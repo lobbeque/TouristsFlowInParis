@@ -277,19 +277,19 @@ public class Affichage {
       for ( int j = 0; j < 4; j ++ ) {  
         float yLabel = 0;
         if ( Application.session.isLog() ) {
-          yLabel = PApplet.map(j*( l - 35 )/4, 0, (l - 35), 0, PApplet.log(160) );
+          yLabel = PApplet.map(j*( l - 35 )/4, 0, (l - 35), 0, PApplet.log(80) );
           p.text ( yLabel, x + 10, y - 155 + 15 + (3 - j)*( l - 35 )/4 );
 
         } else if ( Application.session.isPetit() ) {
           yLabel = 112374/4*j;
           p.text ( (int)yLabel, x + 10,  y - 155 + 15 + (3 - j)*( l - 35 )/4 );
         } else {
-          yLabel = 160 - 40*(j + 1);
-          p.text ( (int)yLabel, x + 10, y - 155 + 15 + (3 - j)*( l - 35 )/4 );
+          yLabel = 80 - 20*(j + 1);
+          p.text ( (int)yLabel, x + 10, y - 155 + 15 + j*( l - 35 )/4 );
         }
         p.line( x + 23, y - 155 + 15 + j*( l - 35 )/4, x + 26, y - 155 + 15 + j*( l - 35 )/4); 
       }
-      for ( int k = 0; k < 5; k ++ ) {
+      for ( int k = 0; k < 4; k ++ ) {
         float xLabel = 0;
         xLabel = PApplet.map(PApplet.log(1*PApplet.pow(10,k)), 0, PApplet.log(Application.session.getEdgeMax()), 0, 130 );
         if ( Application.session.isLog() ){
@@ -353,7 +353,7 @@ public class Affichage {
         p.stroke(0);
         float x = PApplet.map( PApplet.log(temp[0]), 0, PApplet.log(Application.session.getNodeMax()), 0, 130 );
         float y = PApplet.map( temp[1], 0, 450, 0, 150 );
-        p.line ( X + 30 + x, Y - 35, X + 30 + x, Y - 35 - y );
+        p.line ( X + 20 + x, Y - 35, X + 20 + x, Y - 35 - y );
         p.noStroke();
       } 
 
@@ -363,11 +363,11 @@ public class Affichage {
         float y = 0;
         float x = PApplet.map( PApplet.log(temp[0]+1), 0, PApplet.log(Application.session.getEdgeMax()), 0, 130 );
         if ( ! Application.session.isLog() ) {
-          y = PApplet.map( temp[1], 0, 140, 0, 130 );
+          y = PApplet.map( temp[1], 0, 80, 0, 130 );
         } else {
-          y = PApplet.map( PApplet.log(temp[1]), 0, PApplet.log (140), 0, 125 );
+          y = PApplet.map( PApplet.log(temp[1]), 0, PApplet.log (80), 0, 125 );
         } 
-        p.line ( X + 30 + x, Y - 35, X + 30 + x, Y - 35 - y );
+        p.line ( X + 20 + x, Y - 35, X + 20 + x, Y - 35 - y );
         p.noStroke();
     }
 
