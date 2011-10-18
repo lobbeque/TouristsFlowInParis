@@ -17,17 +17,17 @@ public class Bibliotheque {
 
    static void loadGraph () {
       Application.session.setTableauGephi(0, new Gephi()); 
-      Application.session.getTableauGephi()[0].loadGraph("/home/guest/Bureau/quentin/gexf_julie_20080818/roaming_2009_03_31-custom-0-4.gexf");
+      Application.session.getTableauGephi()[0].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-0-4.gexf");
       Application.session.setTableauGephi(1, new Gephi());
-      Application.session.getTableauGephi()[1].loadGraph("/home/guest/Bureau/quentin/gexf_julie_20080818/roaming_2009_03_31-custom-4-8.gexf");
+      Application.session.getTableauGephi()[1].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-4-8.gexf");
       Application.session.setTableauGephi(2, new Gephi());
-      Application.session.getTableauGephi()[2].loadGraph("/home/guest/Bureau/quentin/gexf_julie_20080818/roaming_2009_03_31-custom-8-12.gexf");
+      Application.session.getTableauGephi()[2].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-8-12.gexf");
       Application.session.setTableauGephi(3, new Gephi()); 
-      Application.session.getTableauGephi()[3].loadGraph("/home/guest/Bureau/quentin/gexf_julie_20080818/roaming_2009_03_31-custom-12-16.gexf");
+      Application.session.getTableauGephi()[3].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-12-16.gexf");
       Application.session.setTableauGephi(4, new Gephi()); 
-      Application.session.getTableauGephi()[4].loadGraph("/home/guest/Bureau/quentin/gexf_julie_20080818/roaming_2009_03_31-custom-16-20.gexf");
+      Application.session.getTableauGephi()[4].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-16-20.gexf");
       Application.session.setTableauGephi(5, new Gephi());
-      Application.session.getTableauGephi()[5].loadGraph("/home/guest/Bureau/quentin/gexf_julie_20080818/roaming_2009_03_31-custom-20-24.gexf");
+      Application.session.getTableauGephi()[5].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-20-24.gexf");
       Application.session.setIndex(0);
     }
 
@@ -106,17 +106,17 @@ public class Bibliotheque {
     // à chaque changement d'interval, les données sont stockées de l'objet Gephi vers ces 2 matrices, les actions de filtrages et traitements se feront sur ces matrices
     static void remplirTableauImage(int index){  
       for ( int i = 0; i < Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount; i++) {
-        Application.session.setMatEdge(0, i, (float)Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][1]);
-        Application.session.setMatEdge(1, i, (float)Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][0]);
-        Application.session.setMatEdge(2, i, (float)Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][3]);
-        Application.session.setMatEdge(3, i, (float)Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][2]);
+        Application.session.setMatEdge(0, i, (float)Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][0]);
+        Application.session.setMatEdge(1, i, (float)Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][1]);
+        Application.session.setMatEdge(2, i, (float)Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][2]);
+        Application.session.setMatEdge(3, i, (float)Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][3]);
         Application.session.setMatEdge(4, i, (float)Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][4]);
       }
-      TriRapide.trirapide( Application.session.getMatEdge(), (int)Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount, 5 );
+      
        
       for ( int i = 0; i < Application.session.getTableauGephiCount(Application.session.getIndex(), 0); i++ ) {
-        Application.session.setMatNode(0, i, (float)Application.session.getTableauGephiNode(Application.session.getIndex(), 0, i) );
-        Application.session.setMatNode(1, i, (float)Application.session.getTableauGephiNode(Application.session.getIndex(), 1, i) );
+        Application.session.setMatNode(0, i, (float)Application.session.getTableauGephiNode(Application.session.getIndex(), 1, i) );
+        Application.session.setMatNode(1, i, (float)Application.session.getTableauGephiNode(Application.session.getIndex(), 0, i) );
         Application.session.setMatNode(2, i, (float)Application.session.getTableauGephiNode(Application.session.getIndex(), 2, i) );
       }
       TriRapide.trirapide( Application.session.getMatNode(), (int)Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount, 3 );

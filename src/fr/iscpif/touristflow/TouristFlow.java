@@ -147,10 +147,10 @@ public class TouristFlow extends PApplet {
       }
 
       fill( 255);
-      Application.session.setMatNode(0, 500, 89);
-      text((float)Application.session.getMatNode(0, 500),600,600);
-      text((float)Application.session.getMatNode(1, 500),600,650);
-      text((float)Application.session.getMatNode(2, 500),600,700);
+      
+      text((float)Application.session.getMatNode(0, 1000),600,600);
+      text((float)Application.session.getMatNode(1, 1000),600,650);
+      text((float)Application.session.getMatNode(2, 1000),600,700);
       text((float)Application.session.getTableauGephiCount(Application.session.getIndex(), 0), 600, 750);
       text((int)Application.session.getMaxNodeTotal(), 600, 800);
     }

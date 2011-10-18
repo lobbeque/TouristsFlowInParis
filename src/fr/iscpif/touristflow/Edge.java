@@ -26,16 +26,17 @@ public class Edge {
 
           // Valuation de la transparence des edges en fonction de leur poids
           float value = Application.session.getMatEdge(4,i);
-          if ( value > 10 ) {
-              float poids;
+          
+            float poids = 0;
             if ( Application.session.isLog() ) {
-              poids =  PApplet.map(PApplet.log(value), PApplet.log(10),PApplet.log(Application.session.getEdgeMax()), 1, 15);
-
+                if ( value > 2 ) {
+                    poids =  PApplet.map(PApplet.log(value), PApplet.log(2),PApplet.log(Application.session.getEdgeMax()), 1, 10);
+                }
             } else {
-              poids =  PApplet.map(value, 10,Application.session.getEdgeMax(), 1, 15);
+              poids =  PApplet.map(value, 2,Application.session.getEdgeMax(), 1, 15);
             }
               p.strokeWeight(poids);
-         } 
+          
           float a = 0;
 
           // Plus grande visibilité aux petits edges
@@ -51,12 +52,12 @@ public class Edge {
             } else {
               a = PApplet.map(value, 0, Application.session.getEdgeMaxdyn(), 15, 255);
             }
-            if ( value < 10 )
-              a = 0;
+            if ( value < 2 )
+                a = 0;
             p.stroke(255, 227, 0, a);
           }
          if ( Application.session.isGros() && ( ! Application.session.isPetit()) ) { 
-           if ( ( ( (xy1[1] > 0 ) && (xy1[0] > 0 ) && (xy1[0] < p.width ) && ( xy1[1] < p.height ) ) || ( (  xy2[0] > 0 ) && (  xy2[1] > 0 ) && (  xy2[0] < p.width ) && (  xy2[1] < p.height ) ) ) && ( compt < 2000 ) ) { // on filtre en affichant uniquement les 2000 liens les plus forts situés dans la zone de viz
+           if ( ( ( (xy1[1] > 0 ) && (xy1[0] > 0 ) && (xy1[0] < p.width ) && ( xy1[1] < p.height ) ) || ( (  xy2[0] > 0 ) && (  xy2[1] > 0 ) && (  xy2[0] < p.width ) && (  xy2[1] < p.height ) ) ) && ( Application.session.getMatEdge(4, i) > 2 ) ) { // on filtre en affichant uniquement les 2000 liens les plus forts situés dans la zone de viz
               p.line(xy1[0], xy1[1], xy2[0], xy2[1] ); 
               compt ++;// on affiche que les 2000 noeuds de poids forts dont l'une au moins des extrémités est visible à l'écran
             }

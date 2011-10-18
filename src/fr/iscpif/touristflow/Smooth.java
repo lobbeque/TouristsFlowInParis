@@ -25,11 +25,16 @@ public class Smooth {
     public static void lissage() {
       PApplet p = Application.session.getPApplet();
       int k = coefZoom();
-      for (int i = 0; i < p.width; i = i + k) {//l'écran est découpé en petits carrés
-        for(int j = 0; j < p.height; j = j + k) { 
+      int width = p.width;
+      int height = p.height;
+      int count = Application.session.getNodePourLissageCount() - 1;
+      int zoom = (int) Application.session.getMap().getZoom();
+      float DmaxOnScreen = Application.session.getDmaxOnScreen();
+      for (int i = 0; i < width; i = i + k) {//l'écran est découpé en petits carrés
+        for(int j = 0; j < height; j = j + k) { 
           float poids;
           if ( Application.session.isBiweight() ) {
-            poids = Biweight(i, j);//Utilisation de la méthode de Biweight
+            poids = Biweight(i, j, count, zoom, DmaxOnScreen);//Utilisation de la méthode de Biweight
           } else {
             poids = Shepard(i, j);//Utilisation de la méthode de Biweight
           }
@@ -99,25 +104,25 @@ public class Smooth {
       Bibliotheque.meter2Pixel();
     }
 
-    public static float Biweight (int i, int j) {
+    public static float Biweight (int i, int j, int count, int zoom, float DmaxOnScreen) {
       PApplet p = Application.session.getPApplet();
       float sum1 = 1;
       float sum2 = 1;
-      for(int k = 0; k < Application.session.getNodePourLissageCount() - 1; k++) {
-        if ( Application.session.getMap().getZoom() <= 4096 ) {
+      for(int k = 0; k < count; k++) {
+        if ( zoom <= 4096 ) {
           if ( Application.session.getNodePourLissage(2,k) > 10 ) {
             float d = PApplet.dist(Application.session.getNodePourLissage(0,k), Application.session.getNodePourLissage(1,k), i, j);
 
-            if ( d < Application.session.getDmaxOnScreen() ) {
-              float tmp1 = PApplet.sq( 1 - PApplet.sq( d / Application.session.getDmaxOnScreen() ));
+            if ( d < DmaxOnScreen ) {
+              float tmp1 = PApplet.sq( 1 - PApplet.sq( d / DmaxOnScreen ));
               sum1 = sum1 + tmp1*Application.session.getNodePourLissage(2,k);
               sum2 = sum2 + tmp1;
             }
           }
         } else {
           float d = PApplet.dist(Application.session.getNodePourLissage(0,k), Application.session.getNodePourLissage(1,k), i, j);
-            if ( d < Application.session.getDmaxOnScreen() ) {
-              float tmp1 = PApplet.sq( 1 - PApplet.sq( d / Application.session.getDmaxOnScreen() ));
+            if ( d < DmaxOnScreen ) {
+              float tmp1 = PApplet.sq( 1 - PApplet.sq( d / DmaxOnScreen ));
               sum1 = sum1 + tmp1*Application.session.getNodePourLissage(2,k);
               sum2 = sum2 + tmp1;
             }
