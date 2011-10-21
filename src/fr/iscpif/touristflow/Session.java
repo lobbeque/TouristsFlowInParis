@@ -23,6 +23,9 @@ public class Session {
     // pour le menu
     java.util.ArrayList Boutons = new java.util.ArrayList();
     
+    // pour les oursins
+    java.util.ArrayList Oursins = new java.util.ArrayList();
+    
     int nbMaxEnfants = 30; 
 
     // pour le heatmap
@@ -53,6 +56,8 @@ public class Session {
     // matrices de stockage des noeuds et edges courants ( triées du poids fort au poids faible )
     float[][] matEdge;
     float[][] matNode;
+    float[][] sortant;
+    float[][] entrant; 
 
     // tableau de stockage des longueurs d'edges ( triée de la plus grande à la plus petite )
     float[] tabEdgeDist;
@@ -81,6 +86,7 @@ public class Session {
     boolean edgeDistri = false;
     boolean Log = false;
     boolean premierLissage = false; 
+    boolean oursin = false;
 
 
     // Définition de constantes pour le calcul des Min et Max 
@@ -114,6 +120,10 @@ public class Session {
 
     public ArrayList getBoutons() {
         return Boutons;
+    }
+    
+    public ArrayList getOursins() {
+        return Oursins;
     }
 
     public float getDmax() {
@@ -303,6 +313,22 @@ public class Session {
     public float getMatNode(int i, int j) {
         return matNode[i][j];
     }
+    
+    public float[][] getSortant() {
+        return sortant;
+    }
+    
+    public float getSortant(int i, int j) {
+        return sortant[i][j];
+    }
+    
+    public float[][] getEntrant() {
+        return entrant;
+    }
+    
+    public float getEntrant(int i, int j) {
+        return entrant[i][j];
+    }
 
     public float getMaxEdgeTotal() {
         return maxEdgeTotal;
@@ -366,6 +392,10 @@ public class Session {
 
     public void setBoutons(ArrayList Boutons) {
         this.Boutons = Boutons;
+    }
+    
+    public void setOursins(ArrayList Oursins) {
+        this.Oursins = Oursins;
     }
 
     public void setDmax(float Dmax) {
@@ -527,6 +557,22 @@ public class Session {
     public void setMatEdge(int i, int j , float a) {
         this.matEdge[i][j] = a;
     }
+    
+    public void setSortant(float[][] sortant) {
+        this.sortant = sortant;
+    }
+    
+    public void setSortant(int i, int j, float a) {
+        this.sortant[i][j] = a;
+    }
+    
+    public void setEntrant(float[][] entrant) {
+        this.entrant = entrant;
+    }
+    
+    public void setEntrant(int i, int j, float a) {
+        this.entrant[i][j] = a;
+    }
 
     public void setTabEdgeDist(float[] tabEdgeDist) {
         this.tabEdgeDist = tabEdgeDist;
@@ -600,6 +646,11 @@ public class Session {
         this.select = select;
     }
 
-    
-    
+    public boolean isOursin() {
+        return oursin;
+    }
+
+    public void setOursin(boolean oursin) {
+        this.oursin = oursin;
+    }
 }

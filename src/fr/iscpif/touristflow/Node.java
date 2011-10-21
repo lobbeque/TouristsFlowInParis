@@ -56,9 +56,14 @@ public class Node {
               Application.session.setClosestTextY(xy[1]-radius-4);
             }
             //mode sélection
-            if ( (d < radius+2) && Application.session.isClicked() && (! Application.session.isSelect()) )  {
+            if ( (d < radius+2) && Application.session.isClicked() && (! Application.session.isSelect()) && (! Application.session.isOursin()) )  {
               Affichage.selection(xy[0], xy[1],radius, i);
             }
+            
+            if ( (d < radius+2) && Application.session.isClicked() && (! Application.session.isSelect()) && (Application.session.isOursin()) )  {
+              Affichage.selectionOursins(xy[0], xy[1]);
+            }
+            
         }
     } 
 }

@@ -101,7 +101,7 @@ public class Smooth {
           }
         }
       }
-      Bibliotheque.meter2Pixel();
+      Application.session.setDmaxOnScreen(Bibliotheque.meter2Pixel(Application.session.getDmax()));
     }
 
     public static float Biweight (int i, int j, int count, int zoom, float DmaxOnScreen) {

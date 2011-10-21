@@ -234,6 +234,8 @@ public class BoutonMenu {
         Application.session.setChaud(true);
       if (this.nom.equals("Log"))
         Application.session.setLog(true);
+      if (this.nom.equals("Oursins"))
+        Application.session.setOursin(true);
     }
 
 
@@ -264,5 +266,7 @@ public class BoutonMenu {
         Application.session.setChaud(false);
       if (this.nom.equals("Log"))
         Application.session.setLog(false); 
+      if (this.nom.equals("Oursins"))
+        Application.session.setOursin(false);
      }
 }

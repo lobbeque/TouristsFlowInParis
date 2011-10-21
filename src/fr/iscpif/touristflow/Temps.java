@@ -110,4 +110,8 @@ public class Temps {
     public static int getHourIndex() {
         return hourIndex;
     }
+    
+    public static int getHourCount() {
+        return hourCount;
+    }
 }

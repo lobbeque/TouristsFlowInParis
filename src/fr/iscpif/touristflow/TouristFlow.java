@@ -39,6 +39,8 @@ public class TouristFlow extends PApplet {
       // les info sur les noeuds et edges sont stockés dans 2 matrices
       Application.session.setMatEdge(new float[5][(int)Application.session.getMaxEdgeTotal()]);
       Application.session.setMatNode(); 
+      Application.session.setSortant(new float[6][(int)Application.session.getMaxEdgeTotal()/20]);
+      Application.session.setEntrant(new float[6][(int)Application.session.getMaxEdgeTotal()/20]);
       Bibliotheque.remplirTableauImage( Application.session.getIndex() ); 
 
 
@@ -51,9 +53,10 @@ public class TouristFlow extends PApplet {
       String[] arr = new String[] {"Noeud","Arc","Lissée"};
       Application.session.getBoutons().add( new BoutonMenu ( 50, 80, 50, "Carte", true, arr ));
       String[] arr1 = new String[] {"Info","Select","HeatMap"};
+      String[] arr4 = new String[] {"Oursins"};
       Application.session.getBoutons().add( new BoutonMenu ( 30, 150, 50, "Noeud",arr1 ));
       Application.session.getBoutons().add( new BoutonMenu ( 20, 210, 30, "Info" ));
-      Application.session.getBoutons().add( new BoutonMenu ( 20, 245, 50, "Select" ));
+      Application.session.getBoutons().add( new BoutonMenu ( 20, 245, 50, "Select",arr4 ));
       Application.session.getBoutons().add( new BoutonMenu ( 20, 210, 70, "HeatMap" ));
       String[] arr2 = new String[] {"Exp(1/x)","Max Relatif","Log"};
       Application.session.getBoutons().add( new BoutonMenu ( 30, 80, 120, "Arc", arr2 ));
@@ -64,13 +67,14 @@ public class TouristFlow extends PApplet {
       Application.session.getBoutons().add( new BoutonMenu ( 30, 150, 120, "Lissée", arr3 ));
       Application.session.getBoutons().add( new BoutonMenu ( 20, 210, 185, "Biweight" ));
       Application.session.getBoutons().add( new BoutonMenu ( 20, 210, 120, "Shepard" ));
+      Application.session.getBoutons().add( new BoutonMenu ( 20, 315, 50, "Oursins" ));
 
       Bibliotheque.miseAJourMatriceDistance(Application.session.getIndex());
       
       // tableau qui contiendra les noeuds pour le lissage
       Application.session.setNodePourLissage( new float[3][Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount]);
       
-      Bibliotheque.meter2Pixel();
+      Application.session.setDmaxOnScreen(Bibliotheque.meter2Pixel(Application.session.getDmax()));
       
       Bibliotheque.distMinMax(); 
       
@@ -95,7 +99,7 @@ public class TouristFlow extends PApplet {
            
           Bibliotheque.remplirTableauImage(Application.session.getIndex());
           Bibliotheque.miseAJourMatriceDistance(Application.session.getIndex());
-          Bibliotheque.distMinMax(); 
+          Bibliotheque.effacerOursins();
       }
 
       PFont font1 = createFont("DejaVuSans-ExtraLight-", 15);
@@ -147,12 +151,6 @@ public class TouristFlow extends PApplet {
       }
 
       fill( 255);
-      
-      text((float)Application.session.getMatNode(0, 1000),600,600);
-      text((float)Application.session.getMatNode(1, 1000),600,650);
-      text((float)Application.session.getMatNode(2, 1000),600,700);
-      text((float)Application.session.getTableauGephiCount(Application.session.getIndex(), 0), 600, 750);
-      text((int)Application.session.getMaxNodeTotal(), 600, 800);
     }
    
     @Override
