@@ -266,7 +266,9 @@ public class BoutonMenu {
         Application.session.setChaud(false);
       if (this.nom.equals("Log"))
         Application.session.setLog(false); 
-      if (this.nom.equals("Oursins"))
+      if (this.nom.equals("Oursins")){
         Application.session.setOursin(false);
+        Bibliotheque.effacerOursins();
+      }
      }
 }

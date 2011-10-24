@@ -133,9 +133,28 @@ public class Bibliotheque {
     }
 
     static void effacerOursins() {
-        for (int i = 0; i < Application.session.getOursins().size(); i++) {
-            Application.session.getOursins().remove(i);
+        while (!Application.session.getOursins().isEmpty()){
+            Application.session.getOursins().remove(0);
         }
+    }
+    
+    static void miseAJourOursins() {
+        float[][] temp = new float[2][50];
+        int i = 0;
+        while (!Application.session.getOursins().isEmpty()){
+            Oursin oursin = (Oursin) Application.session.Oursins.get(0);
+            temp[0][i] = oursin.getXN();
+            temp[1][i] = oursin.getYN();
+            Application.session.getOursins().remove(0);
+            i ++;
+        }
+        for ( int j = 0; j < i + 1; j ++  ){  
+            Location l = new Location(temp[0][j], temp[1][j]);
+            float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
+            
+            Affichage.selectionOursins(xy[0], xy[1], temp[0][j], temp[1][j]);
+        }
+
     }
 
     static void miseAJourMatriceDistance(int index) {
@@ -304,3 +323,5 @@ public class Bibliotheque {
         return pointsCardinaux;
     }
 }
+    
+ 

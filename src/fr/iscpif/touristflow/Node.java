@@ -61,7 +61,7 @@ public class Node {
             }
             
             if ( (d < radius+2) && Application.session.isClicked() && (! Application.session.isSelect()) && (Application.session.isOursin()) )  {
-              Affichage.selectionOursins(xy[0], xy[1]);
+              //Affichage.selectionOursins(xy[0], xy[1]);
             }
             
         }

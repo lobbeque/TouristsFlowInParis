@@ -53,18 +53,19 @@ public class Affichage {
         
     }
     
-    public static void selectionOursins(float x, float y) { // fonction d'affichage en mode selection 
+    public static void selectionOursins(float x, float y, float xN, float yN) { // fonction d'affichage en mode selection 
         PApplet p = Application.session.getPApplet();
         p.textAlign(PConstants.LEFT, PConstants.TOP);
         p.stroke(153);
-        p.fill(16, 91, 136);
-        p.text("Arc Entrant", 25, 500);
-        p.fill(182, 92, 96);
-        p.stroke(153);
-        p.text("Arc Sortant", 25, 475);
+        //p.fill(16, 91, 136);
+        //p.text("Arc Entrant", 25, 500);
+        //p.fill(182, 92, 96);
+        //p.stroke(153);
+        //p.text("Arc Sortant", 25, 475);
         int sortantcpt = 0;
         int entrantcpt = 0;
-
+        Location l3 = new Location(x, y);
+        float xy3[] = Application.session.getMap().getScreenPositionFromLocation(l3);
         for (int k = 0; k < Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount; k++) {
             Location l1 = new Location(Application.session.getMatEdge(0, k), Application.session.getMatEdge(1, k));
             Location l2 = new Location(Application.session.getMatEdge(2, k), Application.session.getMatEdge(3, k));
@@ -118,12 +119,6 @@ public class Affichage {
         pointsCardinauxSortant = Bibliotheque.remplissagePointsCardinaux(pointsCardinauxSortant, sortantcpt, 0);
 
 
-        for (int k1 = 0; k1 < 10; k1++) {
-            p.text(pointsCardinauxEntrant[k1], 100 + 50*k1, 800);
-            p.text(pointsCardinauxSortant[k1], 100 + 50*k1, 820);
-        }
-
-
 
         p.noStroke();
         p.noFill();
@@ -131,19 +126,17 @@ public class Affichage {
         boolean deja = false;
         for (int z = 0; z < Application.session.getOursins().size(); z++) {
             Oursin oursin = (Oursin) Application.session.Oursins.get(z);
-            if ((oursin.getX() == x) && (oursin.getY() == y)) {
+            if ((oursin.getXN() == xN) && (oursin.getYN() == yN)) {
                 deja = true;
+                oursin.pressed();
+            }
+            if("selected".equals(oursin.getStatus())){
+                Application.session.getOursins().remove(z);
+                z = z - 1;
             }
         }
         if (!deja) {
-            Application.session.getOursins().add(new Oursin(pointsCardinauxEntrant, pointsCardinauxSortant, x, y));
-        }
-
-        for (int z = 0; z < Application.session.getOursins().size(); z++) {
-            Oursin oursin = (Oursin) Application.session.getOursins().get(z);
-            if ((oursin.getX() == x) && (oursin.getY() == y)) {
-                Oursin.draw();
-            }
+            Application.session.getOursins().add(new Oursin(pointsCardinauxEntrant, pointsCardinauxSortant, x, y, xN, yN));
         }
         /*
         p.fill(1, 160, 20, 200);
