@@ -9,7 +9,7 @@ import processing.core.*;
 
 /**
  *
- * @author jbilcke
+ * @author Quentin Lobbé
  */
 public class TouristFlow extends PApplet {
 
@@ -25,7 +25,9 @@ public class TouristFlow extends PApplet {
     public void setup() {
         Application.session.setPApplet(this);
 
-        size(1400, 979);
+        //size(1400, 979);
+        size(1200, 800);
+
 
         Application.session.setMap(new de.fhpotsdam.unfolding.Map(this));
         Application.session.map.zoomAndPanTo(new Location(48.866f, 2.359f), 10);// position de départ de la carte 
@@ -47,25 +49,25 @@ public class TouristFlow extends PApplet {
 
         smooth();
 
-
+        // définition des boutons du menu et des dépendences entre eux 
         String[] arr = new String[]{"Noeud", "Arc", "Lissée"};
-        Application.session.getBoutons().add(new BoutonMenu(50, 80, 50, "Carte", true, arr));
+        Application.session.getBoutons().add(new BoutonMenu(50, (float) (width / 17.5), (float) (height / 18), "Carte", true, arr));
         String[] arr1 = new String[]{"Info", "Select", "HeatMap"};
         String[] arr4 = new String[]{"Oursins"};
-        Application.session.getBoutons().add(new BoutonMenu(30, 150, 50, "Noeud", arr1));
-        Application.session.getBoutons().add(new BoutonMenu(20, 210, 30, "Info"));
-        Application.session.getBoutons().add(new BoutonMenu(20, 245, 50, "Select", arr4));
-        Application.session.getBoutons().add(new BoutonMenu(20, 210, 70, "HeatMap"));
+        Application.session.getBoutons().add(new BoutonMenu(30, (float) (width / 9.333), (float) (height / 18), "Noeud", arr1));
+        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 6.666), (float) (height / 30), "Info"));
+        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 5.714), (float) (height / 18), "Select", arr4));
+        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 6.666), (float) (height / 12.86), "HeatMap"));
         String[] arr2 = new String[]{"Exp(1/x)", "Max Relatif", "Log"};
-        Application.session.getBoutons().add(new BoutonMenu(30, 80, 120, "Arc", arr2));
-        Application.session.getBoutons().add(new BoutonMenu(20, 130, 185, "Max Relatif"));
-        Application.session.getBoutons().add(new BoutonMenu(20, 80, 185, "Exp(1/x)"));
-        Application.session.getBoutons().add(new BoutonMenu(20, 30, 185, "Log"));
+        Application.session.getBoutons().add(new BoutonMenu(30, (float) (width / 17.5), (float) (height / 7.5), "Arc", arr2));
+        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 10.769), (float) (height / 4.86), "Max Relatif"));
+        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 17.5), (float) (height / 4.86), "Exp(1/x)"));
+        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 46.667), (float) (height / 4.86), "Log"));
         String[] arr3 = new String[]{"Biweight", "Shepard"};
-        Application.session.getBoutons().add(new BoutonMenu(30, 150, 120, "Lissée", arr3));
-        Application.session.getBoutons().add(new BoutonMenu(20, 210, 185, "Biweight"));
-        Application.session.getBoutons().add(new BoutonMenu(20, 210, 120, "Shepard"));
-        Application.session.getBoutons().add(new BoutonMenu(20, 315, 50, "Oursins"));
+        Application.session.getBoutons().add(new BoutonMenu(30, (float) (width / 9.333), (float) (height / 7.5), "Lissée", arr3));
+        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 6.666), (float) (height / 4.86), "Biweight"));
+        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 6.666), (float) (height / 7.5), "Shepard"));
+        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 4.5), (float) (height / 18), "Oursins"));
 
         Bibliotheque.miseAJourMatriceDistance(Application.session.getIndex());
 
@@ -77,8 +79,8 @@ public class TouristFlow extends PApplet {
         Bibliotheque.distMinMax();
 
         // création des deux curseurs de sélection pour le lissage
-        Application.session.setCurseur(new Stick(10, (float) (width / 56 + 165), (float) (height / 1.4 + 53), Application.session.getDmax(), (float) (width / 4.375 - 10 - 165)));
-        Application.session.setCurseur2(new Stick(10, (float) (width / 56 + 165), (float) (height / 1.4 + 18), Application.session.getP(), (float) (width / 4.375 - 10 - 165)));
+        Application.session.setCurseur(new Stick(10, (float) (width / 56 + 165), (float) (height - 150 + 53), Application.session.getDmax(), (float) (320 - 10 - 165)));
+        Application.session.setCurseur2(new Stick(10, (float) (width / 56 + 165), (float) (height - 150 + 18), Application.session.getP(), (float) (320 - 10 - 165)));
     }
 
     @Override
@@ -87,7 +89,8 @@ public class TouristFlow extends PApplet {
         background(0);
         Application.session.getMap().draw();
 
-        fill(15, 9, 105, 100);
+        //fill(15, 9, 105, 100);
+        fill(190, 201, 186, 100);
         rect(0, 0, width, height);
         noFill();
 
@@ -121,6 +124,12 @@ public class TouristFlow extends PApplet {
 
         // affichage de la time line
         Temps.drawDateSelector();
+        stroke(255);
+        fill(255);
+        strokeWeight(2);
+        Affichage.afficheEchelle();
+        
+        noStroke();
 
         // affiche la légende en mode edge ou node 
         if (!Application.session.isHeat()) {
@@ -139,7 +148,6 @@ public class TouristFlow extends PApplet {
 
         ellipseMode(CENTER);
 
-        Affichage.afficheEchelle();
 
 
         for (int i = 0; i < Application.session.getBoutons().size(); i++) {
@@ -150,20 +158,21 @@ public class TouristFlow extends PApplet {
         if ((!Application.session.isSelect()) && (Application.session.isOursin())) {
             if (!Application.session.getOursins().isEmpty()) {
                 fill(190, 201, 186, 100);
-                rect(0, 0, 1400, 950);
+                rect(0, 0, width, height);
                 textAlign(PConstants.LEFT, PConstants.TOP);
                 stroke(153);
                 fill(16, 91, 136);
-                text("Arc Entrant", 25, 500);
+                text("Arc Entrant", width / 56, (float) (height / 1.958));
                 fill(182, 92, 96);
                 stroke(153);
-                text("Arc Sortant", 25, 475);
+                text("Arc Sortant", width / 56, (float) (height / 2.06));
             }
             for (int z = 0; z < Application.session.getOursins().size(); z++) {
                 Oursin oursin = (Oursin) Application.session.getOursins().get(z);
                 oursin.draw();
             }
         }
+        
 
 
         fill(255);
@@ -181,7 +190,7 @@ public class TouristFlow extends PApplet {
             for (int j = 0; j < Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount; j++) {
                 Location l1 = new Location(Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
                 float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
-                if (dist(mouseX, mouseY, xy1[0], xy1[1]) < 10) {
+                if (dist(mouseX, mouseY, xy1[0], xy1[1]) < (width / 140)) {
                     Affichage.selectionOursins(xy1[0], xy1[1], Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
                 }
             }
@@ -190,8 +199,8 @@ public class TouristFlow extends PApplet {
         Application.session.setClicked(true);
 
         // Zones de changement d'interval
-        float dist1 = dist(585, 35, mouseX, mouseY);
-        float dist2 = dist(810, 35, mouseX, mouseY);
+        float dist1 = dist((float) (width / 2.39), (float) (height / 27.97), mouseX, mouseY);
+        float dist2 = dist((float) (width / 1.728), (float) (height / 27.97), mouseX, mouseY);
         if (dist1 < 15) {
             int newHour = Temps.getHourIndex() - 1;
             Temps.setHour(newHour);
@@ -201,25 +210,25 @@ public class TouristFlow extends PApplet {
             Temps.setHour(newHour);
         }
 
-        float dist5 = dist((float) (width / 70 + width / 8 / 2 / 11.6), (float) (height / 1.8 + width / 8 / 2 / 11.6), mouseX, mouseY);
-        float dist6 = dist((float) (width / 70 + width / 8 / 2 / 11.6), (float) (height / 1.8 - width / 8 / 2 / 11.6), mouseX, mouseY);
+        float dist5 = dist((float) (width / 70 + width / 8 / 2 / 11.6), (float) (height - 320 + width / 8 / 2 / 11.6), mouseX, mouseY);
+        float dist6 = dist((float) (width / 70 + width / 8 / 2 / 11.6), (float) (height - 320 - width / 8 / 2 / 11.6), mouseX, mouseY);
         if (!Application.session.isNodeDistri()) {
-            if (dist5 < 15) {
+            if (dist5 < 20) {
                 Application.session.setNodeDistri(true);
             }
         } else {
-            if ((dist5 < 15) || (dist6 < 15)) {
+            if ((dist5 < 20) || (dist6 < 20)) {
                 Application.session.setNodeDistri(false);
             }
         }
-        float dist7 = dist((float) (width / 70 + width / 8 / 2 / 11.6 + width / 8 - width / 8 / 11.6), (float) (height / 1.8 + width / 8 / 2 / 11.6 + height / 9.79), mouseX, mouseY);
-        float dist8 = dist((float) (width / 70 + width / 8 / 2 / 11.6 + width / 8 - width / 8 / 11.6), (float) (height / 1.8 - width / 8 / 2 / 11.6 + height / 9.79), mouseX, mouseY);
+        float dist7 = dist((float) (width / 70 + width / 8 / 2 / 11.6 + 175 - width / 8 / 11.6), (float) (height - 320 + width / 8 / 2 / 11.6 + 100), mouseX, mouseY);
+        float dist8 = dist((float) (width / 70 + width / 8 / 2 / 11.6 + 175 - width / 8 / 11.6), (float) (height - 320 - width / 8 / 2 / 11.6 + 100), mouseX, mouseY);
         if (!Application.session.isEdgeDistri()) {
-            if (dist7 < 15) {
+            if (dist7 < 20) {
                 Application.session.setEdgeDistri(true);
             }
         } else {
-            if ((dist7 < 15) || (dist8 < 15)) {
+            if ((dist7 < 20) || (dist8 < 20)) {
                 Application.session.setEdgeDistri(false);
             }
         }

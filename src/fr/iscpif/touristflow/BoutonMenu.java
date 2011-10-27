@@ -100,7 +100,7 @@ public class BoutonMenu {
           p.stroke(200,170);
           p.line(xPapa, yPapa, x, y);
         }
-        p.stroke(200);
+        p.fill(80);        
         p.textAlign( PConstants.CENTER );
         p.text(nom, x, y - size + size/3);
         p.noFill();
@@ -109,14 +109,14 @@ public class BoutonMenu {
 
      protected void drawSelected() { // draw si le père est cliqué
       PApplet p = Application.session.getPApplet();
-      p.fill(200, 200, 0, 170);
+      p.fill(16, 91, 136, 200);
 
       p.ellipse(x, y, size, size);
-      p.stroke(200, 200, 0, 170);
+      p.stroke(16, 91, 136, 200);
       if (( xPapa != 0 ) && ( yPapa != 0 )) {
         p.line(xPapa, yPapa, x, y);
       }
-      p.fill( 250 );
+      p.fill( 0 );
       p.textAlign( PConstants.CENTER );
       p.text(nom, x, y - size + size/3);
       p.noFill();  

@@ -4,6 +4,7 @@
  */
 package fr.iscpif.touristflow;
 import processing.core.*; 
+import de.fhpotsdam.unfolding.geo.Location;
 
 /**
  *
@@ -39,6 +40,20 @@ public class HeatMap {
         p.image(buffer, x, y, radius*5*PApplet.exp(zoom/20000), radius*5*PApplet.exp(zoom/20000));
         p.imageMode(PConstants.CORNER);
       }
+      
+   }
+   
+      public int GetDegree(float x, float y){
+       int Degree = 0;
+       Location location = Application.session.getMap().getLocationFromScreenPosition(x,y);
+       for ( int i = 0; i < Application.session.getMatEdge().length; i ++){
+           if ((( location.getLat() == Application.session.getMatEdge(0, i)) && ( location.getLon() == Application.session.getMatEdge(1, i))) || (( location.getLat() == Application.session.getMatEdge(2, i)) && ( location.getLon() == Application.session.getMatEdge(3, i)))){
+               Degree ++;
+           }
+       }
+       return Degree;
+      }
+      
     }
     
-}
+

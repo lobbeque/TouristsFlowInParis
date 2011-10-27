@@ -75,14 +75,14 @@ public class Temps {
       hourSelectorX = (p.width - hourCount*2) / 2;
       p.strokeWeight(1);
       for (int i = 0; i < hourCount; i++) {
-        int x = hourSelectorX + i*10;
+        int x = hourSelectorX + i*(p.width/140);
         // surligner la ligne courante
         if (i == hourIndex) {
           p.stroke(0);
-          p.fill( 255 );
-          p.line(x, 0, x, 13);
+          p.fill( 0 );
+          p.line(x, 0, x, (float)(p.height/75.307));
           p.textAlign(PConstants.CENTER, PConstants.TOP);
-          p.text(hourPretty[hourIndex] + "h", p.width/2, 15);
+          p.text(hourPretty[hourIndex] + "h", p.width/2, (float)(p.height/65.266));
         } else {
           // noircir les dates selectionnables ( pour une générlisation du modèle )
           if ((i >= minHourIndex) && (i <= maxHourIndex)) {
@@ -90,12 +90,13 @@ public class Temps {
           } else {
             p.stroke(204); 
           }
-          p.line(x, 0, x, 7);
+          p.line(x, 0, x, (float)(p.height/139.857));
         }
       }
+      p.fill(190, 201, 186,200);
       p.stroke(128);
-      p.triangle(575, 25, 595, 15, 595, 35);
-      p.triangle(820, 25, 800, 15, 800, 35);
+      p.triangle((float)(p.width/2.44), (float)(p.height/39.16), (float)(p.width/2.35), (float)(p.height/65.266), (float)(p.width/2.35), (float)(p.height/27.97));
+      p.triangle((float)(p.width/1.707), (float)(p.height/39.16), (float)(p.width/1.75), (float)(p.height/65.266), (float)(p.width/1.75), (float)(p.height/27.97));
     }
 
 

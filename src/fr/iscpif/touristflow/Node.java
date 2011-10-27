@@ -31,7 +31,8 @@ public class Node {
             p.ellipseMode(PConstants.RADIUS);
             float zoom = Application.session.getMap().getZoom();
             if (( Application.session.isNode() ) && ( ! Application.session.isChaud() )) {
-              p.fill(101, 157, 255, 100);
+              //p.fill(101, 157, 255, 100);
+              p.fill(182, 92, 96, 100);
               p.ellipse(xy[0],xy[1],radius*PApplet.exp(zoom/20000),radius*PApplet.exp(zoom/20000));
               p.fill(178, 206, 255, 200);
               p.ellipse(xy[0],xy[1],radius*PApplet.exp(zoom/20000)/5,radius*PApplet.exp(zoom/20000)/5);
@@ -53,7 +54,7 @@ public class Node {
               Application.session.setClosestDist(d);
               Application.session.setClosestText(value);
               Application.session.setClosestTextX(xy[0]);
-              Application.session.setClosestTextY(xy[1]-radius-4);
+              Application.session.setClosestTextY(xy[1]-radius-p.width/350);
             }
             //mode sélection
             if ( (d < radius+2) && Application.session.isClicked() && (! Application.session.isSelect()) && (! Application.session.isOursin()) )  {
