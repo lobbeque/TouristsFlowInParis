@@ -50,6 +50,7 @@ public class HeatMap {
            if ((( location.getLat() == Application.session.getMatEdge(0, i)) && ( location.getLon() == Application.session.getMatEdge(1, i))) || (( location.getLat() == Application.session.getMatEdge(2, i)) && ( location.getLon() == Application.session.getMatEdge(3, i)))){
                Degree ++;
            }
+           
        }
        return Degree;
       }
