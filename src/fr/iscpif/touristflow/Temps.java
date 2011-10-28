@@ -18,8 +18,8 @@ public class Temps {
     
     // Nous ne calculerons les modifs que sur une journée
 
-    public static String firstHourStamp = "2009032900";// année - mois - jour - heure début interval
-    public static String lastHourStamp = "2009032924";
+    public static String firstHourStamp = "2009033100";// année - mois - jour - heure début interval
+    public static String lastHourStamp = "2009033124";
     public static String nowHour;
 
     public static final long MILLIS_PER_4HOURS = 4 * 60 * 60 * 1000; // nombre de millisecondes dans un interval de 4 heures
