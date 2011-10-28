@@ -18,7 +18,7 @@ public class Smooth {
       } else if ( Application.session.getMap().getZoom() >= 4096 ) {
         k = 3;
       } else {
-        k = 3;
+        k = 4;
       }
       return k;
     }
@@ -105,6 +105,7 @@ public class Smooth {
       }
       Application.session.setDmaxOnScreen(Bibliotheque.meter2Pixel(Application.session.getDmax()));
     }
+    
 
     public static float Biweight (float i, float j, int count, int zoom, float DmaxOnScreen, float[][] tabNode) {
       PApplet p = Application.session.getPApplet();
@@ -112,9 +113,9 @@ public class Smooth {
       float sum2 = 1;
       for(int k = 0; k < count; k++) {
         if ( zoom <= 4096 ) {
-          if ( tabNode[2][k] > 10 ) {
+          if ( tabNode[2][k] > 2 ) {
             float d = PApplet.dist(tabNode[0][k], tabNode[1][k], i, j);
-
+            
             if ( d < DmaxOnScreen ) {
               float tmp1 = PApplet.sq( 1 - PApplet.sq( d / DmaxOnScreen ));
               sum1 = sum1 + tmp1*tabNode[2][k];

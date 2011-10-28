@@ -180,7 +180,7 @@ public class TouristFlow extends PApplet {
             }
         }
         
-        //text(Application.session.getMap().getZoom(),800,600);
+        text(Application.session.getMap().getZoom(),800,600);
 
         fill(255);
     }
