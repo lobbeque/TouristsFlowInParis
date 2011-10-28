@@ -48,26 +48,29 @@ public class TouristFlow extends PApplet {
         Application.session.setMyPoints(loadImage("/home/guest/Bureau/Mon_script/data/ppp.png"));
 
         smooth();
+        
+        float xMap = (float) (width / 17.5);
+        float yMap = (float) (height / 18);
 
         // définition des boutons du menu et des dépendences entre eux 
         String[] arr = new String[]{"Noeud", "Arc", "Lissée"};
-        Application.session.getBoutons().add(new BoutonMenu(50, (float) (width / 17.5), (float) (height / 18), "Carte", true, arr));
+        Application.session.getBoutons().add(new BoutonMenu(50, xMap, yMap, "Carte", true, arr));
         String[] arr1 = new String[]{"Info", "Select", "HeatMap"};
         String[] arr4 = new String[]{"Oursins"};
-        Application.session.getBoutons().add(new BoutonMenu(30, (float) (width / 9.333), (float) (height / 18), "Noeud", arr1));
-        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 6.666), (float) (height / 30), "Info"));
-        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 5.714), (float) (height / 18), "Select", arr4));
-        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 6.666), (float) (height / 12.86), "HeatMap"));
+        Application.session.getBoutons().add(new BoutonMenu(30, xMap + 70, yMap, "Noeud", arr1));
+        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap - 20, "Info"));
+        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 165, yMap, "Select", arr4));
+        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap + 20, "HeatMap"));
         String[] arr2 = new String[]{"Exp(1/x)", "Max Relatif", "Log"};
-        Application.session.getBoutons().add(new BoutonMenu(30, (float) (width / 17.5), (float) (height / 7.5), "Arc", arr2));
-        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 10.769), (float) (height / 4.86), "Max Relatif"));
-        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 17.5), (float) (height / 4.86), "Exp(1/x)"));
-        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 46.667), (float) (height / 4.86), "Log"));
+        Application.session.getBoutons().add(new BoutonMenu(30, xMap, yMap + 70, "Arc", arr2));
+        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 50, yMap + 135, "Max Relatif"));
+        Application.session.getBoutons().add(new BoutonMenu(20, xMap, yMap + 135, "Exp(1/x)"));
+        Application.session.getBoutons().add(new BoutonMenu(20, xMap - 50, yMap + 135, "Log"));
         String[] arr3 = new String[]{"Biweight", "Shepard"};
-        Application.session.getBoutons().add(new BoutonMenu(30, (float) (width / 9.333), (float) (height / 7.5), "Lissée", arr3));
-        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 6.666), (float) (height / 4.86), "Biweight"));
-        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 6.666), (float) (height / 7.5), "Shepard"));
-        Application.session.getBoutons().add(new BoutonMenu(20, (float) (width / 4.5), (float) (height / 18), "Oursins"));
+        Application.session.getBoutons().add(new BoutonMenu(30, xMap + 70, yMap + 70, "Lissée", arr3));
+        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap + 135, "Biweight"));
+        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap + 70, "Shepard"));
+        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 230, yMap, "Oursins"));
 
         Bibliotheque.miseAJourMatriceDistance(Application.session.getIndex());
 
@@ -132,13 +135,17 @@ public class TouristFlow extends PApplet {
         noStroke();
 
         // affiche la légende en mode edge ou node 
-        if (!Application.session.isHeat()) {
+        if ((!Application.session.isHeat()) && (!Application.session.isChaud())) {
             Affichage.afficheLegendeNodeEdge();
         }
 
         // affiche la légende en mode lissée
-        if (Application.session.isHeat()) {
+        if ((Application.session.isHeat()) && (!Application.session.isChaud())) {
             Affichage.afficheLegendeLissee();
+        }
+        
+        if ( Application.session.isChaud() ){
+            Affichage.afficheLegendeHeatMap();
         }
 
         Application.session.setEdgeMindyn(MAX_FLOAT);
@@ -173,7 +180,7 @@ public class TouristFlow extends PApplet {
             }
         }
         
-
+        //text(Application.session.getMap().getZoom(),800,600);
 
         fill(255);
     }

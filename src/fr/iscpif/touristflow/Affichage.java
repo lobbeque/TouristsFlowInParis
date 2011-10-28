@@ -20,7 +20,7 @@ public class Affichage {
         p.textAlign(PConstants.LEFT, PConstants.TOP);
         p.stroke(153);
         p.fill(16, 91, 136);
-        p.text("Arc Entrant", p.width / 56, (float)(p.height / 1.958));
+        p.text("Arc Entrant", p.width / 56, (float) (p.height / 1.958));
         p.fill(182, 92, 96);
         p.stroke(153);
         p.text("Arc Sortant", p.width / 56, (float) (p.height / 2.06));
@@ -148,20 +148,20 @@ public class Affichage {
         p.fill(0);
         p.stroke(0);
         p.strokeWeight(2);
-        p.line((p.width + (float)(p.width/1.4)) / 2 - 40, p.height -45, (p.width + (float)(p.width/1.4)) / 2 + 40, p.height -45); // ligne de référence sur l'écran : 80 PConstants.PIxels
-        p.line((p.width + (float)(p.width/1.4)) / 2 - 42, p.height -40, (p.width + (float)(p.width/1.4)) / 2 - 42, p.height -50);
-        p.line((p.width + (float)(p.width/1.4)) / 2 + 42, p.height -40, (p.width + (float)(p.width/1.4)) / 2 + 42, p.height -50);
-        Location location1 = Application.session.getMap().getLocationFromScreenPosition(p.width/2, p.height/2); // transformation des extrémités en coordonnées Lat/Lon 
-        Location location2 = Application.session.getMap().getLocationFromScreenPosition(p.width/2 + 80, p.height/2);
+        p.line((p.width + (float) (p.width / 1.4)) / 2 - 40, p.height - 45, (p.width + (float) (p.width / 1.4)) / 2 + 40, p.height - 45); // ligne de référence sur l'écran : 80 PConstants.PIxels
+        p.line((p.width + (float) (p.width / 1.4)) / 2 - 42, p.height - 40, (p.width + (float) (p.width / 1.4)) / 2 - 42, p.height - 50);
+        p.line((p.width + (float) (p.width / 1.4)) / 2 + 42, p.height - 40, (p.width + (float) (p.width / 1.4)) / 2 + 42, p.height - 50);
+        Location location1 = Application.session.getMap().getLocationFromScreenPosition(p.width / 2, p.height / 2); // transformation des extrémités en coordonnées Lat/Lon 
+        Location location2 = Application.session.getMap().getLocationFromScreenPosition(p.width / 2 + 80, p.height / 2);
         Application.session.setD(Bibliotheque.distFrom(location1.getLat(), location1.getLon(), location2.getLat(), location2.getLon())); // appel de la fonction de calcul de distance entre deux points
         p.textAlign(PConstants.CENTER);
-        p.text((int) Application.session.getD() + " m", (p.width + (float)(p.width/1.4)) / 2, p.height -50);
+        p.text((int) Application.session.getD() + " m", (p.width + (float) (p.width / 1.4)) / 2, p.height - 50);
     }
 
     public static void afficheLegendeLissee() {
         PApplet p = Application.session.getPApplet();
         float x = p.width / 56;
-        float y = p.height - 150 ;
+        float y = p.height - 150;
         float h = 100;
         float l = 320;
         if (Application.session.isBiweight() || Application.session.isShepard()) {
@@ -204,12 +204,12 @@ public class Affichage {
             p.textAlign(PConstants.CENTER);
             if (Application.session.isBiweight()) {
                 p.fill(255);
-                p.text("DENSITE D'OCCUPATION DES BTS ", p.width / 2, (float)(p.height/16.317));
-                p.text("Méthode de BIWEIGHT", p.width / 2, (float)(p.height/12.238));
+                p.text("DENSITE D'OCCUPATION DES BTS ", p.width / 2, (float) (p.height / 16.317));
+                p.text("Méthode de BIWEIGHT", p.width / 2, (float) (p.height / 12.238));
             } else if (Application.session.isShepard()) {
                 p.fill(255);
-                p.text("DENSITE D'OCCUPATION DES BTS ", p.width / 2, (float)(p.height/16.317));
-                p.text("Méthode de SHEPARD", p.width / 2, (float)(p.height/12.238));
+                p.text("DENSITE D'OCCUPATION DES BTS ", p.width / 2, (float) (p.height / 16.317));
+                p.text("Méthode de SHEPARD", p.width / 2, (float) (p.height / 12.238));
             }
         } else {
             int c = p.color(16, 91, 99);
@@ -230,11 +230,7 @@ public class Affichage {
         p.rect(x, y, l, h); // rectangle de base
         p.fill(182, 92, 96);
         p.rect(x, y, (float) (l / 11.6), (float) (l / 11.6));
-        if (!Application.session.isPetit()) {
-            p.fill(16, 91, 136);
-        } else {
-            p.fill(140, 29, 20);
-        }
+        p.fill(16, 91, 136);
         p.rect((float) (x + l - l / 11.6), (float) (y + h - l / 11.6), (float) (l / 11.6), (float) (l / 11.6));
         p.fill(190, 201, 186, 100);
         p.line(x + l / 2, y + 10, x + l / 2, y + 90);
@@ -243,11 +239,7 @@ public class Affichage {
         p.fill(182, 92, 96);
         p.ellipse(x + 35, y + 25, 15, 15);
         p.ellipse(x + 35, y + 70, 1, 1);
-        if (!Application.session.isPetit()) {
-            p.fill(16, 91, 136);
-        } else {
-            p.fill(140, 29, 20);
-        }
+        p.fill(16, 91, 136);
         p.rect(x + 115, y + 20, 40, 10);
         p.rect(x + 115, y + 65, 40, 1);
         p.fill(0);
@@ -255,25 +247,21 @@ public class Affichage {
         PFont font2 = p.createFont("DejaVuSans-ExtraLight-", 20);
         p.textFont(font2);
         if ((!Application.session.isLog()) && (Application.session.isEdge() || Application.session.isNode()) && (!Application.session.isPetit()) && (!Application.session.isChaud())) {
-            p.text("Distribution Brute ( par plage de 4h )", p.width / 2, (float)(p.height/16.317));
+            p.text("Distribution Brute ( par plage de 4h )", p.width / 2, (float) (p.height / 16.317));
         } else if (Application.session.isLog() && Application.session.isEdge() && (!Application.session.isPetit()) && (!Application.session.isChaud())) {
-            p.text("Distribution Logarithmique ( par plage de 4h )", p.width / 2, (float)(p.height/16.317));
+            p.text("Distribution Logarithmique ( par plage de 4h )", p.width / 2, (float) (p.height / 16.317));
         } else if (Application.session.isEdge() && (!Application.session.isLog()) && Application.session.isPetit() && (!Application.session.isChaud())) {
-            p.text("Distribution en exp(1/x) ( par plage de 4h )", p.width / 2, (float)(p.height/16.317));
-        } else if (Application.session.isNode() && Application.session.isChaud()) {
-            p.text("Représentation en HeatMap ( par plage de 4h )", p.width / 2, (float)(p.height/16.317));
+            p.text("Distribution en exp(1/x) ( par plage de 4h )", p.width / 2, (float) (p.height / 16.317));
         }
         PFont font3 = p.createFont("DejaVuSans-ExtraLight-", 15);
         p.textFont(font3);
         if (Application.session.isEdge() && (!Application.session.isPetit()) && (!Application.session.isChaud()) && (!Application.session.isDyn())) {
-            p.text("Mise en avant des Arcs de poids fort ( variation sur l'épaisseur )", p.width / 2, (float)(p.height/12.238));
+            p.text("Mise en avant des Arcs de poids fort ( variation sur l'épaisseur )", p.width / 2, (float) (p.height / 12.238));
         }
         if (Application.session.isEdge() && (!Application.session.isPetit()) && (!Application.session.isChaud()) && Application.session.isDyn()) {
-            p.text("Mise en avant des Arcs de poids fort VISIBLES à l'écran ( variation sur l'épaisseur )", p.width / 2, (float)(p.height/12.238));
+            p.text("Mise en avant des Arcs de poids fort VISIBLES à l'écran ( variation sur l'épaisseur )", p.width / 2, (float) (p.height / 12.238));
         } else if (Application.session.isEdge() && (!Application.session.isLog()) && Application.session.isPetit() && (!Application.session.isChaud())) {
-            p.text("Mise en avant des Arcs de courte longueur ( variation sur l'oppacité, on conserve par ailleur la variation d'épaisseur )", p.width / 2, (float)(p.height/12.238));
-        } else if (Application.session.isNode() && Application.session.isChaud()) {
-            p.text("Mise en avant des points de forte densité ( gradiant sur le poids des noeuds )", p.width / 2, (float)(p.height/12.238));
+            p.text("Mise en avant des Arcs de courte longueur ( variation sur l'oppacité, on conserve par ailleur la variation d'épaisseur )", p.width / 2, (float) (p.height / 12.238));
         }
         p.fill(0);
         PFont font1 = p.createFont("DejaVuSans-ExtraLight-", 15);
@@ -301,6 +289,46 @@ public class Affichage {
         if (Application.session.isEdgeDistri()) {
             afficheDistributionEdge(x, y + 100 + 175, l, h);
         }
+    }
+
+    public static void afficheLegendeHeatMap() {
+        PApplet p = Application.session.getPApplet();
+        float x = p.width / 70;
+        float y = p.height - 320;
+        float h = 100;
+        float l = 175;
+        p.strokeWeight(2);
+        p.stroke(10, 150);
+        p.fill(190, 201, 186, 100);
+        p.rect(x, y, l, h); // rectangle de base
+        p.noFill();
+
+        int from = p.color(189, 73, 50);
+        int to = p.color(255);
+        for (int i = (int) x + 38; i < x + 38 + 100; i++) {
+            float d = PApplet.dist(i, y, x + 38 + 100, y);
+            d = 100 - d;
+            float percent = PApplet.norm(d, 0, 100);
+            int c = p.lerpColor(from, to, percent);
+            p.stroke(c);
+            p.line(i, y + 60, i, y + 80);
+        }
+        p.stroke(10, 150);
+        p.rect(x + 38, y + 60, 100, 20);
+
+        PFont font1 = p.createFont("DejaVuSans-ExtraLight-", 15);
+        p.textFont(font1);
+        p.fill(0);
+        p.textAlign(PConstants.CENTER);
+        p.text("-", x + 19, y + 75);
+        p.text("+", x - 19 + l, y + 75);
+        p.text("Degré des Noeuds", x + l / 2, y + 40);
+        PFont font2 = p.createFont("DejaVuSans-ExtraLight-", 17);
+        p.textFont(font2);
+        if (Application.session.isNode() && Application.session.isChaud()) {
+            p.text("Représentation en HeatMap du degré des Noeuds ( par plage de 4h )", p.width / 2, (float) (p.height / 16.317));
+        }
+        p.textFont(font1);
     }
 
     public static void afficheDistributionNode(float x, float y, float l, float h) {
@@ -359,11 +387,7 @@ public class Affichage {
         p.stroke(10, 150);
         p.fill(224);
         p.rect(x, y - 175, l, h + 75);
-        if (!Application.session.isPetit()) {
-            p.fill(16, 91, 136);
-        } else {
-            p.fill(140, 29, 20);
-        }
+        p.fill(16, 91, 136);
         p.rect((float) (x + l - l / 11.6), (float) (y - h - 75), (float) (l / 11.6), (float) (l / 11.6));
         p.noStroke();
         p.fill(255);

@@ -37,7 +37,7 @@ public class HeatMap {
         buffer.updatePixels();
         p.imageMode(PConstants.CENTER);
         float zoom = Application.session.getMap().getZoom();
-        p.image(buffer, x, y, radius*5*PApplet.exp(zoom/20000), radius*5*PApplet.exp(zoom/20000));
+        p.image(buffer, x, y, radius*7*PApplet.exp(zoom/20000), radius*7*PApplet.exp(zoom/20000));
         p.imageMode(PConstants.CORNER);
       }
       

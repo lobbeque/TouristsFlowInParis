@@ -18,7 +18,7 @@ public class Smooth {
       } else if ( Application.session.getMap().getZoom() >= 4096 ) {
         k = 3;
       } else {
-        k = 4;
+        k = 3;
       }
       return k;
     }
@@ -58,7 +58,7 @@ public class Smooth {
             p.fill(c, 100);
             p.rect( i, j, k, k);
           }
-          else if ( percent > 0.2 ){
+          else if ( percent > 0.1 ){
             int c = p.color(255,250,213);
             p.fill(c, 100);
             p.rect( i, j, k, k);

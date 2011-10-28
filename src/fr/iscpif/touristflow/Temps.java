@@ -47,7 +47,8 @@ public class Temps {
         long lastHourMillis = lastHour.getTime( );
 
         // calcul du nombre d'interval en une journée ( peu se faire à la main, mais bon comme ca c'est fait pour de plus grands jeux )
-        hourCount = (int)((lastHourMillis - firstHourMillis) / MILLIS_PER_4HOURS + 1);
+        hourCount = (int)((lastHourMillis - firstHourMillis) / MILLIS_PER_4HOURS);
+        
         // hourCount = 6;
         maxHourIndex = hourCount;
         hourStamp = new String[hourCount];

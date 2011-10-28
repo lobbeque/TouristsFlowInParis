@@ -14,7 +14,7 @@ public class Node {
     public static void afficheNode() {
       PApplet p = Application.session.getPApplet();
       float radius = 0;
-      for (int i = 0; i < Application.session.getTableauGephiCount(Application.session.getIndex(), 0); i++) {
+      for (int i = (int)Application.session.getTableauGephiCount(Application.session.getIndex(), 0) - 1; i >= 0; i--) {
             p.noStroke();
             // Transformation des coordonnées de chaque noeud !!! Attention il faut toujours inverser la latitude et la longitude
             Location l = new Location(Application.session.getMatNode(0,i),Application.session.getMatNode(1,i));

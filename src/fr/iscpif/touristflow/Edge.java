@@ -64,7 +64,7 @@ public class Edge {
             }
          } else {
            if  ( ( (xy1[1] > 0 ) && (xy1[0] > 0 ) && (xy1[0] < p.width ) && ( xy1[1] < p.height ) ) || ( (  xy2[0] > 0 ) && (  xy2[1] > 0 ) && (  xy2[0] < p.width ) && (  xy2[1] < p.height ) ) ) {
-             p.stroke( 140,29, 20, PApplet.exp( 1 / a ) );
+             p.stroke( 16,91, 136, PApplet.exp( 1 / a ) );
              p.line(xy1[0], xy1[1], xy2[0], xy2[1] ); 
 
            }

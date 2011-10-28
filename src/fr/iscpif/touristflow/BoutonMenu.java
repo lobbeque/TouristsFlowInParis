@@ -174,30 +174,12 @@ public class BoutonMenu {
       }
 
     protected void incompatib(){ // empêche les combinaisons de filtres incompatibles
-          if (this.nom.equals("Edges")){
-            BoutonMenu boutonMenu = (BoutonMenu) Application.session.getBoutons().get(9);
-            boutonMenu.setStatus( statusNormal );
-
-          }
-          if (this.nom.equals("Lissée")){
-            BoutonMenu boutonMenu1 = (BoutonMenu) Application.session.getBoutons().get(5);
-            boutonMenu1.setStatus( statusNormal );
-
-          }
           if (this.nom.equals("Biweight")){
             BoutonMenu boutonMenu2 = (BoutonMenu) Application.session.getBoutons().get(11);
             boutonMenu2.setStatus( statusNormal );
           }
           if (this.nom.equals("Shepard")){
             BoutonMenu boutonMenu3 = (BoutonMenu) Application.session.getBoutons().get(10);
-            boutonMenu3.setStatus( statusNormal );
-          }
-          if (this.nom.equals("Log")){
-            BoutonMenu boutonMenu2 = (BoutonMenu) Application.session.getBoutons().get(7);
-            boutonMenu2.setStatus( statusNormal );
-          }
-          if (this.nom.equals("Taille")){
-            BoutonMenu boutonMenu3 = (BoutonMenu) Application.session.getBoutons().get(8);
             boutonMenu3.setStatus( statusNormal );
           }
         }
