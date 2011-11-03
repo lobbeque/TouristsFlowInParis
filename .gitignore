@@ -1,5 +1,8 @@
+*~
 .*
+*.zip
 dist
 build
 nbproject/private
+nbproject/private/private.properties
 nbproject/private/profiler
