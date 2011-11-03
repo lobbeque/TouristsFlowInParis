@@ -16,6 +16,9 @@ public class TouristFlow extends PApplet {
     /**
      * @param args the command line arguments
      */
+    
+    float zoom;
+    
     public static void main(String[] args) {
         // must match the name of your class ie "letsp5.Main" = packageName.className 
         PApplet.main(new String[]{"fr.iscpif.touristflow.TouristFlow"});
@@ -80,6 +83,8 @@ public class TouristFlow extends PApplet {
         Application.session.setDmaxOnScreen(Bibliotheque.meter2Pixel(Application.session.getDmax()));
 
         Bibliotheque.distMinMax();
+        
+        zoom = Application.session.getMap().getZoom();
 
         // création des deux curseurs de sélection pour le lissage
         Application.session.setCurseur(new Stick(10, (float) (width / 56 + 165), (float) (height - 150 + 53), Application.session.getDmax(), (float) (320 - 10 - 165)));
@@ -103,6 +108,16 @@ public class TouristFlow extends PApplet {
             Bibliotheque.remplirTableauImage(Application.session.getIndex());
             Bibliotheque.miseAJourMatriceDistance(Application.session.getIndex());
             Bibliotheque.miseAJourOursins();
+            if ( Application.session.isHeat() ){
+                Smooth.initBuff1();
+            }
+        }
+        
+        if ( zoom != Application.session.getMap().getZoom() ){
+            zoom = Application.session.getMap().getZoom();
+            if ( Application.session.isHeat() ){
+                Smooth.initBuff1();
+            }
         }
 
         PFont font1 = createFont("DejaVuSans-ExtraLight-", 15);

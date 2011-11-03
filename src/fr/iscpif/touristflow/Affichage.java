@@ -12,15 +12,20 @@ import de.fhpotsdam.unfolding.geo.Location;
  * @author guest
  */
 public class Affichage {
-
+    
     public static void selection(float x, float y, float radius, int i) { // fonction d'affichage en mode selection 
         PApplet p = Application.session.getPApplet();
         p.fill(190, 201, 186, 100);
         p.rect(0, 0, p.width, p.height);
         p.textAlign(PConstants.LEFT, PConstants.TOP);
         p.stroke(153);
+        
+        
+        
         p.fill(16, 91, 136);
         p.text("Arc Entrant", p.width / 56, (float) (p.height / 1.958));
+        
+        
         p.fill(182, 92, 96);
         p.stroke(153);
         p.text("Arc Sortant", p.width / 56, (float) (p.height / 2.06));
@@ -164,6 +169,7 @@ public class Affichage {
         float y = p.height - 150;
         float h = 100;
         float l = 320;
+        
         if (Application.session.isBiweight() || Application.session.isShepard()) {
             Smooth.miseAJourCarteLissee();
             int i = 0;

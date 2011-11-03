@@ -23,6 +23,8 @@ public class BoutonMenu {
      public String status = statusNormal;
 
      public boolean accordParental = false; // un noeud ne peut s'afficher que si son père a été selection avant
+     
+     public boolean init = true;
 
      public BoutonMenu ( float size, float x, float y, String nom,String[] enfant ) {  // constructeur type  1
       this.size = size;
@@ -207,6 +209,10 @@ public class BoutonMenu {
       if (this.nom.equals("Biweight")){
         Application.session.setBiweight(true);
         Application.session.setShepard(false); 
+        if ( init ){
+        Smooth.initBuff1();
+        init = false;
+        }
       }
       if (this.nom.equals("Shepard")){
         Application.session.setShepard(true);
@@ -242,6 +248,11 @@ public class BoutonMenu {
         Application.session.setNode(false);
       if (this.nom.equals("Biweight"))
         Application.session.setBiweight(false);
+        if ( ! init ){
+            Smooth.initBuff1();
+            init = true;
+        }
+        
       if (this.nom.equals("Shepard"))
         Application.session.setShepard(false);
       if (this.nom.equals("HeatMap"))
