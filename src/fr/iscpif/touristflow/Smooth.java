@@ -9,11 +9,11 @@ import de.fhpotsdam.unfolding.geo.Location;
 
 /**
  *
- * @author guest
+ * @author Quentin lobbé
  */
 public class Smooth {
 
-    public static Location[] buff1;
+    public static float[][] buff1;
     public static float[] buff1Score;
     public static boolean init;
     //public static boolean nonInit = false;
@@ -25,36 +25,17 @@ public class Smooth {
 
     public static void initBuff1() {
         PApplet p = Application.session.getPApplet();
-        buff1 = new Location[p.width * p.height / 8];
+        buff1 = new float[2][p.width * p.height / 8];
+        for (int i = 0; i < buff1[0].length; i++) {
+            buff1[0][i] = -1;
+            buff1[1][i] = -1;
+        }
         buff1Score = new float[p.width * p.height / 8];
         for (int k = 0; k < buff1Score.length; k++) {
             buff1Score[k] = -1;
         }
 
             init = false;
-        
-        initABCD();
-
-    }
-
-    public static void initABCD() {
-        PApplet p = Application.session.getPApplet();
-        A = Application.session.getMap().getLocationFromScreenPosition(0, 0);
-        B = Application.session.getMap().getLocationFromScreenPosition(p.width, 0);
-        C = Application.session.getMap().getLocationFromScreenPosition(p.width, p.height);
-        D = Application.session.getMap().getLocationFromScreenPosition(0, p.height);
-    }
-
-    public static float coefZoom() { // en fonction du zoom la grille d'observation est plus ou moins fine 
-        float k = 0;
-        if (Application.session.getMap().getZoom() >= 8196) {
-            k = 3;
-        } else if (Application.session.getMap().getZoom() >= 4096) {
-            k = 3;
-        } else {
-            k = 3;
-        }
-        return k;
     }
 
     public static void lissage() {
@@ -64,20 +45,10 @@ public class Smooth {
             premiereUtilisationBuffeur();
             calculScore1();
         } else {
-            if (deplacementCarte()) {
-                //shortenBuff1();
-                score2();
-
-                initABCD();
-                // calculScore1();
-
-                /*for (int i = 0; i < buff1X.length; i++) {
-                Location l = new Location(buff1X[i], buff1Y[i]);
-                float lxy[] = Application.session.getMap().getScreenPositionFromLocation(l);
-                buff1X[i] = lxy[0];
-                buff1Y[i] = lxy[1];
-                }*/
-
+            if (Application.session.isDraged()) {
+              
+              calculScore1();  
+              Application.session.setDraged(false);
             }
             
 
@@ -85,36 +56,32 @@ public class Smooth {
         cpt = 0;
 
 
-        for (int i = 0; i < buff1.length; i++) {
-            if (buff1[i] != null) {
+        for (int i = 0; i < buff1[0].length; i++) {
+            if (buff1[0][i] != -1) {
                 p.noStroke();
                 float percent = 0;
                 percent = PApplet.norm(buff1Score[cpt], 1, Application.session.getNodeMax());//On attribut une color à nos petits carrés en fonction du résultat de la méthode
-                float xy[] = Application.session.getMap().getScreenPositionFromLocation(buff1[i]);
-                int x = Integer(xy[0]);
-                int y = Integer(xy[1]);
-
 
                 if (percent > 0.16) {
                     int c = p.color(189, 73, 50);
                     p.fill(c, 100);
-                    p.rect(x, y, 3, 3);
+                    p.rect(buff1[0][i], buff1[1][i], 3, 3);
                 } else if (percent > 0.12) {
                     int c = p.color(219, 158, 54);
                     p.fill(c, 100);
-                    p.rect(x, y, 3, 3);
+                    p.rect(buff1[0][i], buff1[1][i], 3, 3);
                 } else if (percent > 0.8) {
                     int c = p.color(255, 211, 78);
                     p.fill(c, 100);
-                    p.rect(x, y, 3, 3);
+                    p.rect(buff1[0][i], buff1[1][i], 3, 3);
                 } else if (percent > 0.1) {
                     int c = p.color(255, 250, 213);
                     p.fill(c, 100);
-                    p.rect(x, y, 3, 3);
+                    p.rect(buff1[0][i], buff1[1][i], 3, 3);
                 } else {
                     int c = p.color(16, 91, 99);
                     p.fill(c, 100);
-                    p.rect(x, y, 3, 3);
+                    p.rect(buff1[0][i], buff1[1][i], 3, 3);
                 }
 
                 cpt++;
@@ -124,33 +91,21 @@ public class Smooth {
 
     }
 
-    public static int Integer(float f) {
-        int i1 = (int) f;
-        int i2 = i1 + 1;
-        float dif1 = f - i1;
-        float dif2 = i2 - f;
-        if (dif1 > dif2) {
-            return i2;
-        } else {
-            return i1;
-        }
-    }
+
 
     public static void calculScore1() {
 
         PApplet p = Application.session.getPApplet();
-        p.text("ok", 500, 500);
         int width = p.width;
         int height = p.height;
         int count = Application.session.getNodePourLissageCount() - 1;
         int zoom = (int) Application.session.getMap().getZoom();
         float DmaxOnScreen = Bibliotheque.meter2Pixel(Application.session.getDmax());
         int cpt = 0;
-
         for (float i = 0; i < width; i = i + 3) {//l'écran est découpé en petits carrés
             for (float j = 0; j < height; j = j + 3) {
-                buff1[cpt] = Application.session.getMap().getLocationFromScreenPosition(i, j);
-
+                buff1[0][cpt]=i;
+                buff1[1][cpt]=j;
                 if (Application.session.isBiweight()) {
                     buff1Score[cpt] = Biweight(i, j, count, zoom, DmaxOnScreen, Application.session.getNodePourLissage());//Utilisation de la méthode de Biweight
                 } else {
@@ -246,124 +201,5 @@ public class Smooth {
         init = true;
         //nonInit = true;
     }
-
-
-    public static float[] delete(int i, float[] tab) {
-
-        if (i == 0) {
-            tab = PApplet.subset(tab, i + 1);
-        } else {
-            float[] sub1 = PApplet.subset(tab, 0, i);
-            float[] sub2 = PApplet.subset(tab, i + 1);
-            tab = PApplet.concat(sub1, sub2);
-        }
-        return tab;
-    }
-
-    public static Location[] deleteLoc(int i, Location[] tab) {
-        if (i == 0) {
-            tab = (Location[]) PApplet.subset(tab, i + 1);
-        } else {
-            Location[] sub1 = (Location[]) PApplet.subset(tab, 0, i);
-            Location[] sub2 = (Location[]) PApplet.subset(tab, i + 1);
-            tab = (Location[]) PApplet.concat(sub1, sub2);
-        }
-        return tab;
-    }
-
-    public static boolean deplacementCarte() {
-        boolean ret = false;
-        Location l = Application.session.getMap().getLocationFromScreenPosition(0, 0);
-        if (l.getLat() != A.getLat()) {
-            ret = true;
-        }
-        return ret;
-    }
-
-    public static int cas() {
-        Location l = Application.session.getMap().getLocationFromScreenPosition(0, 0);
-        if ((l.getLat() < A.getLat()) && (l.getLon() < A.getLon())) {
-            return 1;
-        } else if ((l.getLat() < A.getLat()) && (l.getLon() > A.getLon())) {
-            return 2;
-        } else if ((l.getLat() > A.getLat()) && (l.getLon() > A.getLon())) {
-            return 3;
-        } else if ((l.getLat() > A.getLat()) && (l.getLon() < A.getLon())) {
-            return 4;
-        } else {
-            return 0;
-        }
-    }
-
-    public static void score2() {
-        PApplet p = Application.session.getPApplet();
-
-        int count = Application.session.getNodePourLissageCount() - 1;
-        int zoom = (int) Application.session.getMap().getZoom();
-        float DmaxOnScreen = Bibliotheque.meter2Pixel(Application.session.getDmax());
-        int cpt = 0;
-
-        Location[] buff2 = new Location[p.width * p.height / 8];
-        float[] buff2Score = new float[p.width * p.height / 8];
-
-
-        Location Aprim = Application.session.getMap().getLocationFromScreenPosition(0, 0);
-        Location Bprim = Application.session.getMap().getLocationFromScreenPosition(p.width, 0);
-        Location Cprim = Application.session.getMap().getLocationFromScreenPosition(p.width, p.height);
-        Location Dprim = Application.session.getMap().getLocationFromScreenPosition(0, p.height);
-
-
-        if (cas() == 1) {
-            //rect 2
-            Location ASeconde = new Location(Aprim.getLat(), A.getLon());
-            float ASecondeScreen[] = Application.session.getMap().getScreenPositionFromLocation(ASeconde);
-            Location DTrois = new Location(C.getLat(), Aprim.getLon());
-            float DTroisScreen[] = Application.session.getMap().getScreenPositionFromLocation(DTrois);
-            for (int i = 0; i < ASecondeScreen[0] - 1; i = i + 3) {
-                for (int j = 0; j < DTroisScreen[1]; j = j + 3) {
-                    buff2[cpt] = Application.session.getMap().getLocationFromScreenPosition(i, j);
-                    if (Application.session.isBiweight()) {
-                        buff2Score[cpt] = Biweight(i, j, count, zoom, DmaxOnScreen, Application.session.getNodePourLissage());//Utilisation de la méthode de Biweight
-                    } else {
-                        buff2Score[cpt] = Shepard(i, j);//Utilisation de la méthode de Biweight
-                    }
-                    cpt++;
-                }
-            }
-
-            //rect 3
-            for (int i = 0; i < p.width; i = i + 3) {
-                for (int j = (int) DTroisScreen[1]; j < p.height; j = j + 3) {
-                    buff2[cpt] = Application.session.getMap().getLocationFromScreenPosition(i, j);
-                    if (Application.session.isBiweight()) {
-                        buff2Score[cpt] = Biweight(i, j, count, zoom, DmaxOnScreen, Application.session.getNodePourLissage());//Utilisation de la méthode de Biweight
-                    } else {
-                        buff2Score[cpt] = Shepard(i, j);//Utilisation de la méthode de Biweight
-                    }
-                    cpt++;
-                }
-            }
-            
-            //rect 1
-            Location l1 = Application.session.getMap().getLocationFromScreenPosition(0, p.height);
-            Location l2 = Application.session.getMap().getLocationFromScreenPosition(p.width, 0);
-
-            for (int i = 0; i < buff1.length; i++) {
-                if (buff1[i] != null) {
-                    if ((buff1[i].getLon() >= l1.getLon()) && (buff1[i].getLon() <= l2.getLon()) && (buff1[i].getLat() >= l1.getLat()) && (buff1[i].getLat() <= l2.getLat())) {
-                        //res = PApplet.append(res, i);
-                        buff2[cpt] = buff1[i];
-                        buff2Score[cpt] = buff1Score[i];
-                        cpt ++;
-                    }
-                }
-            }
-        }
-
-        buff1 = buff2;
-        buff1Score = buff2Score;
-
-        //buff1 = (Location[]) PApplet.concat(buff2, buff1);
-        //buff1Score = PApplet.concat(buff2Score, buff1Score);
-    }
+    
 }

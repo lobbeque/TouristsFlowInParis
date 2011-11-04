@@ -8,7 +8,7 @@ import de.fhpotsdam.unfolding.geo.Location;
 
 /**
  *
- * @author guest
+ * @author Quentin lobbé
  */
 public class HeatMap {
     

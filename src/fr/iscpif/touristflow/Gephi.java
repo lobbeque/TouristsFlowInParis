@@ -22,7 +22,7 @@ import org.openide.util.Lookup;
 
 /**
  *
- * @author jbilcke
+ * @author Fabien Pfaender && Quentin lobbé
  */
 public class Gephi {
   

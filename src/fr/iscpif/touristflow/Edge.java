@@ -7,7 +7,7 @@ import processing.core.*;
 import de.fhpotsdam.unfolding.geo.Location;
 /**
  *
- * @author guest
+ * @author Quentin lobbé
  */
 public class Edge {
     public static void afficheEdge(){

@@ -7,7 +7,7 @@ import processing.core.*;
 import de.fhpotsdam.unfolding.geo.Location;
 /**
  *
- * @author guest
+ * @author Quentin lobbé
  */
 public class Node {
   
@@ -32,7 +32,8 @@ public class Node {
             float zoom = Application.session.getMap().getZoom();
             if (( Application.session.isNode() ) && ( ! Application.session.isChaud() )) {
               //p.fill(101, 157, 255, 100);
-              p.fill(182, 92, 96, 100);
+              p.fill(182, 92, 96, 200);
+              
               p.ellipse(xy[0],xy[1],radius*PApplet.exp(zoom/20000),radius*PApplet.exp(zoom/20000));
               p.fill(178, 206, 255, 200);
               p.ellipse(xy[0],xy[1],radius*PApplet.exp(zoom/20000)/5,radius*PApplet.exp(zoom/20000)/5);

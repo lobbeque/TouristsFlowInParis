@@ -9,23 +9,23 @@ import de.fhpotsdam.unfolding.geo.Location;
 
 /**
  *
- * @author guest
+ * @author Quentin Lobbé
  */
 public class Affichage {
-    
+
     public static void selection(float x, float y, float radius, int i) { // fonction d'affichage en mode selection 
         PApplet p = Application.session.getPApplet();
         p.fill(190, 201, 186, 100);
         p.rect(0, 0, p.width, p.height);
         p.textAlign(PConstants.LEFT, PConstants.TOP);
         p.stroke(153);
-        
-        
-        
+
+
+
         p.fill(16, 91, 136);
         p.text("Arc Entrant", p.width / 56, (float) (p.height / 1.958));
-        
-        
+
+
         p.fill(182, 92, 96);
         p.stroke(153);
         p.text("Arc Sortant", p.width / 56, (float) (p.height / 2.06));
@@ -169,7 +169,7 @@ public class Affichage {
         float y = p.height - 150;
         float h = 100;
         float l = 320;
-        
+
         if (Application.session.isBiweight() || Application.session.isShepard()) {
             Smooth.miseAJourCarteLissee();
             int i = 0;
@@ -182,13 +182,10 @@ public class Affichage {
             p.stroke(10, 150);
             p.fill(190, 201, 186, 100);
             p.rect(x, y, l, h);
+            drawDegrade(x + 25, y + 75, l - 200, 20);
+            p.strokeWeight(2);
+            p.stroke(10, 150);
             p.rect(x + 25, y + 75, l - 200, 20);
-            p.fill(16, 91, 99, 200);
-            p.rect(x + 25, y + 75, (l - 200) / 3, 20);
-            p.fill(219, 158, 54, 200);
-            p.rect(x + 25 + 120 / 3, y + 75, (l - 200) / 3, 20);
-            p.fill(189, 73, 50, 200);
-            p.rect(x + 25 + 240 / 3, y + 75, (l - 200) / 3, 20);
             p.fill(0);
             p.text('-', x + 5, y + 76);
             p.text('+', x + 155, y + 76);
@@ -221,6 +218,39 @@ public class Affichage {
             int c = p.color(16, 91, 99);
             p.fill(c, 100);
             p.rect(0, 0, p.width, p.height);
+        }
+    }
+
+    public static void drawDegrade(float x, float y, float l, float h) {
+        PApplet p = Application.session.getPApplet();
+        int c1 = p.color(16, 91, 99);
+        int c2 = p.color(194, 190, 201);
+        int c4 = p.color(219, 158, 54);
+        int c5 = p.color(189, 73, 50);
+        int c = p.color(0);
+        for (int i = 0; i < l; i++) {
+            float d = PApplet.dist(i + x, 0, l + x, 0);
+            d = l - d;
+
+            if (i > l * 2 / 3) {
+                float percent1 = PApplet.norm(d, 2 * l / 3, l);
+                c = p.lerpColor(c4, c5, percent1);
+                p.stroke(c);
+
+            } else if (i > l / 3) {
+                float percent2 = PApplet.norm(d, 1 * l / 3, 2 * l / 3);
+                c = p.lerpColor(c2, c4, percent2);
+                p.stroke(c);
+
+            } else {
+                float percent3 = PApplet.norm(d, 0, l / 3);
+                p.stroke(c);
+                c = p.lerpColor(c1, c2, percent3);
+            }
+
+            p.stroke(c);
+            p.line(i + x, y, i + x, y + h);
+            p.noStroke();
         }
     }
 

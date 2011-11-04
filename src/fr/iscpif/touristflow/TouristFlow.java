@@ -254,16 +254,20 @@ public class TouristFlow extends PApplet {
                 Application.session.setEdgeDistri(false);
             }
         }
+        
+        
     }
 
     @Override
     public void mouseReleased() {
         Application.session.setClicked(false);
+        Application.session.setDraged(true);
     }
 
     @Override
     public void mouseDragged() {
         Application.session.getCurseur().dragged(mouseX, mouseY);
         Application.session.getCurseur2().dragged(mouseX, mouseY);
+        Application.session.setDraged(false);
     }
 }

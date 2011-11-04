@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import processing.core.*; 
 /**
  *
- * @author guest
+ * @author Quentin Lobbé
  */
 public class Session {
        
@@ -87,7 +87,7 @@ public class Session {
     boolean Log = false;
     boolean premierLissage = false; 
     boolean oursin = false;
-
+    boolean draged = false;
 
     // Définition de constantes pour le calcul des Min et Max 
     float nodeMin = PConstants.MAX_FLOAT;
@@ -368,6 +368,14 @@ public class Session {
 
     public float getNodeMin() {
         return nodeMin;
+    }
+
+    public void setDraged(boolean draged) {
+        this.draged = draged;
+    }
+
+    public boolean isDraged() {
+        return draged;
     }
 
     public float getNodeMindyn() {

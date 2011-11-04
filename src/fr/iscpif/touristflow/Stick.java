@@ -6,7 +6,7 @@ package fr.iscpif.touristflow;
 import processing.core.*; 
 /**
  *
- * @author guest
+ * @author Quentin lobbé
  */
 public class Stick {
       public float x;

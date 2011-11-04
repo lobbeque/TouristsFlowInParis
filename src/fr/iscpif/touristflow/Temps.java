@@ -12,7 +12,7 @@ import java.util.Date;
 import processing.core.*; 
 /**
  *
- * @author guest
+ * @author Quentin lobbé
  */
 public class Temps {
     

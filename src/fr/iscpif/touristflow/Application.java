@@ -6,7 +6,7 @@ package fr.iscpif.touristflow;
 
 /**
  *
- * @author guest
+ * @author Quentin Lobbé
  */
 public class Application {
     static Session session = new Session();

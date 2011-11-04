@@ -12,7 +12,7 @@ import processing.core.*;
  * 
  * 
  * 
- * @author jbilcke
+ * @author Quentin Lobbé
  */
 public class Bibliotheque {
 
@@ -316,6 +316,7 @@ public class Bibliotheque {
             moy = moy / pointCardinal.length;
             moy = PApplet.map(PApplet.log(moy), 0, PApplet.log(Application.session.getDistMax()), 0, 2000);
             sum = PApplet.map(PApplet.log(sum), 0, PApplet.log(Application.session.getEdgeMax()), 0, 10);
+
         }
         pointsCardinaux[rang] = sum;
         pointsCardinaux[rang + 1] = moy;

@@ -6,7 +6,7 @@ package fr.iscpif.touristflow;
 import processing.core.*; 
 /**
  *
- * @author guest
+ * @author Quentin Lobbé
  */
 public class BoutonMenu {
      protected float size;

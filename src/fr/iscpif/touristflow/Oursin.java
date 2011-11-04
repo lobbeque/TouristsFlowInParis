@@ -9,7 +9,7 @@ import processing.core.*;
 
 /**
  *
- * @author guest
+ * @author Quentin lobbé
  */
 public class Oursin {
 
@@ -118,6 +118,7 @@ public class Oursin {
             float y1 = (Bibliotheque.meter2Pixel(rayon) - poids) * PApplet.sin(angle) + xy[1];
             float x2 = Bibliotheque.meter2Pixel(rayon) * PApplet.cos(angle) + xy[0];
             float y2 = Bibliotheque.meter2Pixel(rayon) * PApplet.sin(angle) + xy[1];
+            
 
             p.strokeWeight((float) 1.5);
             p.line(xy[0], xy[1], x1, y1);
