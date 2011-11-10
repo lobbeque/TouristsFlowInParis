@@ -184,19 +184,30 @@ public class BoutonMenu {
             BoutonMenu boutonMenu3 = (BoutonMenu) Application.session.getBoutons().get(10);
             boutonMenu3.setStatus( statusNormal );
           }
+          if (this.nom.equals("Box Cox")){
+            BoutonMenu boutonMenu1 = (BoutonMenu) Application.session.getBoutons().get(8);
+            boutonMenu1.setStatus( statusNormal );
+          }
+          if (this.nom.equals("Log")){
+            BoutonMenu boutonMenu = (BoutonMenu) Application.session.getBoutons().get(6);
+            boutonMenu.setStatus( statusNormal );  
+          }
         }
 
     protected void constantesOn(){ // activation des constantes de filtres
       if (this.nom.equals("Select"))
          Application.session.setSelect(false);
-      if (this.nom.equals("Info"))
-         Application.session.setInfo(true);
+      if (this.nom.equals("Box Cox Noeud"))
+         Application.session.setBoxCoxNode(true);
       if (this.nom.equals("Lissée")){
         Application.session.setHeat(true);
         Application.session.setPremierLissage(true);
+        Application.session.setBoxCox(false);
       }
-      if (this.nom.equals("Max Relatif"))
-        Application.session.setDyn(true);
+      if (this.nom.equals("Box Cox")){
+        Application.session.setBoxCox(true);
+        Application.session.setLog(false);
+      }
       if (this.nom.equals("Exp(1/x)")){
         Application.session.setGros(false);
         Application.session.setPetit(true);
@@ -230,14 +241,14 @@ public class BoutonMenu {
     protected void constantesOff(){ // désactivation des constantes de filtres
       if (this.nom.equals("Select"))
         Application.session.setSelect(true);
-      if (this.nom.equals("Info"))
-        Application.session.setInfo(false);
+      if (this.nom.equals("Box Cox Noeud"))
+        Application.session.setBoxCoxNode(false);
       if (this.nom.equals("Lissée")){
         Application.session.setHeat(false);
         Application.session.setPremierLissage(false);
       }
-      if (this.nom.equals("Max Relatif"))
-        Application.session.setDyn(false);
+      if (this.nom.equals("Box Cox"))
+        Application.session.setBoxCox(false);
       if (this.nom.equals("Exp(1/x)")){
         Application.session.setGros(true);
         Application.session.setPetit(false);

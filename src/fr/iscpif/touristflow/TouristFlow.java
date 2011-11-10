@@ -44,8 +44,11 @@ public class TouristFlow extends PApplet {
         Application.session.setMatNode();
         Application.session.setSortant(new float[6][(int) Application.session.getMaxEdgeTotal() / 20]);
         Application.session.setEntrant(new float[6][(int) Application.session.getMaxEdgeTotal() / 20]);
+        Application.session.setEdgePoids(new float[(int) Application.session.getMaxEdgeTotal()]);
+        Application.session.setNodePoids(new float[(int) Application.session.getMaxNodeTotal()]);
         Bibliotheque.remplirTableauImage(Application.session.getIndex());
-
+        Bibliotheque.effectif( "edge" );
+        Bibliotheque.effectif( "node" );
 
 
         Application.session.setMyPoints(loadImage("/home/guest/Bureau/Mon_script/data/ppp.png"));
@@ -58,15 +61,15 @@ public class TouristFlow extends PApplet {
         // définition des boutons du menu et des dépendences entre eux 
         String[] arr = new String[]{"Noeud", "Arc", "Lissée"};
         Application.session.getBoutons().add(new BoutonMenu(50, xMap, yMap, "Carte", true, arr));
-        String[] arr1 = new String[]{"Info", "Select", "HeatMap"};
+        String[] arr1 = new String[]{"Box Cox Noeud", "Select", "HeatMap"};
         String[] arr4 = new String[]{"Oursins"};
         Application.session.getBoutons().add(new BoutonMenu(30, xMap + 70, yMap, "Noeud", arr1));
-        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap - 20, "Info"));
+        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap - 20, "Box Cox Noeud"));
         Application.session.getBoutons().add(new BoutonMenu(20, xMap + 165, yMap, "Select", arr4));
         Application.session.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap + 20, "HeatMap"));
-        String[] arr2 = new String[]{"Exp(1/x)", "Max Relatif", "Log"};
+        String[] arr2 = new String[]{"Exp(1/x)", "Box Cox", "Log"};
         Application.session.getBoutons().add(new BoutonMenu(30, xMap, yMap + 70, "Arc", arr2));
-        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 50, yMap + 135, "Max Relatif"));
+        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 50, yMap + 135, "Box Cox"));
         Application.session.getBoutons().add(new BoutonMenu(20, xMap, yMap + 135, "Exp(1/x)"));
         Application.session.getBoutons().add(new BoutonMenu(20, xMap - 50, yMap + 135, "Log"));
         String[] arr3 = new String[]{"Biweight", "Shepard"};
@@ -87,8 +90,12 @@ public class TouristFlow extends PApplet {
         zoom = Application.session.getMap().getZoom();
 
         // création des deux curseurs de sélection pour le lissage
-        Application.session.setCurseur(new Stick(10, (float) (width / 56 + 165), (float) (height - 150 + 53), Application.session.getDmax(), (float) (320 - 10 - 165)));
-        Application.session.setCurseur2(new Stick(10, (float) (width / 56 + 165), (float) (height - 150 + 18), Application.session.getP(), (float) (320 - 10 - 165)));
+        Application.session.setCurseur(new Stick(10, (float) (width / 56 + 165), (float)(height - 150 + 53), Application.session.getDmax(), (float) (320 - 10 - 165),0, 1500, (float)1/3));
+        Application.session.setCurseur2(new Stick(10, (float) (width / 56 + 165), (float) (height - 150 + 18), Application.session.getP(), (float) (320 - 10 - 165),0, (float)1.2, (float)1/3));
+        Application.session.setCurseur3(new Stick(10, (float) (width / 56 + 175 + 30), (float) (height - 245), Application.session.getLambdaE(), 115,(float)-1.5, (float)1.5, (float)5/6));
+        Application.session.setCurseur4(new Stick(10, (float) (width / 56 + 175 + 30), (float) (height - 295), Application.session.getLambdaE(), 115,(float)-1.5, (float)1.5, (float)5/6));
+        
+    
     }
 
     @Override
@@ -113,6 +120,7 @@ public class TouristFlow extends PApplet {
             }
         }
         
+        
         if ( zoom != Application.session.getMap().getZoom() ){
             zoom = Application.session.getMap().getZoom();
             if ( Application.session.isHeat() ){
@@ -120,14 +128,10 @@ public class TouristFlow extends PApplet {
             }
         }
 
-        PFont font1 = createFont("DejaVuSans-ExtraLight-", 15);
+        PFont font1 = createFont("DejaVuSans-ExtraLight-", 12);
         textFont(font1);
 
         Application.session.setClosestDist(MAX_FLOAT);
-
-        if (Application.session.isDyn()) {
-            Bibliotheque.MinMax();
-        }
 
         if ((!Application.session.isHeat()) && (Application.session.isEdge())) { // affichage des edges 
             Edge.afficheEdge();
@@ -163,11 +167,6 @@ public class TouristFlow extends PApplet {
             Affichage.afficheLegendeHeatMap();
         }
 
-        Application.session.setEdgeMindyn(MAX_FLOAT);
-        Application.session.setEdgeMaxdyn(MIN_FLOAT);
-        Application.session.setNodeMindyn(MAX_FLOAT);
-        Application.session.setNodeMaxdyn(MIN_FLOAT);
-
         ellipseMode(CENTER);
 
 
@@ -195,8 +194,8 @@ public class TouristFlow extends PApplet {
             }
         }
         
-        text(Application.session.getMap().getZoom(),800,600);
-
+        
+        
         fill(255);
     }
 
@@ -243,18 +242,35 @@ public class TouristFlow extends PApplet {
                 Application.session.setNodeDistri(false);
             }
         }
-        float dist7 = dist((float) (width / 70 + width / 8 / 2 / 11.6 + 175 - width / 8 / 11.6), (float) (height - 320 + width / 8 / 2 / 11.6 + 100), mouseX, mouseY);
-        float dist8 = dist((float) (width / 70 + width / 8 / 2 / 11.6 + 175 - width / 8 / 11.6), (float) (height - 320 - width / 8 / 2 / 11.6 + 100), mouseX, mouseY);
         if (!Application.session.isEdgeDistri()) {
-            if (dist7 < 20) {
+            if (( width / 70 + 175 - 15 <= mouseX ) && ( width / 70 + 175 >= mouseX ) && ( height - 235 <= mouseY ) && ( height - 220 >= mouseY )) {
                 Application.session.setEdgeDistri(true);
             }
         } else {
-            if ((dist7 < 20) || (dist8 < 20)) {
+            if  (( width / 70 + 175 - 15 <= mouseX ) && ( width / 70 + 175 >= mouseX ) && ( height - 220 <= mouseY ) && ( height - 205 >= mouseY )) {
                 Application.session.setEdgeDistri(false);
             }
         }
         
+        if (!Application.session.isEdgeBoxCoxDistri()) {
+            if (( width / 70 + 2*175 - 15 <= mouseX ) && ( width / 70 + 2*175 >= mouseX ) && ( height - 235 <= mouseY ) && ( height - 220 >= mouseY )) {
+                Application.session.setEdgeBoxCoxDistri(true);
+            }
+        } else {
+            if  (( width / 70 + 2*175 - 15 <= mouseX ) && ( width / 70 + 2*175 >= mouseX ) && ( height - 220 <= mouseY ) && ( height - 205 >= mouseY )) {
+                Application.session.setEdgeBoxCoxDistri(false);
+            }
+        }
+        
+        if (!Application.session.isNodeBoxCoxDistri()) {
+            if (( width / 70 + 2*175 - 15 <= mouseX ) && ( width / 70 + 2*175 >= mouseX ) && ( height - 320 <= mouseY ) && ( height - 305 >= mouseY )) {
+                Application.session.setNodeBoxCoxDistri(true);
+            }
+        } else {
+            if  (( width / 70 + 2*175 - 15 <= mouseX ) && ( width / 70 + 2*175 >= mouseX ) && ( height - 335 <= mouseY ) && ( height - 320 >= mouseY )) {
+                Application.session.setNodeBoxCoxDistri(false);
+            }
+        }
         
     }
 
@@ -268,6 +284,8 @@ public class TouristFlow extends PApplet {
     public void mouseDragged() {
         Application.session.getCurseur().dragged(mouseX, mouseY);
         Application.session.getCurseur2().dragged(mouseX, mouseY);
+        Application.session.getCurseur3().dragged(mouseX, mouseY);
+        Application.session.getCurseur4().dragged(mouseX, mouseY);
         Application.session.setDraged(false);
     }
 }

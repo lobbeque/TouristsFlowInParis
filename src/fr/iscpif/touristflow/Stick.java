@@ -16,14 +16,21 @@ public class Stick {
       public float labelCourant;
       public float longueur;
       public float curs;
+      public float div;
+      public float debut;
+      public float fin;
 
-      public Stick ( float size, float x, float y, float label, float longueur ){
+      public Stick ( float size, float x, float y, float label, float longueur, float debut, float fin, float div  ){
         this.size = size;
-        this.x = x + longueur/3;
         this.y = y;
+        this.div = div;
         this.label = label;
         this.labelCourant = x;
         this.longueur = longueur;
+        this.debut = debut;
+        this.fin = fin;
+        this.longueur = longueur; 
+        this.x = x + longueur*div;
       }
 
       public void setX(float tempx){
@@ -44,16 +51,24 @@ public class Stick {
         PApplet p = Application.session.getPApplet();
         p.stroke(255);
         p.strokeWeight(2);
+        // ligne horizontale de base
+        p.line(labelCourant, y + 5, labelCourant + longueur, y + 5);
+        
         PFont font1 = p.createFont("DejaVuSans-ExtraLight-", 10);
         p.textFont(font1); 
+        p.stroke(10);
         p.textAlign(PConstants.CENTER);
+        // barre verticale selection
         p.line(x, y, x, y+ size);
+        // ligne horizontale selection
         p.line(labelCourant, y + 5, x, y + 5);
-        p.stroke(10, 150);
+        // barre verticale gauche
         p.line(labelCourant, y, labelCourant, y+size);
-        p.text( 0, labelCourant, y + 20 );
+        // barre verticale droite
         p.line(labelCourant + longueur, y, labelCourant + longueur, y+size);
-        p.text(3*label + "  ", labelCourant + longueur, y + 20); 
+        p.stroke(10);
+        p.text( debut, labelCourant, y + 20 );
+        p.text(fin + "  ", labelCourant + longueur, y + 20); 
         p.stroke(255);
         drawlabel();
       }
@@ -61,7 +76,7 @@ public class Stick {
       public void drawlabel () {
         PApplet p = Application.session.getPApplet();
         p.textAlign(PConstants.CENTER);
-        float temp = PApplet.map ( x - labelCourant, 0, longueur, 0, 3*label ); 
+        float temp = PApplet.map ( x - labelCourant, 0, longueur, debut, fin ); 
         p.text( temp, x, y - 3);
         curs = temp;
       }

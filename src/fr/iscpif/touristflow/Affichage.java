@@ -265,9 +265,9 @@ public class Affichage {
         p.fill(190, 201, 186, 100);
         p.rect(x, y, l, h); // rectangle de base
         p.fill(182, 92, 96);
-        p.rect(x, y, (float) (l / 11.6), (float) (l / 11.6));
+        p.rect(x, y, (float) (15), (float) (15));
         p.fill(16, 91, 136);
-        p.rect((float) (x + l - l / 11.6), (float) (y + h - l / 11.6), (float) (l / 11.6), (float) (l / 11.6));
+        p.rect((float) (x + l - 15), (float) (y + h - 15), (float) (15), (float) (15));
         p.fill(190, 201, 186, 100);
         p.line(x + l / 2, y + 10, x + l / 2, y + 90);
         p.stroke(255);
@@ -291,33 +291,54 @@ public class Affichage {
         }
         PFont font3 = p.createFont("DejaVuSans-ExtraLight-", 15);
         p.textFont(font3);
-        if (Application.session.isEdge() && (!Application.session.isPetit()) && (!Application.session.isChaud()) && (!Application.session.isDyn())) {
+        if (Application.session.isEdge() && (!Application.session.isPetit()) && (!Application.session.isChaud()) && (!Application.session.isBoxCox())) {
             p.text("Mise en avant des Arcs de poids fort ( variation sur l'épaisseur )", p.width / 2, (float) (p.height / 12.238));
         }
-        if (Application.session.isEdge() && (!Application.session.isPetit()) && (!Application.session.isChaud()) && Application.session.isDyn()) {
-            p.text("Mise en avant des Arcs de poids fort VISIBLES à l'écran ( variation sur l'épaisseur )", p.width / 2, (float) (p.height / 12.238));
+        if (Application.session.isEdge() && (!Application.session.isPetit()) && (!Application.session.isChaud()) && Application.session.isBoxCox()) {
+            p.text("Transformation du poids par la méthode de box cox", p.width / 2, (float) (p.height / 12.238));
         } else if (Application.session.isEdge() && (!Application.session.isLog()) && Application.session.isPetit() && (!Application.session.isChaud())) {
             p.text("Mise en avant des Arcs de courte longueur ( variation sur l'oppacité, on conserve par ailleur la variation d'épaisseur )", p.width / 2, (float) (p.height / 12.238));
         }
         p.fill(0);
         PFont font1 = p.createFont("DejaVuSans-ExtraLight-", 15);
         p.textFont(font1);
-        if ((!Application.session.isDyn()) && (!Application.session.isLog())) {
+        if ((!Application.session.isBoxCox()) && (!Application.session.isLog())) {
             p.text((int) Application.session.getEdgeMax(), x + 135, y + 50);
             p.text((int) Application.session.getEdgeMin(), x + 135, y + 85);
-        } else if (Application.session.isDyn() && (!Application.session.isLog())) {
-            p.text((int) Application.session.getEdgeMaxdyn(), x + 135, y + 50);
-            p.text((int) Application.session.getEdgeMindyn(), x + 135, y + 85);
+        } else if (Application.session.isBoxCox() && (!Application.session.isLog())) {
+            if (CoxBox(Application.session.getEdgeMax(), 'e') >= 1000) {
+                p.text(PApplet.nf((int) CoxBox(Application.session.getEdgeMax(), 'e'), 4), x + 135, y + 50);
+            } else if (CoxBox(Application.session.getEdgeMax(), 'e') >= 100) {
+                p.text(PApplet.nf(CoxBox(Application.session.getEdgeMax(), 'e'), 3, 1), x + 135, y + 50);
+            } else if (CoxBox(Application.session.getEdgeMax(), 'e') >= 10) {
+                p.text(PApplet.nf(CoxBox(Application.session.getEdgeMax(), 'e'), 2, 2), x + 135, y + 50);
+            } else {
+                p.text(PApplet.nf(CoxBox(Application.session.getEdgeMax(), 'e'), 1, 3), x + 135, y + 50);
+            }
+            p.text(0, x + 135, y + 85);
         }
-        if ((!Application.session.isDyn()) && (Application.session.isLog())) {
+        if ((!Application.session.isBoxCox()) && (Application.session.isLog())) {
             p.text((int) PApplet.log(Application.session.getEdgeMax()), x + 135, y + 50);
             p.text(0, x + 135, y + 85);
-        } else if (Application.session.isDyn() && (Application.session.isLog())) {
-            p.text((int) PApplet.log(Application.session.getEdgeMaxdyn()), x + 135, y + 50);
-            p.text(0, x + 135, y + 85);
         }
-        p.text((int) Application.session.getNodeMax(), x + 35, y + 60);
-        p.text((int) Application.session.getNodeMin(), x + 35, y + 90);
+        
+        
+        if ((!Application.session.isBoxCoxNode())) {
+            p.text((int) Application.session.getNodeMax(), x + 35, y + 60);
+            p.text((int) Application.session.getNodeMin(), x + 35, y + 90);
+        } else if (Application.session.isBoxCoxNode()) {
+            if (CoxBox(Application.session.getNodeMax(), 'n') >= 1000) {
+                p.text(PApplet.nf((int) CoxBox(Application.session.getNodeMax(), 'n'), 4), x + 35, y + 60);
+            } else if (CoxBox(Application.session.getNodeMax(), 'n') >= 100) {
+                p.text(PApplet.nf(CoxBox(Application.session.getNodeMax(), 'n'), 3, 1), x + 35, y + 60);
+            } else if (CoxBox(Application.session.getNodeMax(), 'n') >= 10) {
+                p.text(PApplet.nf(CoxBox(Application.session.getNodeMax(), 'n'), 2, 2), x + 35, y + 60);
+            } else {
+                p.text(PApplet.nf(CoxBox(Application.session.getNodeMax(), 'n'), 1, 3), x + 35, y + 60);
+            } 
+            p.text(0, x + 35, y + 90);
+        }
+
 
         if (Application.session.isNodeDistri()) {
             afficheDistributionNode(x, y, l, h);
@@ -325,6 +346,11 @@ public class Affichage {
         if (Application.session.isEdgeDistri()) {
             afficheDistributionEdge(x, y + 100 + 175, l, h);
         }
+        if (Application.session.isBoxCox() || Application.session.isBoxCoxNode()) {
+            afficheBoxCox(x + 175, y + 100 + 175, l, h + 75);
+        }
+        PFont font5 = p.createFont("DejaVuSans-ExtraLight-", 12);
+        p.textFont(font5);
     }
 
     public static void afficheLegendeHeatMap() {
@@ -372,42 +398,61 @@ public class Affichage {
         p.strokeWeight(2);
         p.stroke(10, 150);
         p.fill(224);
+        // rectangle gris de base
         p.rect(x, y - 175, l, h + 75);
         p.fill(182, 92, 96);
+        // rectangle rouge clicable
         p.rect((float) x, (float) (y - l / 11.6), (float) (l / 11.6), (float) (l / 11.6));
         p.fill(224);
         p.noStroke();
         p.fill(255);
-        p.rect(x + 25, y - 155, l - 35, h + 25);
+        // rectangle blanc 
+        p.rect(x + 30, y - 155, l - 35, h + 25);
+
+        // on se place dans le coin inférieur gauche du rectangle blanc 
+        float x1 = x + 30;
+        float y1 = y - 155 + h + 25;
+        float l1 = l - 35;
+        float h1 = h + 25;
+
+
         p.strokeWeight(1);
         p.stroke(0);
         PFont font2 = p.createFont("DejaVuSans-ExtraLight-", 8);
         p.textFont(font2);
         p.fill(0);
-        for (int j = 0; j < 4; j++) {
-            p.line(x + 23, y - 155 + 15 + j * (l - 35) / 4, x + 26, y - 155 + 15 + j * (l - 35) / 4);
-            int yLabel = 336 - j * 112;
-            p.text(yLabel, x + 10, y - 155 + 15 + j * (l - 35) / 4);
+
+        // dessiner les graduations de l'axe des ordonnées
+        //  436 correspond au nombre max de répartition pour un poids, on peut le retrouver grâce à la fonction effectif(String cas) de la bibliotheque
+        for (int j = 0; j < 5; j++) {
+            p.fill(10);
+            float yLabel = PApplet.map(j * h1 / 4, 0, h1, 0, 436);
+            p.text((int) yLabel, x1 - 17, y1 - j * h1 / 4 + 2);
+            p.line(x1 - 3, y1 - j * h1 / 4, x1 + 2, y1 - j * h1 / 4);
         }
-        for (int k = 0; k < 4; k++) {
-            float xLabel = PApplet.map(PApplet.log(1 * PApplet.pow(10, k)), 0, PApplet.log(Application.session.getNodeMax()), 0, 130);
-            p.line(x + 25 + 4 + xLabel, y - 31, x + 25 + 4 + xLabel, y - 28);
-            p.text((int) PApplet.pow(10, k), x + 25 + 4 + xLabel, y - 18);
+        // desssiner les graduations de l'axe des absisses
+        for (int k = 0; k < 5; k++) {
+            float xLabel = PApplet.map(k * l1 / 4, 0, l1, 0, Application.session.getNodeMax());
+            p.line(x1 + k * l1 / 4, y1 - 3, x1 + k * l1 / 4, y1 + 3);
+            p.text((int) xLabel, x1 + k * l1 / 4, y - 18);
         }
+
         p.strokeWeight(2);
-        float[] temp = new float[(int) Application.session.getMaxNodeTotal()];
-        int comp = 1;
-        temp[0] = Application.session.getMatNode(2, 0);
-        temp[1] = comp;
-        p.fill(0);
         PFont font1 = p.createFont("DejaVuSans-ExtraLight-", 12);
         p.textFont(font1);
-        p.text(" effectif ", x + 30, y - 160);
+        p.text(" effectif ", x + 50, y - 160);
         p.text(" poids ", x + 82, y - 5);
-        for (int i = 1; i < Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount; i++) {
-            if (Application.session.getMatNode(2, i) != temp[0]) {
-                drawStick(temp, x, y);
-                temp[0] = Application.session.getMatNode(2, i);
+
+        float[] temp = new float[(int) Application.session.getMaxNodeTotal()];
+        int comp = 1;
+        temp[0] = Application.session.getNodePoids(0);
+        temp[1] = comp;
+        p.fill(0);
+
+        for (int i = 1; i < Application.session.getNodePoids().length; i++) {
+            if (Application.session.getNodePoids(i) != temp[0]) {
+                drawStick(temp, x1, y1, l1, h1);
+                temp[0] = Application.session.getNodePoids(i);
                 comp = 1;
                 temp[1] = comp;
             } else {
@@ -415,39 +460,56 @@ public class Affichage {
                 temp[1] = comp;
             }
         }
+
     }
 
     public static void afficheDistributionEdge(float x, float y, float l, float h) {
+        // x et y représentent les coordo du coin inférieur gauche du rectangle gris
         PApplet p = Application.session.getPApplet();
         p.strokeWeight(2);
         p.stroke(10, 150);
         p.fill(224);
+        // rectangle gris
         p.rect(x, y - 175, l, h + 75);
+
         p.fill(16, 91, 136);
-        p.rect((float) (x + l - l / 11.6), (float) (y - h - 75), (float) (l / 11.6), (float) (l / 11.6));
+        // rectangle clicable bleu ( en haut à droite du gris )
+        p.rect((float) (x + l - 15), (float) (y - h - 75), (float) (15), (float) (15));
         p.noStroke();
         p.fill(255);
-        p.rect(x + 25, y - 155, l - 35, h + 25);
+        // rectangle blanc
+        p.rect(x + 30, y - 155, l - 35, h + 25);
+
         p.strokeWeight(1);
         p.stroke(0);
         PFont font2 = p.createFont("DejaVuSans-ExtraLight-", 8);
         p.textFont(font2);
         p.fill(0);
-        for (int j = 0; j < 4; j++) {
-            float yLabel = 0;
-            if (Application.session.isLog()) {
-                yLabel = PApplet.map(j * (l - 35) / 4, 0, (l - 35), 0, PApplet.log(80));
-                p.text(yLabel, x + 10, y - 155 + 15 + (3 - j) * (l - 35) / 4);
 
+        // on se place maintenant dans le coin inférieur gauche du rectangle blanc
+        float x1 = x + 30;
+        float y1 = y - 155 + h + 25;
+        float l1 = l - 35;
+        float h1 = h + 25;
+
+        // dessiner les graduations de l'axe des ordonnées
+        for (int j = 0; j < 5; j++) {
+            // 50631 correspond au nombre max de répartition pour un poids, on peut le retrouver grâce à la fonction effectif(String cas) de la bibliotheque 
+            float yLabel = PApplet.map(j * h1 / 4, 0, h1, 0, 50631);
+            p.fill(10);
+            if (Application.session.isLog()) {
+                yLabel = PApplet.map(j * h1 / 4, 0, h1, 0, PApplet.log(50631));
+                p.text(yLabel, x1 - 17, y1 - j * h1 / 4 + 2);
             } else if (Application.session.isPetit()) {
                 yLabel = 112374 / 4 * j;
-                p.text((int) yLabel, x + 10, y - 155 + 15 + (3 - j) * (l - 35) / 4);
+                p.text((int) yLabel, x1 - 17, y1 - j * h1 / 4 + 2);
             } else {
-                yLabel = 80 - 20 * (j + 1);
-                p.text((int) yLabel, x + 10, y - 155 + 15 + j * (l - 35) / 4);
+                p.text((int) yLabel, x1 - 17, y1 - j * h1 / 4 + 2);
             }
-            p.line(x + 23, y - 155 + 15 + j * (l - 35) / 4, x + 26, y - 155 + 15 + j * (l - 35) / 4);
+            p.line(x1 - 3, y1 - j * h1 / 4, x1 + 2, y1 - j * h1 / 4);
         }
+
+        // dessiner les graduations de l'axe des absisses ( représentation logarithmique )
         for (int k = 0; k < 4; k++) {
             float xLabel = 0;
             xLabel = PApplet.map(PApplet.log(1 * PApplet.pow(10, k)), 0, PApplet.log(Application.session.getEdgeMax()), 0, 130);
@@ -460,35 +522,33 @@ public class Affichage {
             if (!Application.session.isPetit()) {
                 p.line(x + 25 + 4 + xLabel, y - 31, x + 25 + 4 + xLabel, y - 28);
             }
-
         }
         p.strokeWeight(2);
-
-        float[] temp = new float[(int) Application.session.getMaxEdgeTotal()]; // répartition poids 
-        int comp = 1;
-        temp[0] = Application.session.getMatEdge(4, 0);
-        temp[1] = comp;
 
         p.fill(0);
         PFont font1 = p.createFont("DejaVuSans-ExtraLight-", 12);
         p.textFont(font1);
         if ((!Application.session.isLog()) && Application.session.isEdge() && (!Application.session.isPetit())) {
-            p.text(" effectif ", x + 30, y - 160);
+            p.text(" effectif ", x + 50, y - 160);
             p.text(" poids ", x + 82, y - 5);
         } else if (Application.session.isLog() && Application.session.isEdge() && (!Application.session.isPetit())) {
-            p.text(" log(effectif) ", x + 40, y - 160);
+            p.text(" log(effectif) ", x + 60, y - 160);
             p.text(" log(poids) ", x + 82, y - 5);
         } else if (Application.session.isEdge() && (!Application.session.isLog()) && Application.session.isPetit()) {
-            p.text(" distance (m) ", x + 40, y - 160);
+            p.text(" distance (m) ", x + 60, y - 160);
             p.text(" Arcs triés ", x + 82, y - 5);
         }
 
         // pour le poids
         if (!Application.session.isPetit()) {
-            for (int i = 1; i < Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount; i++) {
-                if (Application.session.getMatEdge(4, i) != temp[0]) {
-                    drawStickBis(temp, x, y);
-                    temp[0] = Application.session.getMatEdge(4, i);
+            float[] temp = new float[(int) Application.session.getMaxEdgeTotal()];
+            int comp = 1;
+            temp[0] = Application.session.getEdgePoids(0);
+            temp[1] = comp;
+            for (int i = 1; i < Application.session.getEdgePoids().length; i++) {
+                if (Application.session.getEdgePoids(i) != temp[0]) {
+                    drawStickBis(temp, x1, y1, l1, h1);
+                    temp[0] = Application.session.getEdgePoids(i);
                     comp = 1;
                     temp[1] = comp;
                 } else {
@@ -501,42 +561,266 @@ public class Affichage {
         // pour les distances
         if (Application.session.isPetit()) {
             for (int i = 1; i < Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount; i++) {
-                drawStickDistBis(Application.session.getTabEdgeDist(), x, y, i);
+                drawStickDistBis(Application.session.getTabEdgeDist(), x1, y1, i, l1, h1);
             }
         }
 
     }
 
-    public static void drawStick(float[] temp, float X, float Y) {
+    public static void drawStick(float[] temp, float X, float Y, float l, float h) {
         PApplet p = Application.session.getPApplet();
         p.stroke(0);
-        float x = PApplet.map(PApplet.log(temp[0]), 0, PApplet.log(Application.session.getNodeMax()), 0, 130);
-        float y = PApplet.map(temp[1], 0, 450, 0, 150);
-        p.line(X + 20 + x, Y - 35, X + 20 + x, Y - 35 - y);
-        p.noStroke();
-    }
-
-    public static void drawStickBis(float[] temp, float X, float Y) {
-        PApplet p = Application.session.getPApplet();
-        p.stroke(0);
-        float y = 0;
-        float x = PApplet.map(PApplet.log(temp[0] + 1), 0, PApplet.log(Application.session.getEdgeMax()), 0, 130);
-        if (!Application.session.isLog()) {
-            y = PApplet.map(temp[1], 0, 80, 0, 130);
-        } else {
-            y = PApplet.map(PApplet.log(temp[1]), 0, PApplet.log(80), 0, 125);
+        if (temp[0] != 0) {
+            float x = PApplet.map(temp[0], 0, Application.session.getNodeMax(), 0, l);
+            float y = PApplet.map(temp[1], 0, 436, 0, h);
+            p.line(X + x, Y, X + x, Y - y);
         }
-        p.line(X + 20 + x, Y - 35, X + 20 + x, Y - 35 - y);
         p.noStroke();
     }
 
-    public static void drawStickDistBis(float[] tabEdgeDist, float X, float Y, int i) {
+    public static void drawStickBis(float[] temp, float X, float Y, float l, float h) {
+        PApplet p = Application.session.getPApplet();
+        p.stroke(0);
+        p.strokeWeight(2);
+        if (temp[0] != 0) {
+            float y = 0;
+            float x = PApplet.map(PApplet.log(temp[0]), 0, PApplet.log(Application.session.getEdgeMax()), 0, l);
+            if (!Application.session.isLog()) {
+                y = PApplet.map(temp[1], 0, 50631, 0, h);
+            } else {
+                y = PApplet.map(PApplet.log(temp[1]), 0, PApplet.log(50631), 0, h);
+            }
+            p.line(X + x, Y, X + x, Y - y);
+        }
+        p.noStroke();
+    }
+
+    public static void drawStickDistBis(float[] tabEdgeDist, float X, float Y, int i, float l, float h) {
         PApplet p = Application.session.getPApplet();
         p.stroke(0);
         float y = 0;
-        float x = PApplet.map(i, 0, Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount, 0, 130);
-        y = PApplet.map(tabEdgeDist[i], 0, Application.session.getDistMax(), 0, 120);
-        p.line(X + 30 + x, Y - 35, X + 30 + x, Y - 35 - y);
+        float x = PApplet.map(i, 0, Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount, 0, l);
+        y = PApplet.map(tabEdgeDist[i], 0, 123242, 0, h);
+        p.line(X + x, Y, X + x, Y - y);
         p.noStroke();
+    }
+
+    public static void afficheBoxCox(float x, float y, float l, float h) {
+        PApplet p = Application.session.getPApplet();
+        // box cox pour les edges
+        if (Application.session.isBoxCox()) {
+            p.strokeWeight(2);
+            p.stroke(10, 150);
+            p.fill(224);
+            //rectangle  du curseur box cox edge
+            p.rect(x, y - h - 50, l, 50);
+            p.fill(10);
+            PFont font2 = p.createFont("DejaVuSans-ExtraLight-", (float) 12);
+            p.textFont(font2);
+            p.text("lambda :", x + 30, y - h - 50 + 14);
+            p.fill(16, 91, 136);
+            p.rect(x + l - 15, y - h - 15, 15, 15);
+            Application.session.getCurseur3().draw();
+            Application.session.setLambdaE(Application.session.getCurseur3().getCurs());
+            p.stroke(10, 150);
+            if (Application.session.isEdgeBoxCoxDistri()) {
+                p.fill(224);
+                p.rect(x, y - h, l, h);
+                p.fill(16, 91, 136);
+                p.rect(x + l - 15, y - h, 15, 15);
+                p.noStroke();
+                p.fill(255);
+                p.rect(x + 30, y - 155, l - 35, h - 50);
+                distributionCoxBox(x + 30, y - 155 + h - 50, l - 35, h - 50);
+            }
+        }
+        // box cox pour les nodes    
+        if (Application.session.isBoxCoxNode()) {
+            p.strokeWeight(2);
+            p.stroke(10, 150);
+            p.fill(224);
+            //rectangle  du curseur box cox edge
+            p.rect(x, p.height - 320, l, 50);
+            p.fill(10);
+            PFont font2 = p.createFont("DejaVuSans-ExtraLight-", (float) 12);
+            p.textFont(font2);
+            p.text("lambda :", x + 30, p.height - 320 + 14);
+            p.fill(182, 92, 96);
+            p.rect(x + l - 15, p.height - 320, 15, 15);
+            Application.session.getCurseur4().draw();
+            Application.session.setLambdaN(Application.session.getCurseur4().getCurs());
+            p.stroke(10, 150);
+            if (Application.session.isNodeBoxCoxDistri()) {
+                p.fill(224);
+                p.rect(x, p.height - 320 - l, l, h);
+                p.fill(182, 92, 96);
+                p.rect(x + l - 15, p.height - 320 - 15, 15, 15);
+                p.noStroke();
+                p.fill(255);
+                p.rect(x + 30, p.height - 320 - 155, l - 35, h - 50);
+                distributionCoxBoxNode(x + 30, p.height - 320 - 155 + h - 50, l - 35, h - 50);
+            }
+        }
+    }
+
+    public static void distributionCoxBoxNode(float x, float y, float l, float h) {
+        PApplet p = Application.session.getPApplet();
+        p.strokeWeight(1);
+        p.stroke(10);
+        PFont font2 = p.createFont("DejaVuSans-ExtraLight-", (float) 7.6);
+        p.textFont(font2);
+        for (int i = 0; i < 5; i++) {
+
+            float yLabel = PApplet.map(i * h / 4, 0, h, 0, 436);
+            p.line(x - 3, y - i * h / 4, x + 2, y - i * h / 4);
+            yLabel = CoxBox(yLabel, 'n');
+            p.fill(10);
+            if (yLabel >= 1000) {
+                p.text(PApplet.nf((int) yLabel, 4), x - 17, y - i * h / 4);
+            } else if (yLabel >= 100) {
+                p.text(PApplet.nf(yLabel, 3, 1), x - 17, y - i * h / 4);
+            } else if (yLabel >= 10) {
+                p.text(PApplet.nf(yLabel, 2, 2), x - 17, y - i * h / 4);
+            } else {
+                p.text(PApplet.nf(yLabel, 1, 3), x - 17, y - i * h / 4);
+            }
+
+            float xLabel = PApplet.map(i * l / 4, 0, l, 0, Application.session.getNodeMax());
+            p.line(x + i * l / 4, y - 3, x + i * l / 4, y + 3);
+            xLabel = CoxBox(xLabel, 'n');
+            if (xLabel >= 1000) {
+                p.text(PApplet.nf((int) xLabel, 4) + "     ", x + i * l / 4, y + 12);
+            } else if (xLabel >= 100) {
+                p.text(PApplet.nf(xLabel, 3, 1) + "     ", x + i * l / 4, y + 12);
+            } else if (xLabel >= 10) {
+                p.text(PApplet.nf(xLabel, 2, 2) + "     ", x + i * l / 4, y + 12);
+            } else {
+                p.text(PApplet.nf(xLabel, 1, 3) + "     ", x + i * l / 4, y + 12);
+            }
+            //http://lstat.kuleuven.be/java/version2.0/Applet015.html
+        }
+        p.textMode(PConstants.CENTER);
+        PFont font = p.createFont("DejaVuSans-ExtraLight-", 12);
+        p.textFont(font);
+        p.text("effectif modifié", x + l / 4, y - h - 7);
+        p.text("poids modifié", x + l / 2, y + 25);
+
+        float[] temp = new float[(int) Application.session.getMaxNodeTotal()];
+        int comp = 1;
+        temp[0] = Application.session.getNodePoids(0);
+        temp[1] = comp;
+        for (int i = 1; i < Application.session.getNodePoids().length; i++) {
+            if (Application.session.getNodePoids(i) != temp[0]) {
+                drawStickCoxBoxNode(temp, x, y, l, h);
+                temp[0] = Application.session.getNodePoids(i);
+                comp = 1;
+                temp[1] = comp;
+            } else {
+                comp++;
+                temp[1] = comp;
+            }
+        }
+
+    }
+
+    public static void distributionCoxBox(float x, float y, float l, float h) {
+        PApplet p = Application.session.getPApplet();
+        p.strokeWeight(1);
+        p.stroke(10);
+        PFont font2 = p.createFont("DejaVuSans-ExtraLight-", (float) 7.6);
+        p.textFont(font2);
+        for (int i = 0; i < 5; i++) {
+
+            float yLabel = PApplet.map(i * h / 4, 0, h, 0, 50631);
+            p.line(x - 3, y - i * h / 4, x + 2, y - i * h / 4);
+            yLabel = CoxBox(yLabel, 'e');
+            p.fill(10);
+            if (yLabel >= 1000) {
+                p.text(PApplet.nf((int) yLabel, 4), x - 17, y - i * h / 4);
+            } else if (yLabel >= 100) {
+                p.text(PApplet.nf(yLabel, 3, 1), x - 17, y - i * h / 4);
+            } else if (yLabel >= 10) {
+                p.text(PApplet.nf(yLabel, 2, 2), x - 17, y - i * h / 4);
+            } else {
+                p.text(PApplet.nf(yLabel, 1, 3), x - 17, y - i * h / 4);
+            }
+
+            float xLabel = PApplet.map(i * l / 4, 0, l, 0, Application.session.getEdgeMax());
+            p.line(x + i * l / 4, y - 3, x + i * l / 4, y + 3);
+            xLabel = CoxBox(xLabel, 'e');
+            if (xLabel >= 1000) {
+                p.text(PApplet.nf((int) xLabel, 4) + "     ", x + i * l / 4, y + 12);
+            } else if (xLabel >= 100) {
+                p.text(PApplet.nf(xLabel, 3, 1) + "     ", x + i * l / 4, y + 12);
+            } else if (xLabel >= 10) {
+                p.text(PApplet.nf(xLabel, 2, 2) + "     ", x + i * l / 4, y + 12);
+            } else {
+                p.text(PApplet.nf(xLabel, 1, 3) + "     ", x + i * l / 4, y + 12);
+            }
+            //http://lstat.kuleuven.be/java/version2.0/Applet015.html
+        }
+        p.textMode(PConstants.CENTER);
+        PFont font = p.createFont("DejaVuSans-ExtraLight-", 12);
+        p.textFont(font);
+        p.text("effectif modifié", x + l / 4, y - h - 7);
+        p.text("poids modifié", x + l / 2, y + 25);
+
+        float[] temp = new float[(int) Application.session.getMaxEdgeTotal()];
+        int comp = 1;
+        temp[0] = Application.session.getEdgePoids(0);
+        temp[1] = comp;
+        for (int i = 1; i < Application.session.getEdgePoids().length; i++) {
+            if (Application.session.getEdgePoids(i) != temp[0]) {
+                drawStickCoxBox(temp, x, y, l, h);
+                temp[0] = Application.session.getEdgePoids(i);
+                comp = 1;
+                temp[1] = comp;
+            } else {
+                comp++;
+                temp[1] = comp;
+            }
+        }
+
+    }
+
+    public static void drawStickCoxBox(float[] temp, float X, float Y, float l, float h) {
+        PApplet p = Application.session.getPApplet();
+        p.stroke(0);
+        p.strokeWeight(2);
+        if (temp[0] != 0) {
+            float x = PApplet.map(CoxBox(temp[0], 'e'), 0, CoxBox(Application.session.getEdgeMax(), 'e'), 0, l);
+            float y = PApplet.map(CoxBox(temp[1], 'e'), 0, CoxBox(50631, 'e'), 0, h);
+            p.line(X + x, Y, X + x, Y - y);
+        }
+        p.noStroke();
+    }
+
+    public static void drawStickCoxBoxNode(float[] temp, float X, float Y, float l, float h) {
+        PApplet p = Application.session.getPApplet();
+        p.stroke(0);
+        p.strokeWeight(2);
+        if (temp[0] != 0) {
+            float x = PApplet.map(CoxBox(temp[0], 'n'), 0, CoxBox(Application.session.getNodeMax(), 'n'), 0, l);
+            float y = PApplet.map(CoxBox(temp[1], 'n'), 0, CoxBox(436, 'n'), 0, h);
+            p.line(X + x, Y, X + x, Y - y);
+        }
+        p.noStroke();
+    }
+
+    public static float CoxBox(float y, char i) {
+        // T(Y) = ((Y^lambda)-1)/lambda si lambda != 0
+        float lambda = 1;
+        if (i == 'e') {
+            lambda = Application.session.getLambdaE();
+        } else if (i == 'n') {
+            lambda = Application.session.getLambdaN();
+        }
+        float ret = 0;
+        if (lambda == 0) {
+            ret = PApplet.log(y);
+        } else {
+            ret = (PApplet.pow(y, lambda) - 1) / lambda;
+        }
+        return ret;
     }
 }

@@ -49,6 +49,12 @@ public class Session {
     float[][] NodePourLissageHold; 
     Stick curseur;
     Stick curseur2;
+    Stick curseur3;
+    Stick curseur4;
+    
+    // pour le box cox 
+    float lambdaE = 1;
+    float lambdaN = 1;
 
 
     PImage myMap;
@@ -58,6 +64,9 @@ public class Session {
     float[][] matNode;
     float[][] sortant;
     float[][] entrant; 
+    
+    float[] EdgePoids;
+    float[] NodePoids;
 
     // tableau de stockage des longueurs d'edges ( triée de la plus grande à la plus petite )
     float[] tabEdgeDist;
@@ -72,7 +81,7 @@ public class Session {
     // Booléan utilisés dans la gestion et le passage d'un mode de visualisation à un autre  
     boolean clicked = false;
     boolean select = true;
-    boolean info = false;
+    boolean boxcoxNode = false;
     boolean heat = false;
     boolean petit = false;
     boolean gros = true;
@@ -80,10 +89,12 @@ public class Session {
     boolean node = false;
     boolean Biweight = false;
     boolean Shepard = false;
-    boolean dyn = false;
+    boolean boxcox = false;
     boolean chaud = false;
     boolean nodeDistri = false;
     boolean edgeDistri = false;
+    boolean edgeBoxCoxDistri = false;
+    boolean nodeBoxCoxDistri = false;
     boolean Log = false;
     boolean premierLissage = false; 
     boolean oursin = false;
@@ -95,11 +106,6 @@ public class Session {
     float edgeMin = PConstants.MAX_FLOAT;
     float edgeMax = PConstants.MIN_FLOAT;
 
-    float edgeMindyn = PConstants.MAX_FLOAT;
-    float edgeMaxdyn = PConstants.MIN_FLOAT;
-    float nodeMindyn = PConstants.MAX_FLOAT;
-    float nodeMaxdyn = PConstants.MIN_FLOAT;
-
     float distMax = PConstants.MIN_FLOAT;
     float distMin = PConstants.MAX_FLOAT;
 
@@ -107,6 +113,10 @@ public class Session {
 
     static float maxEdgeTotal = PConstants.MIN_FLOAT;
     static float maxNodeTotal = PConstants.MIN_FLOAT;
+    
+    float nodeEffMax =  PConstants.MIN_FLOAT;
+    float edgeEffMax =  PConstants.MIN_FLOAT;
+    
 
     public void setPApplet(PApplet p) {
         this.p = p;
@@ -226,6 +236,15 @@ public class Session {
         return curseur2;
     }
 
+    public Stick getCurseur3() {
+        return curseur3;
+    }
+
+    public void setCurseur3(Stick curseur3) {
+        this.curseur3 = curseur3;
+    }
+    
+
     public float getD() {
         return d;
     }
@@ -238,8 +257,8 @@ public class Session {
         return distMin;
     }
 
-    public boolean isDyn() {
-        return dyn;
+    public boolean isBoxCox() {
+        return boxcox;
     }
 
     public boolean isEdge() {
@@ -254,16 +273,8 @@ public class Session {
         return edgeMax;
     }
 
-    public float getEdgeMaxdyn() {
-        return edgeMaxdyn;
-    }
-
     public float getEdgeMin() {
         return edgeMin;
-    }
-
-    public float getEdgeMindyn() {
-        return edgeMindyn;
     }
 
     public boolean isGros() {
@@ -282,8 +293,8 @@ public class Session {
         return indexBis;
     }
 
-    public boolean isInfo() {
-        return info;
+    public boolean isBoxCoxNode() {
+        return boxcoxNode;
     }
 
     public Location getLocationCourante() {
@@ -300,6 +311,22 @@ public class Session {
     
     public float getMatEdge( int i, int j ) {
         return matEdge[i][j];
+    }
+
+    public float[] getEdgePoids() {
+        return EdgePoids;
+    }
+    
+    public float getEdgePoids( int i) {
+        return EdgePoids[i];
+    }
+    
+    public float[] getNodePoids() {
+        return NodePoids;
+    }
+    
+    public float getNodePoids( int i) {
+        return NodePoids[i];
     }
 
     public float[] getTabEdgeDist() {
@@ -362,10 +389,6 @@ public class Session {
         return nodeMax;
     }
 
-    public float getNodeMaxdyn() {
-        return nodeMaxdyn;
-    }
-
     public float getNodeMin() {
         return nodeMin;
     }
@@ -376,10 +399,6 @@ public class Session {
 
     public boolean isDraged() {
         return draged;
-    }
-
-    public float getNodeMindyn() {
-        return nodeMindyn;
     }
 
     public boolean isPetit() {
@@ -502,8 +521,8 @@ public class Session {
         this.distMin = distMin;
     }
 
-    public void setDyn(boolean dyn) {
-        this.dyn = dyn;
+    public void setBoxCox(boolean dyn) {
+        this.boxcox = dyn;
     }
 
     public void setEdge(boolean edge) {
@@ -518,16 +537,8 @@ public class Session {
         this.edgeMax = edgeMax;
     }
 
-    public void setEdgeMaxdyn(float edgeMaxdyn) {
-        this.edgeMaxdyn = edgeMaxdyn;
-    }
-
     public void setEdgeMin(float edgeMin) {
         this.edgeMin = edgeMin;
-    }
-
-    public void setEdgeMindyn(float edgeMindyn) {
-        this.edgeMindyn = edgeMindyn;
     }
 
     public void setGros(boolean gros) {
@@ -546,8 +557,8 @@ public class Session {
         this.indexBis = indexBis;
     }
 
-    public void setInfo(boolean info) {
-        this.info = info;
+    public void setBoxCoxNode(boolean boxcoxNode) {
+        this.boxcoxNode = boxcoxNode;
     }
 
     public void setLocationCourante(Location locationCourante) {
@@ -564,6 +575,22 @@ public class Session {
     
     public void setMatEdge(int i, int j , float a) {
         this.matEdge[i][j] = a;
+    }
+
+    public void setEdgePoids(float[] EdgePoids) {
+        this.EdgePoids = EdgePoids;
+    }
+    
+    public void setEdgePoids(int i, float a ) {
+        this.EdgePoids[i] = a;
+    }
+    
+    public void setNodePoids(float[] NodePoids) {
+        this.NodePoids = NodePoids;
+    }
+    
+    public void setNodePoids(int i, float a ) {
+        this.NodePoids[i] = a;
     }
     
     public void setSortant(float[][] sortant) {
@@ -588,6 +615,10 @@ public class Session {
     
     public void setTabEdgeDist(int i, float a) {
         this.tabEdgeDist[i] = a;
+    }
+    
+    public float getTabEdgeDist(int i) {
+        return tabEdgeDist[i];
     }
 
     public void setMatNode() {
@@ -630,16 +661,8 @@ public class Session {
         this.nodeMax = nodeMax;
     }
 
-    public void setNodeMaxdyn(float nodeMaxdyn) {
-        this.nodeMaxdyn = nodeMaxdyn;
-    }
-
     public void setNodeMin(float nodeMin) {
         this.nodeMin = nodeMin;
-    }
-
-    public void setNodeMindyn(float nodeMindyn) {
-        this.nodeMindyn = nodeMindyn;
     }
 
     public void setPetit(boolean petit) {
@@ -661,4 +684,61 @@ public class Session {
     public void setOursin(boolean oursin) {
         this.oursin = oursin;
     }
+
+    public boolean isEdgeBoxCoxDistri() {
+        return edgeBoxCoxDistri;
+    }
+
+    public void setEdgeBoxCoxDistri(boolean edgeBoxCoxDistri) {
+        this.edgeBoxCoxDistri = edgeBoxCoxDistri;
+    }
+
+    public float getLambdaE() {
+        return lambdaE;
+    }
+
+    public void setLambdaE(float lambdaE) {
+        this.lambdaE = lambdaE;
+    }
+    
+    public float getLambdaN() {
+        return lambdaN;
+    }
+
+    public void setLambdaN(float lambdaN) {
+        this.lambdaN = lambdaN;
+    }
+
+    public float getEdgeEffMax() {
+        return edgeEffMax;
+    }
+
+    public float getNodeEffMax() {
+        return nodeEffMax;
+    }
+
+    public void setEdgeEffMax(float edgeEffMax) {
+        this.edgeEffMax = edgeEffMax;
+    }
+
+    public void setNodeEffMax(float nodeEffMax) {
+        this.nodeEffMax = nodeEffMax;
+    }
+
+    public Stick getCurseur4() {
+        return curseur4;
+    }
+
+    public void setCurseur4(Stick curseur4) {
+        this.curseur4 = curseur4;
+    }
+
+    public boolean isNodeBoxCoxDistri() {
+        return nodeBoxCoxDistri;
+    }
+
+    public void setNodeBoxCoxDistri(boolean nodeBoxCoxDistri) {
+        this.nodeBoxCoxDistri = nodeBoxCoxDistri;
+    }  
+    
 }

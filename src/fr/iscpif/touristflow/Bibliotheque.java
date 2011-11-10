@@ -6,6 +6,7 @@ package fr.iscpif.touristflow;
 
 import de.fhpotsdam.unfolding.geo.Location;
 import processing.core.*;
+import java.util.Arrays;
 
 /**
 
@@ -41,30 +42,6 @@ public class Bibliotheque {
     static void maxNodeTot(int i) {
         if (i > Application.session.getMaxNodeTotal()) {
             Application.session.setMaxNodeTotal(i);
-        }
-    }
-
-    // Calcul du poids min et max des edges visibles à l'écran
-    static void MinMax() {
-        int compt = 0;
-
-        int width = Application.session.getPApplet().width;
-        int height = Application.session.getPApplet().height;
-        for (int i = 0; i < Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount; i++) {
-            Location l1 = new Location(Application.session.getMatEdge(0, i), Application.session.getMatEdge(1, i));
-            Location l2 = new Location(Application.session.getMatEdge(2, i), Application.session.getMatEdge(3, i));
-            float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
-            float xy2[] = Application.session.getMap().getScreenPositionFromLocation(l2);
-            if ((((xy1[1] > 0) && (xy1[0] > 0) && (xy1[0] < width) && (xy1[1] < height)) || ((xy2[0] > 0) && (xy2[1] > 0) && (xy2[0] < width) && (xy2[1] < height))) && (compt < 2000)) { // on filtre en affichant uniquement les 2000 liens les plus forts situés dans la zone de viz
-                float value = Application.session.getMatEdge(4, i);
-                if (value > Application.session.getEdgeMaxdyn()) {
-                    Application.session.setEdgeMaxdyn(value);
-                }
-                if (value < Application.session.getEdgeMindyn()) {
-                    Application.session.setEdgeMindyn(value);
-                }
-                compt++;
-            }
         }
     }
 
@@ -113,45 +90,64 @@ public class Bibliotheque {
 
     // à chaque changement d'interval, les données sont stockées de l'objet Gephi vers ces 2 matrices, les actions de filtrages et traitements se feront sur ces matrices
     static void remplirTableauImage(int index) {
+        PApplet p = Application.session.getPApplet();
+        int cpt = 0;
+        
+        for (int i = 0; i < Application.session.getNodePoids().length; i ++) {
+            Application.session.setNodePoids(i, 0);
+        }
+
+        for (int k = 0; k < Application.session.getEdgePoids().length; k++) {
+            Application.session.setEdgePoids(k, 0);
+        }
+
         for (int i = 0; i < Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount; i++) {
             Application.session.setMatEdge(0, i, (float) Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][0]);
             Application.session.setMatEdge(1, i, (float) Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][1]);
             Application.session.setMatEdge(2, i, (float) Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][2]);
             Application.session.setMatEdge(3, i, (float) Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][3]);
             Application.session.setMatEdge(4, i, (float) Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][4]);
+            cpt++;
+            Application.session.setEdgePoids(i, (float) Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][4]);
         }
+
+
 
 
         for (int i = 0; i < Application.session.getTableauGephiCount(Application.session.getIndex(), 0); i++) {
             Application.session.setMatNode(0, i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 1, i));
             Application.session.setMatNode(1, i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 0, i));
             Application.session.setMatNode(2, i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 2, i));
+            Application.session.setNodePoids(i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 2, i));
         }
-        TriRapide.trirapide(Application.session.getMatNode(), (int) Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount, 3);
+        //TriRapide.trirapide(Application.session.getMatNode(), (int) Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount, 3);
+
+        Application.session.setNodePoids(PApplet.sort(Application.session.getNodePoids()));
+        Application.session.setEdgePoids(PApplet.sort(Application.session.getEdgePoids()));
 
         Application.session.setIndexBis(index);
     }
 
     static void effacerOursins() {
-        while (!Application.session.getOursins().isEmpty()){
+        while (!Application.session.getOursins().isEmpty()) {
             Application.session.getOursins().remove(0);
         }
     }
-    
+
     static void miseAJourOursins() {
         float[][] temp = new float[2][50];
         int i = 0;
-        while (!Application.session.getOursins().isEmpty()){
+        while (!Application.session.getOursins().isEmpty()) {
             Oursin oursin = (Oursin) Application.session.Oursins.get(0);
             temp[0][i] = oursin.getXN();
             temp[1][i] = oursin.getYN();
             Application.session.getOursins().remove(0);
-            i ++;
+            i++;
         }
-        for ( int j = 0; j < i + 1; j ++  ){  
+        for (int j = 0; j < i + 1; j++) {
             Location l = new Location(temp[0][j], temp[1][j]);
             float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
-            
+
             Affichage.selectionOursins(xy[0], xy[1], temp[0][j], temp[1][j]);
         }
 
@@ -164,6 +160,7 @@ public class Bibliotheque {
         }
 
         TriRapide.trirapide2(Application.session.getTabEdgeDist(), (int) Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount);
+
     }
 
     static void maxNbRepartitionEdge(int comp) {
@@ -323,6 +320,55 @@ public class Bibliotheque {
 
         return pointsCardinaux;
     }
+
+    // fonction de calcule des effectifs max pour les distributions
+    public static void effectif(String cas) {
+        float count = 0;
+        float cpt = 0;
+        float max = PConstants.MIN_FLOAT;
+        if ("node".equals(cas)) {
+            count = Application.session.getNodePoids().length;
+            cpt = 0;
+            float temp = 0;
+            for (int i = 1; i < count; i++) {
+                if (Application.session.getNodePoids(i) > 0) {
+                    if (cpt == 0) {
+                        temp = Application.session.getNodePoids(i);
+                        cpt = 1;
+                    } else {
+                        if (Application.session.getNodePoids(i) == temp) {
+                            cpt++;
+                        } else {
+                            max = PApplet.max(cpt, max);
+                            cpt = 1;
+                            temp = Application.session.getNodePoids(i);
+                        }
+                    }
+                }
+            }
+            Application.session.setNodeEffMax(max);
+        } else if ("edge".equals(cas)) {
+            count = Application.session.getEdgePoids().length;
+            cpt = 0;
+            float temp = 0;
+            for (int i = 1; i < count; i++) {
+                if (Application.session.getEdgePoids(i) > 0) {
+                    if (cpt == 0) {
+                        temp = Application.session.getEdgePoids(i);
+                        cpt = 1;
+                    } else {
+                        if (Application.session.getEdgePoids(i) == temp) {
+                            cpt++;
+                        } else {
+                            max = PApplet.max(cpt, max);
+                            cpt = 1;
+                            temp = Application.session.getEdgePoids(i);
+                        }
+                    }
+                }
+            }
+            Application.session.setEdgeEffMax(max);
+            Application.session.setNodeEffMax(max);
+        }
+    }
 }
-    
- 
