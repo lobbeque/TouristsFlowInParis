@@ -72,6 +72,32 @@ public class Stick {
         p.stroke(255);
         drawlabel();
       }
+      
+      public void drawStep () {
+        PApplet p = Application.session.getPApplet();
+        p.stroke(255);
+        p.strokeWeight(2);
+        // ligne horizontale de base
+        p.line(labelCourant, y + 5, labelCourant + longueur, y + 5);
+        
+        PFont font1 = p.createFont("DejaVuSans-ExtraLight-", 10);
+        p.textFont(font1); 
+        p.stroke(10);
+        p.textAlign(PConstants.CENTER);
+        // barre verticale selection
+        p.line(x, y, x, y+ size);
+        // ligne horizontale selection
+        p.line(labelCourant, y + 5, x, y + 5);
+        // barre verticale gauche
+        p.line(labelCourant, y, labelCourant, y+size);
+        // barre verticale droite
+        p.line(labelCourant + longueur, y, labelCourant + longueur, y+size);
+        p.stroke(10);
+        p.text( (int)debut, labelCourant, y + 20 );
+        p.text((int)fin + "  ", labelCourant + longueur, y + 20); 
+        p.stroke(255);
+        drawlabelStep();
+      }
 
       public void drawlabel () {
         PApplet p = Application.session.getPApplet();
@@ -79,6 +105,14 @@ public class Stick {
         float temp = PApplet.map ( x - labelCourant, 0, longueur, debut, fin ); 
         p.text( temp, x, y - 3);
         curs = temp;
+      }
+      
+      public void drawlabelStep () {
+        PApplet p = Application.session.getPApplet();
+        p.textAlign(PConstants.CENTER);
+        float temp = PApplet.map ( x - labelCourant, 0, longueur, debut, fin ); 
+        p.text( (int)temp, x, y - 3);
+        curs = (int)temp;
       }
 
       public void dragged(float tempx, float tempy) {

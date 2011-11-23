@@ -6,8 +6,7 @@ package fr.iscpif.touristflow;
 
 import de.fhpotsdam.unfolding.geo.Location;
 import processing.core.*;
-import java.util.Arrays;
-
+import static java.lang.System.*;
 /**
 
  * 
@@ -70,7 +69,8 @@ public class Bibliotheque {
         float dScreen = dReel * distScreen / distReel;
         return dScreen;
     }
-
+    
+    
     // détermine l'edge de plus grande et plus courte taille
     static void distMinMax() {
         for (int k = 0; k < Temps.getHourCount(); k++) {
@@ -90,7 +90,7 @@ public class Bibliotheque {
 
     // à chaque changement d'interval, les données sont stockées de l'objet Gephi vers ces 2 matrices, les actions de filtrages et traitements se feront sur ces matrices
     static void remplirTableauImage(int index) {
-        PApplet p = Application.session.getPApplet();
+        
         int cpt = 0;
         
         for (int i = 0; i < Application.session.getNodePoids().length; i ++) {
@@ -133,9 +133,38 @@ public class Bibliotheque {
             Application.session.getOursins().remove(0);
         }
     }
+    
+    static void creerOursinsVue() {
+        PApplet p = Application.session.getPApplet();
+        int i = 1;
+            for (int j = 0; j < Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount; j++) {
+                Location l1 = new Location(Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
+                float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
+                if ((xy1[1] > 0) && (xy1[0] > 0) && (xy1[0] < p.width) && (xy1[1] < p.height) && (Application.session.getMatNode(2, j) > 30)) {
+                    out.println("Création Oursin " + i);
+                    Affichage.selectionOursins(xy1[0], xy1[1], Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
+                    i ++;
+                }
+            }
+            out.println("Oursins calculés");
+    }
+    
+    static void showOursins() {
+        for (int i = 0; i < Application.session.getOursins().size(); i ++){
+            Oursin oursin = (Oursin) Application.session.Oursins.get(i);
+            oursin.setStatus("normal");
+        }
+    }
+    
+    static void hideOursins() {
+        for (int i = 0; i < Application.session.getOursins().size(); i ++){
+            Oursin oursin = (Oursin) Application.session.Oursins.get(i);
+            oursin.setStatus("selected");
+        }
+    }
 
     static void miseAJourOursins() {
-        float[][] temp = new float[2][50];
+        float[][] temp = new float[2][1000];
         int i = 0;
         while (!Application.session.getOursins().isEmpty()) {
             Oursin oursin = (Oursin) Application.session.Oursins.get(0);
@@ -173,37 +202,37 @@ public class Bibliotheque {
 
         // on va créer 16 tableaux qui correspondront à une division de l'espace autour d'un noeud suivant les points cardinaux
 
-        float[] sud = new float[cpt];
+        int[] sud = {};
 
-        float[] sudsudEst = new float[cpt];
+        int[] sudsudEst = {};
 
-        float[] sudEst = new float[cpt];
+        int[] sudEst = {};
 
-        float[] sudEstEst = new float[cpt];
+        int[] sudEstEst = {};
 
-        float[] Est = new float[cpt];
+        int[] Est = {};
 
-        float[] nordEstEst = new float[cpt];
+        int[] nordEstEst = {};
 
-        float[] nordEst = new float[cpt];
+        int[] nordEst = {};
 
-        float[] nordnordEst = new float[cpt];
+        int[] nordnordEst = {};
 
-        float[] nord = new float[cpt];
+        int[] nord = {};
 
-        float[] nordnordOuest = new float[cpt];
+        int[] nordnordOuest = {};
 
-        float[] nordOuest = new float[cpt];
+        int[] nordOuest = {};
 
-        float[] nordOuestOuest = new float[cpt];
+        int[] nordOuestOuest = {};
 
-        float[] Ouest = new float[cpt];
+        int[] Ouest = {};
 
-        float[] sudOuestOuest = new float[cpt];
+        int[] sudOuestOuest = {};
 
-        float[] sudOuest = new float[cpt];
+        int[] sudOuest = {};
 
-        float[] sudsudOuest = new float[cpt];
+        int[] sudsudOuest = {};
 
         // les arcs sortants sont rangés en fonction de leur orientation dans le tableau qui va bien
 
@@ -218,52 +247,52 @@ public class Bibliotheque {
             }
 
             if ((-PConstants.PI / 16 <= angle) && (angle < PConstants.PI / 16)) {
-                sud = PApplet.splice(sud, j, 0);
+                sud = PApplet.append(sud, j);
 
             } else if ((PConstants.PI / 16 <= angle) && (angle < 3 * PConstants.PI / 16)) {
-                sudsudEst = PApplet.splice(sudsudEst, j, 0);
+                sudsudEst = PApplet.append(sudsudEst, j);
 
             } else if ((3 * PConstants.PI / 16 <= angle) && (angle < 5 * PConstants.PI / 16)) {
-                sudEst = PApplet.splice(sudEst, j, 0);
+                sudEst = PApplet.append(sudEst, j);
 
             } else if ((5 * PConstants.PI / 16 <= angle) && (angle < 7 * PConstants.PI / 16)) {
-                sudEstEst = PApplet.splice(sudEstEst, j, 0);
+                sudEstEst = PApplet.append(sudEstEst, j);
 
             } else if ((7 * PConstants.PI / 16 <= angle) && (angle < 9 * PConstants.PI / 16)) {
-                Est = PApplet.splice(Est, j, 0);
+                Est = PApplet.append(Est, j);
 
             } else if ((9 * PConstants.PI / 16 <= angle) && (angle < 11 * PConstants.PI / 16)) {
-                nordEstEst = PApplet.splice(nordEstEst, j, 0);
+                nordEstEst = PApplet.append(nordEstEst, j);
 
             } else if ((11 * PConstants.PI / 16 <= angle) && (angle < 13 * PConstants.PI / 16)) {
-                nordEst = PApplet.splice(nordEst, j, 0);
+                nordEst = PApplet.append(nordEst, j);
 
             } else if ((13 * PConstants.PI / 16 <= angle) && (angle < 15 * PConstants.PI / 16)) {
-                nordnordEst = PApplet.splice(nordnordEst, j, 0);
+                nordnordEst = PApplet.append(nordnordEst, j);
 
             } else if (((15 * PConstants.PI / 16 <= angle) && (angle <= PConstants.PI)) || ((- 15 * PConstants.PI / 16 > angle) && (angle >= -PConstants.PI))) {
-                nord = PApplet.splice(nord, j, 0);
+                nord = PApplet.append(nord, j);
 
             } else if ((- 13 * PConstants.PI / 16 > angle) && (angle >= - 15 * PConstants.PI / 16)) {
-                nordnordOuest = PApplet.splice(nordnordOuest, j, 0);
+                nordnordOuest = PApplet.append(nordnordOuest, j);
 
             } else if ((- 11 * PConstants.PI / 16 > angle) && (angle >= - 13 * PConstants.PI / 16)) {
-                nordOuest = PApplet.splice(nordOuest, j, 0);
+                nordOuest = PApplet.append(nordOuest, j);
 
             } else if ((- 9 * PConstants.PI / 16 > angle) && (angle >= - 11 * PConstants.PI / 16)) {
-                nordOuestOuest = PApplet.splice(nordOuestOuest, j, 0);
+                nordOuestOuest = PApplet.append(nordOuestOuest, j);
 
             } else if ((- 7 * PConstants.PI / 16 > angle) && (angle >= - 9 * PConstants.PI / 16)) {
-                Ouest = PApplet.splice(Ouest, j, 0);
+                Ouest = PApplet.append(Ouest, j);
 
             } else if ((- 5 * PConstants.PI / 16 > angle) && (angle >= - 7 * PConstants.PI / 16)) {
-                sudOuestOuest = PApplet.splice(sudOuestOuest, j, 0);
+                sudOuestOuest = PApplet.append(sudOuestOuest, j);
 
             } else if ((- 3 * PConstants.PI / 16 > angle) && (angle >= - 5 * PConstants.PI / 16)) {
-                sudOuest = PApplet.splice(sudOuest, j, 0);
+                sudOuest = PApplet.append(sudOuest, j);
 
             } else if ((-PConstants.PI / 16 > angle) && (angle >= - 3 * PConstants.PI / 16)) {
-                sudsudOuest = PApplet.splice(sudsudOuest, j, 0);
+                sudsudOuest = PApplet.append(sudsudOuest, j);
             }
         }
 
@@ -288,7 +317,8 @@ public class Bibliotheque {
     }
 
     // Traitement des points cardinaux des Oursins
-    static float[] traitementPointsCardinaux(float[] pointCardinal, float[] pointsCardinaux, int rang, int sens) {
+    static float[] traitementPointsCardinaux(int[] pointCardinal, float[] pointsCardinaux, int rang, int sens) {
+        
         float sum = 0;
         float moy = 0;
 
@@ -297,22 +327,22 @@ public class Bibliotheque {
             for (int i = 0; i < pointCardinal.length; i++) {
                 if (pointCardinal[i] > 0) {
                     if (sens == 0) {
-                        sum = sum + Application.session.getSortant(4, i);
-                        Location location1 = Application.session.getMap().getLocationFromScreenPosition(Application.session.getSortant(0, i), Application.session.getSortant(1, i));
-                        Location location2 = Application.session.getMap().getLocationFromScreenPosition(Application.session.getSortant(2, i), Application.session.getSortant(3, i));
+                        sum = sum + Application.session.getSortant(4, pointCardinal[i]);
+                        Location location1 = Application.session.getMap().getLocationFromScreenPosition(Application.session.getSortant(0, pointCardinal[i]), Application.session.getSortant(1, pointCardinal[i]));
+                        Location location2 = Application.session.getMap().getLocationFromScreenPosition(Application.session.getSortant(2, pointCardinal[i]), Application.session.getSortant(3, pointCardinal[i]));
                         moy = moy + distFrom(location1.getLat(), location1.getLon(), location2.getLat(), location2.getLon());
                     } else if (sens == 1) {
-                        sum = sum + Application.session.getEntrant(4, i);
-                        Location location3 = Application.session.getMap().getLocationFromScreenPosition(Application.session.getEntrant(0, i), Application.session.getEntrant(1, i));
-                        Location location4 = Application.session.getMap().getLocationFromScreenPosition(Application.session.getEntrant(2, i), Application.session.getEntrant(3, i));
+                        sum = sum + Application.session.getSortant(4, pointCardinal[i]);
+                        Location location3 = Application.session.getMap().getLocationFromScreenPosition(Application.session.getEntrant(0, pointCardinal[i]), Application.session.getEntrant(1, pointCardinal[i]));
+                        Location location4 = Application.session.getMap().getLocationFromScreenPosition(Application.session.getEntrant(2, pointCardinal[i]), Application.session.getEntrant(3, pointCardinal[i]));
                         moy = moy + distFrom(location3.getLat(), location3.getLon(), location4.getLat(), location4.getLon());
                     }
                 }
             }
             // sinon on calcul la moyenne des distances et la somme des poids 
             moy = moy / pointCardinal.length;
-            moy = PApplet.map(PApplet.log(moy), 0, PApplet.log(Application.session.getDistMax()), 0, 2000);
-            sum = PApplet.map(PApplet.log(sum), 0, PApplet.log(Application.session.getEdgeMax()), 0, 10);
+            moy = PApplet.map(Affichage.CoxBoxLambda(moy, (float)0.4), 0, Affichage.CoxBoxLambda(Application.session.getDistMax(), (float)0.4), 0, 1500);
+            sum = PApplet.map(PApplet.log(sum), 0, PApplet.log(Application.session.getEdgeMax()), (float)0.5, 15);
 
         }
         pointsCardinaux[rang] = sum;

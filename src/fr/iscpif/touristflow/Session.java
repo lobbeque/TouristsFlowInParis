@@ -51,6 +51,7 @@ public class Session {
     Stick curseur2;
     Stick curseur3;
     Stick curseur4;
+    Stick curseur5;
     
     // pour le box cox 
     float lambdaE = 1;
@@ -99,6 +100,7 @@ public class Session {
     boolean premierLissage = false; 
     boolean oursin = false;
     boolean draged = false;
+    boolean kmeansDraw = false;
 
     // Définition de constantes pour le calcul des Min et Max 
     float nodeMin = PConstants.MAX_FLOAT;
@@ -732,6 +734,14 @@ public class Session {
     public void setCurseur4(Stick curseur4) {
         this.curseur4 = curseur4;
     }
+    
+    public Stick getCurseur5() {
+        return curseur5;
+    }
+
+    public void setCurseur5(Stick curseur5) {
+        this.curseur5 = curseur5;
+    }
 
     public boolean isNodeBoxCoxDistri() {
         return nodeBoxCoxDistri;
@@ -739,6 +749,13 @@ public class Session {
 
     public void setNodeBoxCoxDistri(boolean nodeBoxCoxDistri) {
         this.nodeBoxCoxDistri = nodeBoxCoxDistri;
-    }  
-    
+    }
+
+    public boolean isKmeansDraw() {
+        return kmeansDraw;
+    }
+
+    public void setKmeansDraw(boolean kmeansDraw) {
+        this.kmeansDraw = kmeansDraw;
+    }
 }

@@ -46,8 +46,21 @@ public class Oursin {
     Oursin(float[] pointsCardinauxEntrant, float[] pointsCardinauxSortant, float x, float y, float xN, float yN) {
         branchesSortantes = new float[32];
         branchesEntrantes = new float[32];
-        System.arraycopy(pointsCardinauxSortant, 0, branchesSortantes, 0, 32);
-        System.arraycopy(pointsCardinauxEntrant, 0, branchesEntrantes, 0, 32);
+
+        for (int i = 0; i < 32; i++) {
+            if (pointsCardinauxSortant[i] < 0) {
+                branchesSortantes[i] = 0;
+            } else {
+                branchesSortantes[i] = pointsCardinauxSortant[i];
+            }
+
+            if (pointsCardinauxEntrant[i] < 0) {
+                branchesEntrantes[i] = 0;
+            } else {
+                branchesEntrantes[i] = pointsCardinauxEntrant[i];
+            }
+        }
+
         this.x = x;
         this.y = y;
         this.xNative = xN;
@@ -56,10 +69,10 @@ public class Oursin {
         this.somSortant = 0;
         int i = 0;
         while (i != 32) {
-            if ((branchesEntrantes[i] > 0) && (branchesSortantes[i] > 0)) {
+
                 this.somEntrant = this.somEntrant + branchesEntrantes[i];
                 this.somSortant = this.somSortant + branchesSortantes[i];
-            }
+
             i = i + 2;
 
         }
@@ -84,23 +97,25 @@ public class Oursin {
             p.ellipseMode(PApplet.RADIUS);
             //float rayon1 = PApplet.map(PApplet.log(PApplet.max(somEntrant, somSortant)), 0, PApplet.log(Application.session.getNodeMax()), 0, 15);
             //float rayon2 = PApplet.map(PApplet.log(PApplet.min(somEntrant, somSortant)), 0, PApplet.log(Application.session.getNodeMax()), 0, 15);
-            float rayon1 = PApplet.map(PApplet.max(somEntrant, somSortant), 0, 200, 0, (float)(p.width/46.6730));
-            float rayon2 = PApplet.map(PApplet.min(somEntrant, somSortant)/2, 0, 200, 0, (float)(p.width/46.6730));
+            float rayon1 = PApplet.map(PApplet.max(somEntrant, somSortant), 0, 200, 0, (float) (p.width / 46.6730));
+            //float rayon2 = PApplet.map(PApplet.min(somEntrant, somSortant), 0, 200, 0, (float) (p.width / 46.6730));
+            p.strokeWeight(2);
             if (PApplet.max(somEntrant, somSortant) == somEntrant) {
                 p.fill(16, 91, 136);
                 p.stroke(10);
                 p.ellipse(xy[0], xy[1], rayon1, rayon1);
                 p.noStroke();
-                p.fill(182, 92, 96);
-                p.ellipse(xy[0], xy[1], rayon2, rayon2);
+                //p.fill(182, 92, 96);
+                //p.ellipse(xy[0], xy[1], rayon2, rayon2);
             } else {
                 p.fill(182, 92, 96);
                 p.stroke(10);
                 p.ellipse(xy[0], xy[1], rayon1, rayon1);
                 p.noStroke();
-                p.fill(16, 91, 136);
-                p.ellipse(xy[0], xy[1], rayon2, rayon2);
+                //p.fill(16, 91, 136);
+                //p.ellipse(xy[0], xy[1], rayon2, rayon2);
             }
+            p.ellipseMode(PApplet.CENTER);
             p.fill(0);
 
 
@@ -116,13 +131,15 @@ public class Oursin {
             p.ellipseMode(PApplet.RADIUS);
             float x1 = (Bibliotheque.meter2Pixel(rayon) - poids) * PApplet.cos(angle) + xy[0];
             float y1 = (Bibliotheque.meter2Pixel(rayon) - poids) * PApplet.sin(angle) + xy[1];
-            float x2 = Bibliotheque.meter2Pixel(rayon) * PApplet.cos(angle) + xy[0];
-            float y2 = Bibliotheque.meter2Pixel(rayon) * PApplet.sin(angle) + xy[1];
-            
+            //float x2 = Bibliotheque.meter2Pixel(rayon) * PApplet.cos(angle) + xy[0];
+            //float y2 = Bibliotheque.meter2Pixel(rayon) * PApplet.sin(angle) + xy[1];
 
-            p.strokeWeight((float) 1.5);
+            if (poids <= 0) {
+                p.strokeWeight((float) 0.5);
+            } else {
+                p.strokeWeight(poids);
+            }
             p.line(xy[0], xy[1], x1, y1);
-            p.ellipse(x2, y2, poids, poids);
         }
     }
 
@@ -133,19 +150,39 @@ public class Oursin {
     public float getY() {
         return y;
     }
-    
+
     public float getYN() {
         return yNative;
     }
-    
+
     public float getXN() {
         return xNative;
     }
-    
+
+    public float[] getEntrant() {
+        return this.branchesEntrantes;
+    }
+
+    public float getEntrant(int i) {
+        return this.branchesEntrantes[i];
+    }
+
+    public float[] getSortant() {
+        return this.branchesSortantes;
+    }
+
+    public float getSortant(int i) {
+        return this.branchesSortantes[i];
+    }
+
     public String getStatus() {
         return status;
     }
     
+    public void setStatus (String stat){
+        this.status = stat;
+    }
+
     public void pressed() {
         if (status.equals(statusNormal)) { // si le status est normal alors celui devient selected
             status = statusSelected;

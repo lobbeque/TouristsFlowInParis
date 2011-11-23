@@ -29,6 +29,8 @@ public class Affichage {
         p.fill(182, 92, 96);
         p.stroke(153);
         p.text("Arc Sortant", p.width / 56, (float) (p.height / 2.06));
+        p.textAlign(PConstants.CENTER);
+        
         for (int k = 0; k < Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount; k++) {
             Location l1 = new Location(Application.session.getMatEdge(0, k), Application.session.getMatEdge(1, k));
             Location l2 = new Location(Application.session.getMatEdge(2, k), Application.session.getMatEdge(3, k));
@@ -61,11 +63,6 @@ public class Affichage {
         PApplet p = Application.session.getPApplet();
         p.textAlign(PConstants.LEFT, PConstants.TOP);
         p.stroke(153);
-        //p.fill(16, 91, 136);
-        //p.text("Arc Entrant", 25, 500);
-        //p.fill(182, 92, 96);
-        //p.stroke(153);
-        //p.text("Arc Sortant", 25, 475);
         int sortantcpt = 0;
         int entrantcpt = 0;
         Location l3 = new Location(x, y);
@@ -76,22 +73,15 @@ public class Affichage {
             float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
             float xy2[] = Application.session.getMap().getScreenPositionFromLocation(l2);
             if (Application.session.getMatEdge(4, k) > 1) {
-                //float poids = PApplet.map(PApplet.log(Application.session.getMatEdge(4, k)), 0, PApplet.log(Application.session.getEdgeMax()), 1, 15);
-                //p.strokeWeight(poids);
+
                 if ((x == xy1[0]) && (y == xy1[1])) {
 
-                    // on dessine un arc rouge pour un lien sortant 
-
-                    // p.stroke(182, 92, 96, 255);
-                    // p.line(xy1[0], xy1[1], xy2[0], xy2[1]);
-
-                    // en vue de la transformation en objets simples on stocke les liens sortants dans une matrice
 
                     Application.session.setSortant(0, sortantcpt, xy1[0]);
                     Application.session.setSortant(1, sortantcpt, xy1[1]);
                     Application.session.setSortant(2, sortantcpt, xy2[0]);
                     Application.session.setSortant(3, sortantcpt, xy2[1]);
-                    Application.session.setSortant(4, sortantcpt, Application.session.getMatEdge(4, k));
+                    Application.session.setSortant(4, sortantcpt, (float)Application.session.getMatEdge(4, k));
                     Application.session.setSortant(5, sortantcpt, PApplet.atan2(xy2[0] - x, xy2[1] - y)); // angle par rapport à un axe vertical passant par l'horigine des points 
                     sortantcpt++;
 
@@ -102,14 +92,10 @@ public class Affichage {
                     Application.session.setEntrant(1, entrantcpt, xy1[1]);
                     Application.session.setEntrant(2, entrantcpt, xy2[0]);
                     Application.session.setEntrant(3, entrantcpt, xy2[1]);
-                    Application.session.setEntrant(4, entrantcpt, Application.session.getMatEdge(4, k));
+                    Application.session.setEntrant(4, entrantcpt, (float)Application.session.getMatEdge(4, k));
                     Application.session.setEntrant(5, entrantcpt, PApplet.atan2(xy1[0] - x, xy1[1] - y)); // angle par rapport à un axe vertical passant par l'horigine des points 
                     entrantcpt++;
 
-                    // on dessine un arc bleu pour un lien sortant
-
-                    // p.stroke(16, 91, 136, 255);
-                    // p.line(xy1[0], xy1[1], xy2[0], xy2[1]);
                 }
             }
         }
@@ -134,18 +120,15 @@ public class Affichage {
                 deja = true;
                 oursin.pressed();
             }
-            if ("selected".equals(oursin.getStatus())) {
-                Application.session.getOursins().remove(z);
-                z = z - 1;
-            }
+            //if ("selected".equals(oursin.getStatus())) {
+                //Application.session.getOursins().remove(z);
+                //z = z - 1;
+            //}
         }
         if (!deja) {
             Application.session.getOursins().add(new Oursin(pointsCardinauxEntrant, pointsCardinauxSortant, x, y, xN, yN));
         }
-        /*
-        p.fill(1, 160, 20, 200);
-        p.ellipse(x, y, radius, radius);
-         */
+
     }
 
     public static void afficheEchelle() {
@@ -823,4 +806,79 @@ public class Affichage {
         }
         return ret;
     }
+    
+    public static float CoxBoxLambda(float y, float lambda) {
+        // T(Y) = ((Y^lambda)-1)/lambda si lambda != 0
+        
+        float ret = 0;
+        if (lambda == 0) {
+            ret = PApplet.log(y);
+        } else {
+            ret = (PApplet.pow(y, lambda) - 1) / lambda;
+        }
+        return ret;
+    }
+    
+    // affichage de la légende du clustering 
+    public static void afficheCluster() {
+        PApplet p = Application.session.getPApplet();
+        
+        // coordonnées du rectangle
+        float x = p.width - 250;
+        float y = p.height / 18;
+        float l = 220;
+        float h = 50;
+        
+        p.stroke(10, 150);
+        p.fill(190, 201, 186, 100);
+        
+        p.strokeWeight(1);
+        // show
+        p.rect(x + 20, y - 15, l/2 - 20, 15);
+        // hide
+        p.rect(x + l/2, y - 15, l/2 - 20, 15);
+        // create
+        p.rect(x + 20, y - 30, l/2 - 20, 15);
+        // delete
+        p.rect(x + l/2, y - 30, l/2 - 20, 15);
+        
+        
+        p.strokeWeight(2);
+        // rectangle de base 
+        p.rect(x, y, l, h);
+        
+        
+        
+        
+        // boutons selections
+        p.fill(138,184,51);
+        p.triangle(x + 95, y + 20, x + 95, y + 44, x + 120, y + 32);
+        
+        p.fill(16, 91, 136);
+        p.ellipse(x + 150, y + 30, 12, 12);
+        
+        p.fill(182, 92, 96);
+        p.rectMode(PConstants.CENTER);
+        p.rect(x + 195, y + 30, 24, 24);
+        p.rectMode(PConstants.CORNER);
+        
+        // textes
+        p.fill(0); 
+        p.text("clusters :", x + 35, y + 15);
+        p.textMode(PConstants.CENTER);
+        p.text("run", x + 90 + 25/2, y + 15);
+        p.text("show", x + 150, y + 15);
+        p.text("clean", x + 195, y + 15);
+        p.text("show", x + 20 + l/4 - 10, y - 3 );
+        p.text("hide", x + l/2 + l/4 - 10, y - 3 );
+        p.text("create", x + 20 + l/4 - 10, y - 17 );
+        p.text("delete", x + l/2 + l/4 - 10, y - 17 );
+        
+        // curseur
+        Application.session.getCurseur5().drawStep();
+        KMeans.setN((int)Application.session.getCurseur5().getCurs());
+        PFont font1 = p.createFont("DejaVuSans-ExtraLight-", 12);
+        p.textFont(font1);
+    }
+    
 }
