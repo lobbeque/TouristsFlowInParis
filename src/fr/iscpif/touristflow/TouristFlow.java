@@ -14,6 +14,7 @@ import static java.lang.System.*;
  */
 public class TouristFlow extends PApplet {
 
+
     /**
      * @param args the command line arguments
      */
@@ -31,30 +32,36 @@ public class TouristFlow extends PApplet {
         //size(1400, 979);
         size(1200, 800);
 
-
+        // info à rentrer pour créer la carte unfloding
         Application.session.setMap(new de.fhpotsdam.unfolding.Map(this));
         Application.session.map.zoomAndPanTo(new Location(48.866f, 2.359f), 10);// position de départ de la carte 
         de.fhpotsdam.unfolding.utils.MapUtils.createDefaultEventDispatcher(this, Application.session.getMap());
 
+        //initialiser la date courante de la carte
         Temps.setupDates();
+        //charger les gexf
         Bibliotheque.loadGraph();
 
         // les info sur les noeuds et edges sont stockés dans 2 matrices
         Application.session.setMatEdge(new float[5][(int) Application.session.getMaxEdgeTotal()]);
         Application.session.setMatNode();
+        // on réserve de la place pour le mode sélection et oursins
         Application.session.setSortant(new float[6][(int) Application.session.getMaxEdgeTotal() / 20]);
         Application.session.setEntrant(new float[6][(int) Application.session.getMaxEdgeTotal() / 20]);
         Application.session.setEdgePoids(new float[(int) Application.session.getMaxEdgeTotal()]);
         Application.session.setNodePoids(new float[(int) Application.session.getMaxNodeTotal()]);
+        // on initialise les 2 matrices principales sur lesquelles nou sallons maintenant travailler 
         Bibliotheque.remplirTableauImage(Application.session.getIndex());
+        // on initialise les effectifs pour les graphiques de distributions
         Bibliotheque.effectif("edge");
         Bibliotheque.effectif("node");
 
-
-        Application.session.setMyPoints(loadImage("/home/guest/Bureau/Mon_script/data/ppp.png"));
+        // chargement du points pour le heatmap
+        Application.session.setMyPoints(loadImage("./Ressources/ppp.png"));
 
         smooth();
 
+        // centre du bouton principal du menu
         float xMap = (float) (width / 17.5);
         float yMap = (float) (height / 18);
 
@@ -82,7 +89,7 @@ public class TouristFlow extends PApplet {
 
         // tableau qui contiendra les noeuds pour le lissage
         Application.session.setNodePourLissage(new float[3][Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount]);
-
+        // initialisation de la constante Dmax, utile au lissage 
         Application.session.setDmaxOnScreen(Bibliotheque.meter2Pixel(Application.session.getDmax()));
 
         Bibliotheque.distMinMax();
@@ -92,8 +99,10 @@ public class TouristFlow extends PApplet {
         // création des deux curseurs de sélection pour le lissage
         Application.session.setCurseur(new Stick(10, (float) (width / 56 + 165), (float) (height - 150 + 53), Application.session.getDmax(), (float) (320 - 10 - 165), 0, 1500, (float) 1 / 3));
         Application.session.setCurseur2(new Stick(10, (float) (width / 56 + 165), (float) (height - 150 + 18), Application.session.getP(), (float) (320 - 10 - 165), 0, (float) 1.2, (float) 1 / 3));
+        // création des deux curseurs pour le box cox
         Application.session.setCurseur3(new Stick(10, (float) (width / 56 + 175 + 30), (float) (height - 245), Application.session.getLambdaE(), 115, (float) -1.5, (float) 1.5, (float) 5 / 6));
         Application.session.setCurseur4(new Stick(10, (float) (width / 56 + 175 + 30), (float) (height - 295), Application.session.getLambdaE(), 115, (float) -1.5, (float) 1.5, (float) 5 / 6));
+        // création du curseur pour le kmeans
         Application.session.setCurseur5(new Stick(10, (float) (width - 250 + 10), (float) (height / 18 + 28), KMeans.getN(), 60, (float) 1, (float) 5, (float) 3 / 5));
 
     }
@@ -104,7 +113,6 @@ public class TouristFlow extends PApplet {
         background(0);
         Application.session.getMap().draw();
 
-        //fill(15, 9, 105, 100);
         fill(190, 201, 186, 100);
         rect(0, 0, width, height);
         noFill();
@@ -114,15 +122,18 @@ public class TouristFlow extends PApplet {
 
             Bibliotheque.remplirTableauImage(Application.session.getIndex());
             Bibliotheque.miseAJourMatriceDistance(Application.session.getIndex());
+   
             Bibliotheque.miseAJourOursins();
+      
             if (Application.session.isHeat()) {
                 Smooth.initBuff1();
             }
         }
 
-
+        // on surveille le niveau de zoom
         if (zoom != Application.session.getMap().getZoom()) {
             zoom = Application.session.getMap().getZoom();
+            // s'il change on met à jour la carte lissée
             if (Application.session.isHeat()) {
                 Smooth.initBuff1();
             }
@@ -144,7 +155,7 @@ public class TouristFlow extends PApplet {
         stroke(153);
         fill(255, 255, 255, 100);
 
-        // affichage de la time line
+        // affichage de la "time line"
         Temps.drawDateSelector();
         stroke(255);
         fill(255);
@@ -163,69 +174,48 @@ public class TouristFlow extends PApplet {
             Affichage.afficheLegendeLissee();
         }
 
+        // affiche la légende en mode heatMap
         if (Application.session.isChaud()) {
             Affichage.afficheLegendeHeatMap();
         }
 
+        // affiche la légende en mode Cluster
         if (Application.session.isOursin()) {
             Affichage.afficheCluster();
         }
 
-
-
         ellipseMode(CENTER);
 
-
-
+        // dessiner les boutons du menu
         for (int i = 0; i < Application.session.getBoutons().size(); i++) {
             BoutonMenu boutonMenu = (BoutonMenu) Application.session.getBoutons().get(i);
             boutonMenu.draw();
         }
 
+        // dessiner les oursins crées  
         if ((!Application.session.isSelect()) && (Application.session.isOursin())) {
-            if (Application.session.getOursins().size() > 0) {
-                //fill(190, 201, 186, 100);
-                //rect(0, 0, width, height);
-                textAlign(PConstants.LEFT, PConstants.TOP);
-                stroke(153);
-                fill(16, 91, 136);
-                text("Arc Entrant", width / 56, (float) (height / 1.958));
-                fill(182, 92, 96);
-                stroke(153);
-                text("Arc Sortant", width / 56, (float) (height / 2.06));
-                textAlign(PConstants.CENTER);
-            }
+
             for (int z = 0; z < Application.session.getOursins().size(); z++) {
                 Oursin oursin = (Oursin) Application.session.getOursins().get(z);
                 oursin.draw();
             }
-
         }
 
+        // dessiner les clusters
         if (Application.session.isKmeansDraw()) {
             KMeans.drawCluster();
         }
-
-
-
         fill(255);
     }
+    // compteur pour les captures
     int compteurImage = 0;
 
     @Override
     public void keyReleased() {
         // capture écran
         if (key == 's' || key == 'S') {
-            save("roaming_2009_03_29-custom-12-16-num_" + compteurImage + ".jpeg");
+            save("roaming_2009_03_29-custom-12-16-num_" + compteurImage + ".png");
             compteurImage++;
-        }
-    }
-
-    @Override
-    public void keyPressed() {
-        if (key == 'd') {
-            KMeans.drawCluster();
-            out.println("Cluster représentation ok");
         }
 
     }
@@ -238,6 +228,7 @@ public class TouristFlow extends PApplet {
             boutonMenu.pressed(mouseX, mouseY); // appel de la routine pour chaque noeud du menu
         }
 
+        // création d'un oursin quand on clique dessus
         if ((!Application.session.isSelect()) && (Application.session.isOursin())) {
             for (int j = 0; j < Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount; j++) {
                 Location l1 = new Location(Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
@@ -262,6 +253,7 @@ public class TouristFlow extends PApplet {
             Temps.setHour(newHour);
         }
 
+        // Zones d'affichage des distributions ( petits carrés bleus et rouges )
         float dist5 = dist((float) (width / 70 + width / 8 / 2 / 11.6), (float) (height - 320 + width / 8 / 2 / 11.6), mouseX, mouseY);
         float dist6 = dist((float) (width / 70 + width / 8 / 2 / 11.6), (float) (height - 320 - width / 8 / 2 / 11.6), mouseX, mouseY);
         if (!Application.session.isNodeDistri()) {
@@ -303,6 +295,7 @@ public class TouristFlow extends PApplet {
             }
         }
 
+        // zones d'activation des boutons du menu Oursins 
         if (Application.session.isOursin()) {
             if ((width - 250 + 20 <= mouseX) && (width - 250 + 220 / 2 >= mouseX) && (height / 18 - 15 <= mouseY) && (height / 18 >= mouseY)) {
                 Bibliotheque.showOursins();
@@ -315,8 +308,7 @@ public class TouristFlow extends PApplet {
             }
         }
 
-        // boutons clusters
-
+        // zones d'activation des boutons du menu cluster
         float dist7 = dist((float) (width - 250 + 107), (float) (height / 18 + 32), mouseX, mouseY);
         float dist8 = dist((float) (width - 250 + 150), (float) (height / 18 + 30), mouseX, mouseY);
         float dist9 = dist((float) (width - 250 + 195), (float) (height / 18 + 30), mouseX, mouseY);
@@ -340,6 +332,11 @@ public class TouristFlow extends PApplet {
                 KMeans.KMeansClean();
                 out.println("Cluster Clean");
             }
+        }
+
+        // Affichage indépendant des calques des clusters
+        if (Application.session.isKmeansDraw()) {
+            KMeans.pressed(mouseX, mouseY);
         }
     }
 

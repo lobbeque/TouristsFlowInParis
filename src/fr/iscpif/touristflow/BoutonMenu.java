@@ -272,7 +272,7 @@ public class BoutonMenu {
         Application.session.setLog(false); 
       if (this.nom.equals("Oursins")){
         Application.session.setOursin(false);
-        Bibliotheque.effacerOursins();
+        //Bibliotheque.effacerOursins();
       }
      }
 }

@@ -18,17 +18,17 @@ public class Bibliotheque {
 
     static void loadGraph() {
         Application.session.setTableauGephi(0, new Gephi());
-        Application.session.getTableauGephi()[0].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-0-4.gexf");
+        Application.session.getTableauGephi()[0].loadGraph("./Ressources/roaming_2009_03_31-prepa-0-4.gexf");
         Application.session.setTableauGephi(1, new Gephi());
-        Application.session.getTableauGephi()[1].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-4-8.gexf");
+        Application.session.getTableauGephi()[1].loadGraph("./Ressources/roaming_2009_03_31-prepa-4-8.gexf");
         Application.session.setTableauGephi(2, new Gephi());
-        Application.session.getTableauGephi()[2].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-8-12.gexf");
+        Application.session.getTableauGephi()[2].loadGraph("./Ressources/roaming_2009_03_31-prepa-8-12.gexf");
         Application.session.setTableauGephi(3, new Gephi());
-        Application.session.getTableauGephi()[3].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-12-16.gexf");
+        Application.session.getTableauGephi()[3].loadGraph("./Ressources/roaming_2009_03_31-prepa-12-16.gexf");
         Application.session.setTableauGephi(4, new Gephi());
-        Application.session.getTableauGephi()[4].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-16-20.gexf");
+        Application.session.getTableauGephi()[4].loadGraph("./Ressources/roaming_2009_03_31-prepa-16-20.gexf");
         Application.session.setTableauGephi(5, new Gephi());
-        Application.session.getTableauGephi()[5].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-20-24.gexf");
+        Application.session.getTableauGephi()[5].loadGraph("./Ressources/roaming_2009_03_31-prepa-20-24.gexf");
         Application.session.setIndex(0);
     }
 
@@ -128,12 +128,14 @@ public class Bibliotheque {
         Application.session.setIndexBis(index);
     }
 
+    // efface tous les oursins de la liste courante 
     static void effacerOursins() {
         while (!Application.session.getOursins().isEmpty()) {
             Application.session.getOursins().remove(0);
         }
     }
     
+    // créer tous les oursins dans la zone définie par l'écran  
     static void creerOursinsVue() {
         PApplet p = Application.session.getPApplet();
         int i = 1;
@@ -149,6 +151,7 @@ public class Bibliotheque {
             out.println("Oursins calculés");
     }
     
+    // affiche les oursins 
     static void showOursins() {
         for (int i = 0; i < Application.session.getOursins().size(); i ++){
             Oursin oursin = (Oursin) Application.session.Oursins.get(i);
@@ -156,6 +159,7 @@ public class Bibliotheque {
         }
     }
     
+    // cacher les oursins 
     static void hideOursins() {
         for (int i = 0; i < Application.session.getOursins().size(); i ++){
             Oursin oursin = (Oursin) Application.session.Oursins.get(i);
@@ -163,6 +167,7 @@ public class Bibliotheque {
         }
     }
 
+    // mettre à jour les oursins en cas de changement d'intervalle de temps
     static void miseAJourOursins() {
         float[][] temp = new float[2][1000];
         int i = 0;
@@ -182,6 +187,7 @@ public class Bibliotheque {
 
     }
 
+    // matrice regroupant les distances de tous les edges de la plus à la plus petite
     static void miseAJourMatriceDistance(int index) {
         Application.session.setTabEdgeDist(new float[(int) Application.session.getMaxEdgeTotal()]);
         for (int j = 0; j < Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount; j++) {
