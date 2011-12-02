@@ -18,17 +18,17 @@ public class Bibliotheque {
 
     static void loadGraph() {
         Application.session.setTableauGephi(0, new Gephi());
-        Application.session.getTableauGephi()[0].loadGraph("./Ressources/roaming_2009_03_31-prepa-0-4.gexf");
+        Application.session.getTableauGephi()[0].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-0-4.gexf");
         Application.session.setTableauGephi(1, new Gephi());
-        Application.session.getTableauGephi()[1].loadGraph("./Ressources/roaming_2009_03_31-prepa-4-8.gexf");
+        Application.session.getTableauGephi()[1].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-4-8.gexf");
         Application.session.setTableauGephi(2, new Gephi());
-        Application.session.getTableauGephi()[2].loadGraph("./Ressources/roaming_2009_03_31-prepa-8-12.gexf");
+        Application.session.getTableauGephi()[2].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-8-12.gexf");
         Application.session.setTableauGephi(3, new Gephi());
-        Application.session.getTableauGephi()[3].loadGraph("./Ressources/roaming_2009_03_31-prepa-12-16.gexf");
+        Application.session.getTableauGephi()[3].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-12-16.gexf");
         Application.session.setTableauGephi(4, new Gephi());
-        Application.session.getTableauGephi()[4].loadGraph("./Ressources/roaming_2009_03_31-prepa-16-20.gexf");
+        Application.session.getTableauGephi()[4].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-16-20.gexf");
         Application.session.setTableauGephi(5, new Gephi());
-        Application.session.getTableauGephi()[5].loadGraph("./Ressources/roaming_2009_03_31-prepa-20-24.gexf");
+        Application.session.getTableauGephi()[5].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-20-24.gexf");
         Application.session.setIndex(0);
     }
 
