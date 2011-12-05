@@ -4,6 +4,7 @@
  */
 package fr.iscpif.touristflow;
 
+import java.util.Properties;
 import de.fhpotsdam.unfolding.geo.Location;
 import processing.core.*;
 import static java.lang.System.*;
@@ -13,7 +14,6 @@ import static java.lang.System.*;
  * @author Quentin Lobbé
  */
 public class TouristFlow extends PApplet {
-
 
     /**
      * @param args the command line arguments
@@ -31,6 +31,13 @@ public class TouristFlow extends PApplet {
 
         //size(1400, 979);
         size(1200, 800);
+
+        //Si l'on se sert d'un proxy, décommenter et ajouter le nom du proxy  
+        /*Properties props = System.getProperties();
+        props.put("http.proxyHost", "proxyhostname");
+        props.put("http.proxyPort", "proxyhostport");*/
+
+
 
         // info à rentrer pour créer la carte unfloding
         Application.session.setMap(new de.fhpotsdam.unfolding.Map(this));
@@ -122,9 +129,9 @@ public class TouristFlow extends PApplet {
 
             Bibliotheque.remplirTableauImage(Application.session.getIndex());
             Bibliotheque.miseAJourMatriceDistance(Application.session.getIndex());
-   
+
             Bibliotheque.miseAJourOursins();
-      
+
             if (Application.session.isHeat()) {
                 Smooth.initBuff1();
             }
@@ -216,6 +223,14 @@ public class TouristFlow extends PApplet {
         if (key == 's' || key == 'S') {
             save("roaming_2009_03_29-custom-12-16-num_" + compteurImage + ".png");
             compteurImage++;
+        }
+
+        if (key == 'o') {
+            if (Node.getHide()) {
+                Node.setHide(false);
+            } else {
+                Node.setHide(true);
+            }
         }
 
     }

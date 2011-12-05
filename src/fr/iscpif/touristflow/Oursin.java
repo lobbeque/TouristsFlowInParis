@@ -4,6 +4,7 @@
  */
 package fr.iscpif.touristflow;
 
+import static java.lang.System.*;
 import de.fhpotsdam.unfolding.geo.Location;
 import processing.core.*;
 
@@ -13,8 +14,10 @@ import processing.core.*;
  */
 public class Oursin {
 
-    public float x; // les coordonnées du centre de l'oursin
+    // les coordonnées du centre de l'oursin dans le plan
+    public float x;
     public float y;
+    // les coordonnées du centre de l'oursin dans l'espace géographique ( ne changent pas )
     public float xNative;
     public float yNative;
     public float[] branchesSortantes;
@@ -24,6 +27,14 @@ public class Oursin {
     public String status = statusNormal;
     public float somEntrant;
     public float somSortant;
+    // Vecteur moyen
+    public float xMoyEntrant;
+    public float yMoyEntrant;
+    public float xMoySortant;
+    public float yMoySortant;
+    public int nEntrant;
+    public int nSortant;
+
     /*
     EstPoids, EstDist = 0, 1
     sudEstEstPoids, sudEstEstDist = 2, 3
@@ -42,22 +53,25 @@ public class Oursin {
     nordEstPoids, nordEstDist = 28, 29
     nordEstEstPoids, nordEstEstDist = 30, 31
      */
-
     Oursin(float[] pointsCardinauxEntrant, float[] pointsCardinauxSortant, float x, float y, float xN, float yN) {
         branchesSortantes = new float[32];
         branchesEntrantes = new float[32];
+        this.nEntrant = 0;
+        this.nSortant = 0;
 
         for (int i = 0; i < 32; i++) {
             if (pointsCardinauxSortant[i] < 0) {
                 branchesSortantes[i] = 0;
             } else {
                 branchesSortantes[i] = pointsCardinauxSortant[i];
+                nSortant++;
             }
 
             if (pointsCardinauxEntrant[i] < 0) {
                 branchesEntrantes[i] = 0;
             } else {
                 branchesEntrantes[i] = pointsCardinauxEntrant[i];
+                nEntrant++;
             }
         }
 
@@ -65,13 +79,18 @@ public class Oursin {
         this.y = y;
         this.xNative = xN;
         this.yNative = yN;
+        this.xMoyEntrant = 0;
+        this.xMoySortant = 0;
+        this.yMoyEntrant = 0;
+        this.yMoySortant = 0;
         this.somEntrant = 0;
         this.somSortant = 0;
+
         int i = 0;
         while (i != 32) {
 
-                this.somEntrant = this.somEntrant + branchesEntrantes[i];
-                this.somSortant = this.somSortant + branchesSortantes[i];
+            this.somEntrant = this.somEntrant + branchesEntrantes[i];
+            this.somSortant = this.somSortant + branchesSortantes[i];
 
             i = i + 2;
 
@@ -83,46 +102,80 @@ public class Oursin {
         PApplet p = Application.session.getPApplet();
         Location l = new Location(xNative, yNative);
         float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
-        if (status.equals(statusNormal)) {
-            p.stroke(16, 91, 136, 220);
-            p.fill(16, 91, 136, 220);
-            for (int i = 0; i < 16; i++) {
-                drawArc(i * PConstants.PI / 8 + PConstants.PI / 64, branchesEntrantes[i * 2], branchesEntrantes[i * 2 + 1]);
-            }
-            p.stroke(182, 92, 96, 220);
-            p.fill(182, 92, 96, 220);
-            for (int i = 0; i < 16; i++) {
-                drawArc(i * PConstants.PI / 8 - PConstants.PI / 64, branchesSortantes[i * 2], branchesSortantes[i * 2 + 1]);
-            }
-            p.ellipseMode(PApplet.RADIUS);
-            //float rayon1 = PApplet.map(PApplet.log(PApplet.max(somEntrant, somSortant)), 0, PApplet.log(Application.session.getNodeMax()), 0, 15);
-            //float rayon2 = PApplet.map(PApplet.log(PApplet.min(somEntrant, somSortant)), 0, PApplet.log(Application.session.getNodeMax()), 0, 15);
-            float rayon1 = PApplet.map(PApplet.max(somEntrant, somSortant), 0, 200, 0, (float) (p.width / 46.6730));
-            //float rayon2 = PApplet.map(PApplet.min(somEntrant, somSortant), 0, 200, 0, (float) (p.width / 46.6730));
-            p.strokeWeight(2);
-            if (PApplet.max(somEntrant, somSortant) == somEntrant) {
-                p.fill(16, 91, 136);
-                p.stroke(10);
-                p.ellipse(xy[0], xy[1], rayon1, rayon1);
-                p.noStroke();
-                //p.fill(182, 92, 96);
-                //p.ellipse(xy[0], xy[1], rayon2, rayon2);
-            } else {
-                p.fill(182, 92, 96);
-                p.stroke(10);
-                p.ellipse(xy[0], xy[1], rayon1, rayon1);
-                p.noStroke();
-                //p.fill(16, 91, 136);
-                //p.ellipse(xy[0], xy[1], rayon2, rayon2);
-            }
-            p.ellipseMode(PApplet.CENTER);
-            p.fill(0);
+        xMoyEntrant = 0;
+        xMoySortant = 0;
+        yMoyEntrant = 0;
+        yMoySortant = 0;
 
-
+        p.stroke(16, 91, 136, 220);
+        p.fill(16, 91, 136, 220);
+        for (int i = 0; i < 16; i++) {
+            drawArc(i * PConstants.PI / 8 + PConstants.PI / 64, branchesEntrantes[i * 2], branchesEntrantes[i * 2 + 1], true);
         }
+        p.stroke(182, 92, 96, 220);
+        p.fill(182, 92, 96, 220);
+        for (int i = 0; i < 16; i++) {
+            drawArc(i * PConstants.PI / 8 - PConstants.PI / 64, branchesSortantes[i * 2], branchesSortantes[i * 2 + 1], false);
+        }
+        p.ellipseMode(PApplet.RADIUS);
+        //float rayon1 = PApplet.map(PApplet.log(PApplet.max(somEntrant, somSortant)), 0, PApplet.log(Application.session.getNodeMax()), 0, 15);
+        //float rayon2 = PApplet.map(PApplet.log(PApplet.min(somEntrant, somSortant)), 0, PApplet.log(Application.session.getNodeMax()), 0, 15);
+        float rayon1 = PApplet.map(PApplet.max(somEntrant, somSortant), 0, 200, 0, (float) (p.width / 46.6730));
+        //float rayon2 = PApplet.map(PApplet.min(somEntrant, somSortant), 0, 200, 0, (float) (p.width / 46.6730));
+        p.strokeWeight(2);
+        if (PApplet.max(somEntrant, somSortant) == somEntrant) {
+            p.fill(16, 91, 136);
+            p.stroke(10);
+            if (status.equals(statusNormal)) {
+                p.ellipse(xy[0], xy[1], rayon1, rayon1);
+            }
+            p.noStroke();
+            //p.fill(182, 92, 96);
+            //p.ellipse(xy[0], xy[1], rayon2, rayon2);
+        } else {
+            p.fill(182, 92, 96);
+            p.stroke(10);
+            if (status.equals(statusNormal)) {
+                p.ellipse(xy[0], xy[1], rayon1, rayon1);
+            }
+            p.noStroke();
+            //p.fill(16, 91, 136);
+            //p.ellipse(xy[0], xy[1], rayon2, rayon2);
+        }
+        p.ellipseMode(PApplet.CENTER);
+        p.fill(0);
+
+        p.strokeWeight(2);
+        p.stroke(0);
+        p.stroke(16, 91, 136);
+        p.line(xy[0], xy[1], xMoyEntrant / nEntrant + xy[0], yMoyEntrant / nEntrant + xy[1]);
+        p.stroke(182, 92, 96);
+        p.line(xy[0], xy[1], xMoySortant / nSortant + xy[0], yMoySortant / nSortant + xy[1]);
+        p.stroke(0);
+        p.stroke(16, 91, 136);
+        drawVectMoy(xy[0], xy[1], xMoyEntrant / nEntrant + xy[0], yMoyEntrant / nEntrant + xy[1]);
+        p.stroke(182, 92, 96);
+        drawVectMoy(xy[0], xy[1], xMoySortant / nSortant + xy[0], yMoySortant / nSortant + xy[1]);
+        p.stroke(0);
+
     }
 
-    public void drawArc(float angle, float poids, float rayon) {
+    public void drawVectMoy(float x1, float y1, float x2, float y2) {
+        PApplet p = Application.session.getPApplet();
+        float a = PApplet.atan2(y2 - y1, x2 - x1);
+        a = -a;
+        if (a < 0) {
+            a = 2 * PConstants.PI + a;
+        }
+        float d = PApplet.dist(x2, y2, x1, y1);
+        d = PApplet.map(d, 0, 10, 0, 100);
+        float x = d * PApplet.cos(-a);
+        float y = d * PApplet.sin(-a);
+
+        p.line(x1, y1, x + x1, y + y1);
+    }
+
+    public void drawArc(float angle, float poids, float rayon, boolean sens) {
         PApplet p = Application.session.getPApplet();
         Location l = new Location(xNative, yNative);
         float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
@@ -134,12 +187,22 @@ public class Oursin {
             //float x2 = Bibliotheque.meter2Pixel(rayon) * PApplet.cos(angle) + xy[0];
             //float y2 = Bibliotheque.meter2Pixel(rayon) * PApplet.sin(angle) + xy[1];
 
+            if (sens) {
+                xMoyEntrant = xMoyEntrant + Bibliotheque.meter2Pixel(rayon) * PApplet.cos(angle);
+                yMoyEntrant = yMoyEntrant + Bibliotheque.meter2Pixel(rayon) * PApplet.sin(angle);
+            } else {
+                xMoySortant = xMoySortant + Bibliotheque.meter2Pixel(rayon) * PApplet.cos(angle);
+                yMoySortant = yMoySortant + Bibliotheque.meter2Pixel(rayon) * PApplet.sin(angle);
+            }
+
             if (poids <= 0) {
                 p.strokeWeight((float) 0.5);
             } else {
                 p.strokeWeight(poids);
             }
-            p.line(xy[0], xy[1], x1, y1);
+            if (status.equals(statusNormal)) {
+                p.line(xy[0], xy[1], x1, y1);
+            }
         }
     }
 
@@ -178,8 +241,8 @@ public class Oursin {
     public String getStatus() {
         return status;
     }
-    
-    public void setStatus (String stat){
+
+    public void setStatus(String stat) {
         this.status = stat;
     }
 

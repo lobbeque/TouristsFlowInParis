@@ -13,6 +13,8 @@ import de.fhpotsdam.unfolding.geo.Location;
  */
 public class Node {
 
+    public static boolean hide = false;
+
     public static void afficheNode() {
         PApplet p = Application.session.getPApplet();
         float radius = 0;
@@ -32,17 +34,20 @@ public class Node {
             if (!Application.session.isBoxCoxNode()) {
                 radius = PApplet.map(value, Application.session.getNodeMin(), Application.session.getNodeMax(), 1, 15);
             } else {
-                radius = PApplet.map(Affichage.CoxBox(value,'n'), Affichage.CoxBox(Application.session.getNodeMin(),'n'), Affichage.CoxBox(Application.session.getNodeMax(),'n'), 1, 15);
+                radius = PApplet.map(Affichage.CoxBox(value, 'n'), Affichage.CoxBox(Application.session.getNodeMin(), 'n'), Affichage.CoxBox(Application.session.getNodeMax(), 'n'), 1, 15);
             }
             p.ellipseMode(PConstants.RADIUS);
             float zoom = Application.session.getMap().getZoom();
             if ((Application.session.isNode()) && (!Application.session.isChaud())) {
                 //p.fill(101, 157, 255, 100);
                 p.fill(182, 92, 96, 200);
-
-                p.ellipse(xy[0], xy[1], radius * PApplet.exp(zoom / 20000), radius * PApplet.exp(zoom / 20000));
+                if (!hide) {
+                    p.ellipse(xy[0], xy[1], radius * PApplet.exp(zoom / 20000), radius * PApplet.exp(zoom / 20000));
+                }
                 p.fill(178, 206, 255, 200);
+
                 p.ellipse(xy[0], xy[1], radius * PApplet.exp(zoom / 20000) / 5, radius * PApplet.exp(zoom / 20000) / 5);
+
             }
             if (Application.session.getClosestDist() != PConstants.MAX_FLOAT) {
                 p.fill(0);
@@ -68,5 +73,13 @@ public class Node {
             }
 
         }
+    }
+
+    public static boolean getHide() {
+        return hide;
+    }
+
+    public static void setHide(boolean a) {
+        hide = a;
     }
 }

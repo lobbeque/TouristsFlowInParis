@@ -17,10 +17,7 @@ public class Smooth {
     public static float[] buff1Score;
     public static boolean init;
     //public static boolean nonInit = false;
-    public static Location A;
-    public static Location B;
-    public static Location C;
-    public static Location D;
+
     public static float ca = 0;
 
     public static void initBuff1() {
