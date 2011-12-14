@@ -7,6 +7,7 @@ package fr.iscpif.touristflow;
 import de.fhpotsdam.unfolding.geo.Location;
 import processing.core.*;
 import static java.lang.System.*;
+
 /**
 
  * 
@@ -15,7 +16,9 @@ import static java.lang.System.*;
  * @author Quentin Lobbé
  */
 public class Bibliotheque {
+    
 
+    
     static void loadGraph() {
         Application.session.setTableauGephi(0, new Gephi());
         Application.session.getTableauGephi()[0].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-0-4.gexf");
@@ -69,8 +72,7 @@ public class Bibliotheque {
         float dScreen = dReel * distScreen / distReel;
         return dScreen;
     }
-    
-    
+
     // détermine l'edge de plus grande et plus courte taille
     static void distMinMax() {
         for (int k = 0; k < Temps.getHourCount(); k++) {
@@ -90,10 +92,10 @@ public class Bibliotheque {
 
     // à chaque changement d'interval, les données sont stockées de l'objet Gephi vers ces 2 matrices, les actions de filtrages et traitements se feront sur ces matrices
     static void remplirTableauImage(int index) {
-        
+
         int cpt = 0;
-        
-        for (int i = 0; i < Application.session.getNodePoids().length; i ++) {
+
+        for (int i = 0; i < Application.session.getNodePoids().length; i++) {
             Application.session.setNodePoids(i, 0);
         }
 
@@ -113,12 +115,15 @@ public class Bibliotheque {
 
 
 
+        
 
         for (int i = 0; i < Application.session.getTableauGephiCount(Application.session.getIndex(), 0); i++) {
             Application.session.setMatNode(0, i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 1, i));
             Application.session.setMatNode(1, i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 0, i));
             Application.session.setMatNode(2, i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 2, i));
             Application.session.setNodePoids(i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 2, i));
+            
+          
         }
         //TriRapide.trirapide(Application.session.getMatNode(), (int) Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount, 3);
 
@@ -126,6 +131,7 @@ public class Bibliotheque {
         Application.session.setEdgePoids(PApplet.sort(Application.session.getEdgePoids()));
 
         Application.session.setIndexBis(index);
+
     }
 
     // efface tous les oursins de la liste courante 
@@ -134,34 +140,34 @@ public class Bibliotheque {
             Application.session.getOursins().remove(0);
         }
     }
-    
+
     // créer tous les oursins dans la zone définie par l'écran  
     static void creerOursinsVue() {
         PApplet p = Application.session.getPApplet();
         int i = 1;
-            for (int j = 0; j < Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount; j++) {
-                Location l1 = new Location(Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
-                float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
-                if ((xy1[1] > 0) && (xy1[0] > 0) && (xy1[0] < p.width) && (xy1[1] < p.height) && (Application.session.getMatNode(2, j) > 30)) {
-                    out.println("Création Oursin " + i);
-                    Affichage.selectionOursins(xy1[0], xy1[1], Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
-                    i ++;
-                }
+        for (int j = 0; j < Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount; j++) {
+            Location l1 = new Location(Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
+            float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
+            if ((xy1[1] > 0) && (xy1[0] > 0) && (xy1[0] < p.width) && (xy1[1] < p.height) && (Application.session.getMatNode(2, j) > 30)) {
+                out.println("Création Oursin " + i);
+                Affichage.selectionOursins(xy1[0], xy1[1], Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
+                i++;
             }
-            out.println("Oursins calculés");
+        }
+        out.println("Oursins calculés");
     }
-    
+
     // affiche les oursins 
     static void showOursins() {
-        for (int i = 0; i < Application.session.getOursins().size(); i ++){
+        for (int i = 0; i < Application.session.getOursins().size(); i++) {
             Oursin oursin = (Oursin) Application.session.Oursins.get(i);
             oursin.setStatus("normal");
         }
     }
-    
+
     // cacher les oursins 
     static void hideOursins() {
-        for (int i = 0; i < Application.session.getOursins().size(); i ++){
+        for (int i = 0; i < Application.session.getOursins().size(); i++) {
             Oursin oursin = (Oursin) Application.session.Oursins.get(i);
             oursin.setStatus("selected");
         }
@@ -324,7 +330,7 @@ public class Bibliotheque {
 
     // Traitement des points cardinaux des Oursins
     static float[] traitementPointsCardinaux(int[] pointCardinal, float[] pointsCardinaux, int rang, int sens) {
-        
+
         float sum = 0;
         float moy = 0;
 
@@ -347,8 +353,8 @@ public class Bibliotheque {
             }
             // sinon on calcul la moyenne des distances et la somme des poids 
             moy = moy / pointCardinal.length;
-            moy = PApplet.map(Affichage.CoxBoxLambda(moy, (float)0.4), 0, Affichage.CoxBoxLambda(Application.session.getDistMax(), (float)0.4), 0, 1500);
-            sum = PApplet.map(PApplet.log(sum), 0, PApplet.log(Application.session.getEdgeMax()), (float)0.5, 15);
+            moy = PApplet.map(Affichage.CoxBoxLambda(moy, (float) 0.4), 0, Affichage.CoxBoxLambda(Application.session.getDistMax(), (float) 0.4), 0, 1500);
+            sum = PApplet.map(PApplet.log(sum), 0, PApplet.log(Application.session.getEdgeMax()), (float) 0.5, 15);
 
         }
         pointsCardinaux[rang] = sum;
@@ -407,4 +413,111 @@ public class Bibliotheque {
             Application.session.setNodeEffMax(max);
         }
     }
+
+    /*
+     * décommenter cette version de creerArrow et commmenter la suivante s'il on veut 
+     * à nouveau créer les arrow en direct depuis les oursins, sinon on travail sur des fichiers csv préparés
+     */
+    
+    /*public static void creerArrow() {
+        Bibliotheque.creerOursinsVue();
+        for (int z = 0; z < Application.session.getOursins().size(); z++) {
+            Oursin oursin = (Oursin) Application.session.getOursins().get(z);
+            oursin.draw();
+        }
+        Bibliotheque.effacerOursins();
+    }*/
+    
+    public static void creerArrow() {
+        PApplet p = Application.session.getPApplet();
+        
+        
+        
+        String[] lines = p.loadStrings(Application.session.getReferencesArrows(Application.session.getIndex()));
+        for (int i = 1; i < lines.length; i++) {
+            
+            String[] mots = PApplet.split(lines[i], ';');
+            
+            Arrow a = new Arrow(Float.parseFloat(mots[0]),Float.parseFloat(mots[1]), Float.parseFloat(mots[2]), Float.parseFloat(mots[3]), Float.parseFloat(mots[4]), Boolean.parseBoolean(mots[5]));
+            out.println("oursin " + i + " crée" );    
+            
+            if ( Boolean.parseBoolean(mots[5]) ){
+                Application.session.arrowsIN.add(a);
+            } else {
+                Application.session.arrowsOUT.add(a);
+            } 
+        }
+    }
+
+    public static void supprimerArrow() {
+        while (Application.session.arrowsIN.size() > 0) {
+            Application.session.arrowsIN.remove(0);
+        }
+        while (Application.session.arrowsOUT.size() > 0) {
+            Application.session.arrowsOUT.remove(0);
+        }
+    }
+
+    // extraire les données du csv nb_roam_bts_moy
+    public static float[][] readData() {
+        PApplet p = Application.session.getPApplet();
+        String[] lines = p.loadStrings("./Ressources/nb_roam_bts_moy.csv");
+        int count = lines.length;
+        float[][] mat = new float[27][count];
+        for (int i = 1; i < lines.length; i++) {
+            String[] mots = PApplet.split(lines[i], ';');
+            for (int j = 0; j < mots.length; j++) {
+                mat[j][i - 1] = Float.parseFloat(mots[j]);
+            }
+        }
+        return mat;
+    }
+
+    // stocker les données des Arrows dans un csv 
+    public static void writeArrowData() {
+        PApplet p = Application.session.getPApplet();
+        String[] lines = {};
+        lines = PApplet.append(lines,"xSource ; ySource ; angle ; xTarget ; yTarget ; sens");
+        for (int i = 0; i < Application.session.arrowsIN.size(); i++) {
+            Arrow a = (Arrow) Application.session.arrowsIN.get(i);
+
+            String words = Float.toString(a.getX()) + ';' + Float.toString(a.getY()) + ';' + Float.toString(a.getAngle()) + ';' + Float.toString(a.get_X()) + ';' + Float.toString(a.get_Y()) + ';' + Boolean.toString(a.getSens());
+            lines = PApplet.append(lines, words);
+        }
+        for (int i = 0; i < Application.session.arrowsOUT.size(); i++) {
+            Arrow a = (Arrow) Application.session.arrowsOUT.get(i);
+
+            String words = Float.toString(a.getX()) + ';' + Float.toString(a.getY()) + ';' + Float.toString(a.getAngle()) + ';' + Float.toString(a.get_X()) + ';' + Float.toString(a.get_Y()) + ';' + Boolean.toString(a.getSens());
+            lines = PApplet.append(lines, words);
+
+        }
+        
+        p.saveStrings("Anisotropie_" + Temps.getDateText() + ".csv", lines);
+    }
+    
+    public static float[][] getGrille (float n){
+        PApplet p = Application.session.getPApplet();
+        Location l1 = Application.session.getMap().getLocationFromScreenPosition(0,0);
+        Location l2 = Application.session.getMap().getLocationFromScreenPosition(n,n);
+        float pas_X = l1.getLat() - l2.getLat();
+        float pas_Y = l2.getLon()- l1.getLon();
+        out.println(pas_X);
+        out.println(pas_Y);
+        int cpt = 0;
+        float[][] mat = new float[2][20000];
+        for ( float i = (float)49.066; i > 48.511; i = (float)(i - pas_X) ){
+           for ( float j = (float)2.893; j > 1.979; j = (float)(j - pas_Y) ){ 
+               mat[0][cpt] = i;
+               mat[1][cpt] = j;
+               cpt ++;
+           }
+        }
+        out.println("done");
+        out.println(cpt);
+        return mat;
+    }
+
+
+    
+    
 }

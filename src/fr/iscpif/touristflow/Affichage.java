@@ -6,21 +6,33 @@ package fr.iscpif.touristflow;
 
 import processing.core.*;
 import de.fhpotsdam.unfolding.geo.Location;
+import static java.lang.System.*;
 
 /**
  *
  * @author Quentin Lobbé
  */
 public class Affichage {
-    
+
+    public static int temp;
+    static boolean drawArrow = false;
+
+    public static boolean isDrawArrow() {
+        return drawArrow;
+    }
+
+    public static void setDrawArrow(boolean drawArrow) {
+        Affichage.drawArrow = drawArrow;
+    }
+
     // fonction d'affichage en mode selection
-    public static void selection(float x, float y, float radius, int i) {  
+    public static void selection(float x, float y, float radius, int i) {
         PApplet p = Application.session.getPApplet();
-        
+
         // rectangle de base
         p.fill(190, 201, 186, 100);
         p.rect(0, 0, p.width, p.height);
-        
+
         // textes légende
         p.textAlign(PConstants.LEFT, PConstants.TOP);
         p.stroke(153);
@@ -29,7 +41,7 @@ public class Affichage {
         p.fill(182, 92, 96);
         p.text("Arc Sortant", p.width / 56, (float) (p.height / 2.06));
         p.textAlign(PConstants.CENTER);
-        
+
         // dessiner l'ensemble [noeud + arcs sortants + arcs entrants]
         for (int k = 0; k < Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount; k++) {
             Location l1 = new Location(Application.session.getMatEdge(0, k), Application.session.getMatEdge(1, k));
@@ -52,7 +64,7 @@ public class Affichage {
                 }
             }
         }
-        
+
         // petit cercle vert 
         p.noStroke();
         p.noFill();
@@ -62,7 +74,7 @@ public class Affichage {
     }
 
     // routine lorsque l'on clique sur un noeud pour le transformer en oursin
-    public static void selectionOursins(float x, float y, float xN, float yN) {  
+    public static void selectionOursins(float x, float y, float xN, float yN) {
         PApplet p = Application.session.getPApplet();
         p.textAlign(PConstants.LEFT, PConstants.TOP);
         p.stroke(153);
@@ -76,7 +88,7 @@ public class Affichage {
             float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
             float xy2[] = Application.session.getMap().getScreenPositionFromLocation(l2);
             if (Application.session.getMatEdge(4, k) > 1) {
-                
+
                 // ranger les infos de l'arc dans la matrice correspondant à son sens ( source, cible, poids, angle )
                 if ((x == xy1[0]) && (y == xy1[1])) {
 
@@ -84,7 +96,7 @@ public class Affichage {
                     Application.session.setSortant(1, sortantcpt, xy1[1]);
                     Application.session.setSortant(2, sortantcpt, xy2[0]);
                     Application.session.setSortant(3, sortantcpt, xy2[1]);
-                    Application.session.setSortant(4, sortantcpt, (float)Application.session.getMatEdge(4, k));
+                    Application.session.setSortant(4, sortantcpt, (float) Application.session.getMatEdge(4, k));
                     Application.session.setSortant(5, sortantcpt, PApplet.atan2(xy2[0] - x, xy2[1] - y)); // angle par rapport à un axe vertical passant par l'horigine des points 
                     sortantcpt++;
 
@@ -95,7 +107,7 @@ public class Affichage {
                     Application.session.setEntrant(1, entrantcpt, xy1[1]);
                     Application.session.setEntrant(2, entrantcpt, xy2[0]);
                     Application.session.setEntrant(3, entrantcpt, xy2[1]);
-                    Application.session.setEntrant(4, entrantcpt, (float)Application.session.getMatEdge(4, k));
+                    Application.session.setEntrant(4, entrantcpt, (float) Application.session.getMatEdge(4, k));
                     Application.session.setEntrant(5, entrantcpt, PApplet.atan2(xy1[0] - x, xy1[1] - y)); // angle par rapport à un axe vertical passant par l'horigine des points 
                     entrantcpt++;
 
@@ -115,7 +127,7 @@ public class Affichage {
 
         p.noStroke();
         p.noFill();
-        
+
         // on ne recalcule pas les oursins déjà calculés : on change leur statut ( visible ou non )
         boolean deja = false;
         for (int z = 0; z < Application.session.getOursins().size(); z++) {
@@ -130,8 +142,7 @@ public class Affichage {
             Application.session.getOursins().add(new Oursin(pointsCardinauxEntrant, pointsCardinauxSortant, x, y, xN, yN));
         }
     }
-    
-    
+
     public static void afficheEchelle() {
         PApplet p = Application.session.getPApplet();
         p.fill(0);
@@ -150,7 +161,7 @@ public class Affichage {
     // affiche la légende de la carte lissée 
     public static void afficheLegendeLissee() {
         PApplet p = Application.session.getPApplet();
-        
+
         // coordo du rectangle de base
         float x = p.width / 56;
         float y = p.height - 150;
@@ -165,14 +176,14 @@ public class Affichage {
             }
             // fonction de lissage principale 
             Smooth.lissage();
-            
+
             //rectangle de base 
             p.textAlign(PConstants.LEFT, PConstants.TOP);
             p.strokeWeight(2);
             p.stroke(10, 150);
             p.fill(190, 201, 186, 100);
             p.rect(x, y, l, h);
-            
+
             // dégradé
             drawDegrade(x + 25, y + 75, l - 200, 20);
             p.strokeWeight(2);
@@ -181,7 +192,7 @@ public class Affichage {
             p.fill(0);
             p.text('-', x + 5, y + 76);
             p.text('+', x + 155, y + 76);
-            
+
             // curseur facteur de puissance et rayon de lissage  
             if (!Application.session.isBiweight()) {
                 p.text("facteur de puissance", x + 7, y + 12);
@@ -195,10 +206,10 @@ public class Affichage {
                 Application.session.getCurseur2().draw();
                 Application.session.setP(Application.session.getCurseur2().getCurs());
             }
-            
-            
+
+
             Smooth.miseAJourCarteLissee();
-            
+
             // titre de la visualisation 
             PFont font2 = p.createFont("DejaVuSans-ExtraLight-", 15);
             p.textFont(font2);
@@ -212,11 +223,7 @@ public class Affichage {
                 p.text("DENSITE D'OCCUPATION DES BTS ", p.width / 2, (float) (p.height / 16.317));
                 p.text("Méthode de SHEPARD", p.width / 2, (float) (p.height / 12.238));
             }
-        } else {
-            int c = p.color(16, 91, 99);
-            p.fill(c, 100);
-            p.rect(0, 0, p.width, p.height);
-        }
+        } 
     }
 
     // dessine le dégradé de la carte lissée, c'est une série de petits batons côte à côte
@@ -256,26 +263,26 @@ public class Affichage {
     // affiche la légende des noeuds et arcs
     public static void afficheLegendeNodeEdge() {
         PApplet p = Application.session.getPApplet();
-        
+
         // coordonnées du rectangle de base
         float x = p.width / 70;
         float y = p.height - 320;
         float h = 100;
         float l = 175;
-        
+
         // rectangle de base
         p.strokeWeight(2);
         p.stroke(10, 150);
         p.fill(190, 201, 186, 100);
-        p.rect(x, y, l, h); 
-        
+        p.rect(x, y, l, h);
+
         // rectangles d'affichage des distributions 
         p.fill(182, 92, 96);
         p.rect(x, y, (float) (15), (float) (15));
         p.fill(16, 91, 136);
         p.rect((float) (x + l - 15), (float) (y + h - 15), (float) (15), (float) (15));
         p.fill(190, 201, 186, 100);
-        
+
         // légende
         p.line(x + l / 2, y + 10, x + l / 2, y + 90);
         p.stroke(255);
@@ -286,7 +293,7 @@ public class Affichage {
         p.fill(16, 91, 136);
         p.rect(x + 115, y + 20, 40, 10);
         p.rect(x + 115, y + 65, 40, 1);
-        
+
         // titre de la visualisation suivant le cas
         p.fill(0);
         p.textAlign(PConstants.CENTER);
@@ -312,7 +319,7 @@ public class Affichage {
         p.fill(0);
         PFont font1 = p.createFont("DejaVuSans-ExtraLight-", 15);
         p.textFont(font1);
-        
+
         // afficher le min et max dans la légende suivant le cas 
         if ((!Application.session.isBoxCox()) && (!Application.session.isLog())) {
             p.text((int) Application.session.getEdgeMax(), x + 135, y + 50);
@@ -333,7 +340,7 @@ public class Affichage {
             p.text((int) PApplet.log(Application.session.getEdgeMax()), x + 135, y + 50);
             p.text(0, x + 135, y + 85);
         }
-        
+
         if ((!Application.session.isBoxCoxNode())) {
             p.text((int) Application.session.getNodeMax(), x + 35, y + 60);
             p.text((int) Application.session.getNodeMin(), x + 35, y + 90);
@@ -346,7 +353,7 @@ public class Affichage {
                 p.text(PApplet.nf(CoxBox(Application.session.getNodeMax(), 'n'), 2, 2), x + 35, y + 60);
             } else {
                 p.text(PApplet.nf(CoxBox(Application.session.getNodeMax(), 'n'), 1, 3), x + 35, y + 60);
-            } 
+            }
             p.text(0, x + 35, y + 90);
         }
 
@@ -367,20 +374,20 @@ public class Affichage {
     // affiche légende en mode heat map  
     public static void afficheLegendeHeatMap() {
         PApplet p = Application.session.getPApplet();
-        
+
         // coordonnées du rectangle de base 
         float x = p.width / 70;
         float y = p.height - 320;
         float h = 100;
         float l = 175;
-        
+
         // rectangle de base 
         p.strokeWeight(2);
         p.stroke(10, 150);
         p.fill(190, 201, 186, 100);
-        p.rect(x, y, l, h); 
+        p.rect(x, y, l, h);
         p.noFill();
-        
+
         // dégradé 
         int from = p.color(189, 73, 50);
         int to = p.color(255);
@@ -584,7 +591,7 @@ public class Affichage {
         }
 
     }
-    
+
     // dessine  un baton dans le barchart 
     public static void drawStick(float[] temp, float X, float Y, float l, float h) {
         PApplet p = Application.session.getPApplet();
@@ -629,28 +636,28 @@ public class Affichage {
     // affiche la légende en mode boxcox
     public static void afficheBoxCox(float x, float y, float l, float h) {
         PApplet p = Application.session.getPApplet();
-        
+
         // box cox pour les edges
         if (Application.session.isBoxCox()) {
-            
+
             //rectangle de base 
             p.strokeWeight(2);
             p.stroke(10, 150);
             p.fill(224);
             p.rect(x, y - h - 50, l, 50);
             p.fill(10);
-            
+
             // textes et rectangle clicable 
             PFont font2 = p.createFont("DejaVuSans-ExtraLight-", (float) 12);
             p.textFont(font2);
             p.text("lambda :", x + 30, y - h - 50 + 14);
             p.fill(16, 91, 136);
             p.rect(x + l - 15, y - h - 15, 15, 15);
-            
+
             // curseur 
             Application.session.getCurseur3().draw();
             Application.session.setLambdaE(Application.session.getCurseur3().getCurs());
-            
+
             // barchart
             p.stroke(10, 150);
             if (Application.session.isEdgeBoxCoxDistri()) {
@@ -664,16 +671,16 @@ public class Affichage {
                 distributionCoxBox(x + 30, y - 155 + h - 50, l - 35, h - 50);
             }
         }
-        
+
         // box cox pour les nodes    
         if (Application.session.isBoxCoxNode()) {
-            
+
             //rectangle  du curseur box cox edge
             p.strokeWeight(2);
             p.stroke(10, 150);
             p.fill(224);
             p.rect(x, p.height - 320, l, 50);
-            
+
             // textes et rectangles clicables 
             p.fill(10);
             PFont font2 = p.createFont("DejaVuSans-ExtraLight-", (float) 12);
@@ -681,11 +688,11 @@ public class Affichage {
             p.text("lambda :", x + 30, p.height - 320 + 14);
             p.fill(182, 92, 96);
             p.rect(x + l - 15, p.height - 320, 15, 15);
-            
+
             // curseur 
             Application.session.getCurseur4().draw();
             Application.session.setLambdaN(Application.session.getCurseur4().getCurs());
-            
+
             // barchart
             p.stroke(10, 150);
             if (Application.session.isNodeBoxCoxDistri()) {
@@ -866,11 +873,11 @@ public class Affichage {
         }
         return ret;
     }
-    
+
     // calcule de la fonction coxbox en rentrant un lambda donné 
     public static float CoxBoxLambda(float y, float lambda) {
         // T(Y) = ((Y^lambda)-1)/lambda si lambda != 0
-        
+
         float ret = 0;
         if (lambda == 0) {
             ret = PApplet.log(y);
@@ -879,67 +886,154 @@ public class Affichage {
         }
         return ret;
     }
-    
+
     // affichage de la légende du clustering 
     public static void afficheCluster() {
         PApplet p = Application.session.getPApplet();
-        
+
         // coordonnées du rectangle
         float x = p.width - 250;
         float y = p.height / 18;
         float l = 220;
         float h = 50;
-        
+
         p.stroke(10, 150);
         p.fill(190, 201, 186, 100);
-        
+
         p.strokeWeight(1);
         // show
-        p.rect(x + 20, y - 15, l/2 - 20, 15);
+        p.rect(x + 20, y - 15, l / 2 - 20, 15);
         // hide
-        p.rect(x + l/2, y - 15, l/2 - 20, 15);
+        p.rect(x + l / 2, y - 15, l / 2 - 20, 15);
         // create
-        p.rect(x + 20, y - 30, l/2 - 20, 15);
+        p.rect(x + 20, y - 30, l / 2 - 20, 15);
         // delete
-        p.rect(x + l/2, y - 30, l/2 - 20, 15);
-        
-        
+        p.rect(x + l / 2, y - 30, l / 2 - 20, 15);
+
+
         p.strokeWeight(2);
         // rectangle de base 
         p.rect(x, y, l, h);
-        
-        
-        
-        
+
+
+
+
         // boutons selections
-        p.fill(138,184,51);
+        p.fill(138, 184, 51);
         p.triangle(x + 95, y + 20, x + 95, y + 44, x + 120, y + 32);
-        
+
         p.fill(16, 91, 136);
         p.ellipse(x + 150, y + 30, 12, 12);
-        
+
         p.fill(182, 92, 96);
         p.rectMode(PConstants.CENTER);
         p.rect(x + 195, y + 30, 24, 24);
         p.rectMode(PConstants.CORNER);
-        
+
         // textes
-        p.fill(0); 
+        p.fill(0);
         p.text("clusters :", x + 35, y + 15);
         p.textMode(PConstants.CENTER);
-        p.text("run", x + 90 + 25/2, y + 15);
+        p.text("run", x + 90 + 25 / 2, y + 15);
         p.text("show", x + 150, y + 15);
         p.text("clean", x + 195, y + 15);
-        p.text("show", x + 20 + l/4 - 10, y - 3 );
-        p.text("hide", x + l/2 + l/4 - 10, y - 3 );
-        p.text("create", x + 20 + l/4 - 10, y - 17 );
-        p.text("delete", x + l/2 + l/4 - 10, y - 17 );
-        
+        p.text("show", x + 20 + l / 4 - 10, y - 3);
+        p.text("hide", x + l / 2 + l / 4 - 10, y - 3);
+        p.text("create", x + 20 + l / 4 - 10, y - 17);
+        p.text("delete", x + l / 2 + l / 4 - 10, y - 17);
+
         // curseur
         Application.session.getCurseur5().drawStep();
-        KMeans.setN((int)Application.session.getCurseur5().getCurs());
+        KMeans.setN((int) Application.session.getCurseur5().getCurs());
         PFont font1 = p.createFont("DejaVuSans-ExtraLight-", 12);
         p.textFont(font1);
     }
-    
+
+    public static void afficheArrow() {
+        PApplet p = Application.session.getPApplet();
+        
+        float zoom = Application.session.getMap().getZoom();
+        if ((temp != zoom) && (zoom <= 8192) && (drawArrow)) {
+            
+            Smooth.setGrille(Bibliotheque.getGrille(40));
+            Smooth.initBuff1();
+            temp = (int)zoom;
+        }
+        
+        
+        
+        if (drawArrow) {
+            
+            Smooth.lissageArrow();
+        } else {
+            for (int i = 0; i < Application.session.arrowsIN.size(); i++) {
+                Arrow a = (Arrow) Application.session.arrowsIN.get(i);
+
+                    a.update();
+
+            }
+            for (int i = 0; i < Application.session.arrowsOUT.size(); i++) {
+                Arrow a = (Arrow) Application.session.arrowsOUT.get(i);
+
+                    a.update();
+
+            }
+        }
+        
+       // p.strokeWeight(2);
+        
+        // coordonnées du rectangle de base 
+        float x = p.width / 70;
+        float y = p.height - 500;
+        float h = 300;
+        float l = 120;
+
+        p.stroke(10, 150);
+        p.stroke(10, 150);
+        p.fill(190, 201, 186, 100);
+        // rectangle de base 
+        p.rect(x, y, l, h);
+
+        p.line(x, y + h / 3, x + l, y + h / 3);
+        p.line(x, y + 2 * h / 3 + 10, x + l, y + 2 * h / 3 + 10);
+
+        p.line(x, y + 2 * h / 3 + h / 9 + 10, x + l, y + 2 * h / 3 + h / 9 + 10);
+        p.line(x, y + 2 * h / 3 + 2 * h / 9 + 5, x + l, y + 2 * h / 3 + 2 * h / 9 + 5);
+
+        p.fill(0);
+        
+
+        
+        
+        p.text("sens :", x + 22, y + 15);
+        p.text("entrant", x + l / 2, y + h / 9);
+        p.text("sortant", x + l / 2, y + 2 * h / 9);
+
+        p.text("anisotropie :", x + 44, y + h / 3 + 15);
+        p.text("taille :", x + l / 4, y + h / 3 + 32);
+        p.text("rayon :", x + l / 4, y + h / 3 + 75);
+
+        p.text("champs", x + l / 2, y + 2 * h / 3 + 30);
+        p.text("créer", x + l / 2, y + 2 * h / 3 + 60);
+        p.text("supprimer", x + l / 2, y + 2 * h / 3 + 90);
+        
+        Arrow A1 = new Arrow(x + l / 2 + l / 4 - 10, y + 2 * h / 9 + h / 18 - 5, PConstants.PI, (float)2.5, true);
+        Arrow A2 = new Arrow(x + l / 2 - l / 4 + 10, y + h / 9 + h / 18 - 5, PConstants.PI, (float)2.5, false);
+        
+        A1.updateLightBis();
+        A2.updateLightBis();
+
+        p.noStroke();
+        
+        Application.session.getCurseur7().drawStep();
+        Application.session.setDmax(Application.session.getCurseur7().getCurs());
+        Application.session.getCurseur6().drawStep();
+        Application.session.setArrowsMax(Application.session.getCurseur6().getCurs());
+
+    }
+
+    public static void setTemp(int temp) {
+        Affichage.temp = temp;
+    }
+
 }

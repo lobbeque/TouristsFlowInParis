@@ -26,6 +26,11 @@ public class Session {
     // pour les oursins
     java.util.ArrayList Oursins = new java.util.ArrayList();
     
+    // pour les arrows
+    ArrayList arrowsIN = new ArrayList();
+    ArrayList arrowsOUT = new ArrayList();
+    float arrowsMax = 5;
+    
     int nbMaxEnfants = 30; 
 
     // pour le heatmap
@@ -52,6 +57,13 @@ public class Session {
     Stick curseur3;
     Stick curseur4;
     Stick curseur5;
+    
+    // pour tester le champ de flèches
+    Stick curseur6;
+    Stick curseur7;
+    
+    // pour les arraws
+    String[] referencesArrows;
     
     // pour le box cox 
     float lambdaE = 1;
@@ -101,6 +113,7 @@ public class Session {
     boolean oursin = false;
     boolean draged = false;
     boolean kmeansDraw = false;
+    boolean arrow = false;
 
     // Définition de constantes pour le calcul des Min et Max 
     float nodeMin = PConstants.MAX_FLOAT;
@@ -119,7 +132,20 @@ public class Session {
     float nodeEffMax =  PConstants.MIN_FLOAT;
     float edgeEffMax =  PConstants.MIN_FLOAT;
     
+    float[][] NBRoamBTSMoy;
 
+    public float[][] getNBRoamBTSMoy() {
+        return NBRoamBTSMoy;
+    }
+    
+    public float getNBRoamBTSMoy( int i, int j ) {
+        return NBRoamBTSMoy[i][j];
+    }
+
+    public void setNBRoamBTSMoy(float[][] NBRoamBTSMoy) {
+        this.NBRoamBTSMoy = NBRoamBTSMoy;
+    }
+    
     public void setPApplet(PApplet p) {
         this.p = p;
     }
@@ -758,4 +784,49 @@ public class Session {
     public void setKmeansDraw(boolean kmeansDraw) {
         this.kmeansDraw = kmeansDraw;
     }
+
+    public boolean isArrow() {
+        return arrow;
+    }
+
+    public void setArrow(boolean arrow) {
+        this.arrow = arrow;
+    }
+
+    public Stick getCurseur6() {
+        return curseur6;
+    }
+
+    public Stick getCurseur7() {
+        return curseur7;
+    }
+
+    public void setCurseur6(Stick curseur6) {
+        this.curseur6 = curseur6;
+    }
+
+    public void setCurseur7(Stick curseur7) {
+        this.curseur7 = curseur7;
+    }
+
+    public float getArrowsMax() {
+        return arrowsMax;
+    }
+
+    public void setArrowsMax(float arrowsMax) {
+        this.arrowsMax = arrowsMax;
+    }
+
+
+    public String getReferencesArrows( int i ) {
+        return referencesArrows[i];
+    }
+
+    public void setReferencesArrows(String[] referencesArrows) {
+        this.referencesArrows = referencesArrows;
+    }
+    
+    public void setReferencesArrows(int i, String str) {
+        this.referencesArrows[i] = str;
+    }  
 }

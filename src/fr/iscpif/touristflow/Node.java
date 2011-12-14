@@ -12,6 +12,8 @@ import de.fhpotsdam.unfolding.geo.Location;
  * @author Quentin lobbé
  */
 public class Node {
+    
+    
 
     public static boolean hide = false;
 

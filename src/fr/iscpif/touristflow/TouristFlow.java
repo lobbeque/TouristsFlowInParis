@@ -75,7 +75,7 @@ public class TouristFlow extends PApplet {
         // définition des boutons du menu et des dépendences entre eux 
         String[] arr = new String[]{"Noeud", "Arc", "Lissée"};
         Application.session.getBoutons().add(new BoutonMenu(50, xMap, yMap, "Carte", true, arr));
-        String[] arr1 = new String[]{"Box Cox Noeud", "Select", "HeatMap"};
+        String[] arr1 = new String[]{"Box Cox Noeud", "Select", "HeatMap", "Oursins"};
         String[] arr4 = new String[]{"Oursins"};
         Application.session.getBoutons().add(new BoutonMenu(30, xMap + 70, yMap, "Noeud", arr1));
         Application.session.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap - 20, "Box Cox Noeud"));
@@ -86,11 +86,12 @@ public class TouristFlow extends PApplet {
         Application.session.getBoutons().add(new BoutonMenu(20, xMap + 50, yMap + 135, "Box Cox"));
         Application.session.getBoutons().add(new BoutonMenu(20, xMap, yMap + 135, "Exp(1/x)"));
         Application.session.getBoutons().add(new BoutonMenu(20, xMap - 50, yMap + 135, "Log"));
-        String[] arr3 = new String[]{"Biweight", "Shepard"};
+        String[] arr3 = new String[]{"Biweight", "Shepard", "Arrow"};
         Application.session.getBoutons().add(new BoutonMenu(30, xMap + 70, yMap + 70, "Lissée", arr3));
         Application.session.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap + 135, "Biweight"));
         Application.session.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap + 70, "Shepard"));
-        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 230, yMap, "Oursins"));
+        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 260, yMap, "Oursins"));
+        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 70, yMap + 135, "Arrow"));
 
         Bibliotheque.miseAJourMatriceDistance(Application.session.getIndex());
 
@@ -111,7 +112,21 @@ public class TouristFlow extends PApplet {
         Application.session.setCurseur4(new Stick(10, (float) (width / 56 + 175 + 30), (float) (height - 295), Application.session.getLambdaE(), 115, (float) -1.5, (float) 1.5, (float) 5 / 6));
         // création du curseur pour le kmeans
         Application.session.setCurseur5(new Stick(10, (float) (width - 250 + 10), (float) (height / 18 + 28), KMeans.getN(), 60, (float) 1, (float) 5, (float) 3 / 5));
+        Application.session.setCurseur6(new Stick(10, (float) (width / 70 + 10), (float) (height - 500 + 145), Application.session.getArrowsMax(), 100, (float) 0, (float) 20, (float) 1 / 4));
+        Application.session.setCurseur7(new Stick(10, (float) (width / 70 + 10), (float) (height - 500 + 187), Application.session.getDmax(), 100, (float) 0, (float) 1500, (float) 1 / 3));
 
+        Application.session.setNBRoamBTSMoy(Bibliotheque.readData());
+
+        // charger les liens vers les csv contenant les info sur les flêches d'anisotropie
+        Application.session.setReferencesArrows(new String[6]);
+        Application.session.setReferencesArrows(0, "./Ressources/Anisotropie_31 March 2009 00h.csv");
+        Application.session.setReferencesArrows(1, "./Ressources/Anisotropie_31 March 2009 04h.csv");
+        Application.session.setReferencesArrows(2, "./Ressources/Anisotropie_31 March 2009 08h.csv");
+        Application.session.setReferencesArrows(3, "./Ressources/Anisotropie_31 March 2009 12h.csv");
+        Application.session.setReferencesArrows(4, "./Ressources/Anisotropie_31 March 2009 16h.csv");
+        Application.session.setReferencesArrows(5, "./Ressources/Anisotropie_31 March 2009 20h.csv");
+
+        Affichage.setTemp(0);
     }
 
     @Override
@@ -131,6 +146,18 @@ public class TouristFlow extends PApplet {
             Bibliotheque.miseAJourMatriceDistance(Application.session.getIndex());
 
             Bibliotheque.miseAJourOursins();
+
+            if (Application.session.isArrow()) {
+                if ((Application.session.arrowsIN.size() > 0) || (Application.session.arrowsOUT.size() > 0)) {
+                    
+                    Bibliotheque.supprimerArrow();
+                    Bibliotheque.creerArrow();
+                }
+                if ( Affichage.isDrawArrow() ){
+                    
+                    Smooth.initBuff1();
+                }
+            }
 
             if (Application.session.isHeat()) {
                 Smooth.initBuff1();
@@ -172,7 +199,7 @@ public class TouristFlow extends PApplet {
         noStroke();
 
         // affiche la légende en mode edge ou node 
-        if ((!Application.session.isHeat()) && (!Application.session.isChaud())) {
+        if ((!Application.session.isHeat()) && (!Application.session.isChaud()) && (!Application.session.isArrow())) {
             Affichage.afficheLegendeNodeEdge();
         }
 
@@ -212,7 +239,20 @@ public class TouristFlow extends PApplet {
         if (Application.session.isKmeansDraw()) {
             KMeans.drawCluster();
         }
+
+        if (Application.session.isArrow()) {
+            Affichage.afficheArrow();
+        }
+
+
+
+
+        
+
+        //Location location = Application.session.getMap().getLocationFromScreenPosition(mouseX, mouseY);
+        //text(location.toString(), mouseX, mouseY);
         fill(255);
+
     }
     // compteur pour les captures
     int compteurImage = 0;
@@ -221,18 +261,9 @@ public class TouristFlow extends PApplet {
     public void keyReleased() {
         // capture écran
         if (key == 's' || key == 'S') {
-            save("roaming_2009_03_29-custom-12-16-num_" + compteurImage + ".png");
+            save("roaming_2009_03_29-custom-num_" + compteurImage + ".png");
             compteurImage++;
         }
-
-        if (key == 'o') {
-            if (Node.getHide()) {
-                Node.setHide(false);
-            } else {
-                Node.setHide(true);
-            }
-        }
-
     }
 
     @Override
@@ -323,6 +354,26 @@ public class TouristFlow extends PApplet {
             }
         }
 
+        // pour les Arrows
+        if (Application.session.isArrow()) {
+            if ((width / 70 <= mouseX) && (width / 70 + 120 >= mouseX) && (height - 300 + 100 / 3 + 10 <= mouseY) && (height - 300 + 200 / 3 + 5 >= mouseY)) {
+                Bibliotheque.creerArrow();
+            } else if ((width / 70 <= mouseX) && (width / 70 + 120 >= mouseX) && (height - 300 + 200 / 3 + 5 <= mouseY) && (height - 200 >= mouseY)) {
+                Bibliotheque.supprimerArrow();
+            } else if ((width / 70 <= mouseX) && (width / 70 + 120 >= mouseX) && (height - 300 + 10 <= mouseY) && (height - 300 + 100 / 3 + 10 >= mouseY)) {
+                if (Affichage.isDrawArrow()) {
+                    Affichage.setDrawArrow(false);
+                } else {
+                    if (( Application.session.getMap().getZoom() <= 8192 ) && ( Application.session.arrowsIN.size() > 0 ) ) {
+                        Affichage.setDrawArrow(true);
+                    } else {
+                        out.println("il faut dézoomer ou appuyer sur créer avant d'afficher le champ");
+                    }
+                    
+                }
+            }
+        }
+
         // zones d'activation des boutons du menu cluster
         float dist7 = dist((float) (width - 250 + 107), (float) (height / 18 + 32), mouseX, mouseY);
         float dist8 = dist((float) (width - 250 + 150), (float) (height / 18 + 30), mouseX, mouseY);
@@ -371,5 +422,7 @@ public class TouristFlow extends PApplet {
             Application.session.getCurseur5().dragged(mouseX, mouseY);
         }
         Application.session.setDraged(false);
+        Application.session.getCurseur6().dragged(mouseX, mouseY);
+        Application.session.getCurseur7().dragged(mouseX, mouseY);
     }
 }

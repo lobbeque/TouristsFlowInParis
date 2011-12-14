@@ -17,6 +17,8 @@ import processing.core.*;
 public class Temps {
     
     // Nous ne calculerons les modifs que sur une journée
+    
+    public static String DateText = "";
 
     public static String firstHourStamp = "2009033100";// année - mois - jour - heure début interval
     public static String lastHourStamp = "2009033124";
@@ -84,6 +86,7 @@ public class Temps {
           p.line(x, 0, x, (float)(p.height/75.307));
           p.textAlign(PConstants.CENTER, PConstants.TOP);
           p.text(hourPretty[hourIndex] + "h", p.width/2, (float)(p.height/65.266));
+          DateText = hourPretty[hourIndex] + "h";
         } else {
           // noircir les dates selectionnables ( pour une générlisation du modèle )
           if ((i >= minHourIndex) && (i <= maxHourIndex)) {
@@ -115,5 +118,9 @@ public class Temps {
     
     public static int getHourCount() {
         return hourCount;
+    }
+    
+    public static String getDateText() {
+        return DateText;
     }
 }

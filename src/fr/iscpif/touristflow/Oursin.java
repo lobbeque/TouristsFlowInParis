@@ -6,6 +6,7 @@ package fr.iscpif.touristflow;
 
 import static java.lang.System.*;
 import de.fhpotsdam.unfolding.geo.Location;
+import java.util.ArrayList;
 import processing.core.*;
 
 /**
@@ -13,6 +14,8 @@ import processing.core.*;
  * @author Quentin lobbé
  */
 public class Oursin {
+
+    Arrow arrow;
 
     // les coordonnées du centre de l'oursin dans le plan
     public float x;
@@ -96,6 +99,9 @@ public class Oursin {
 
         }
 
+        if (Application.session.isArrow()) {
+            this.status = this.statusSelected;
+        }
     }
 
     public void draw() {
@@ -146,33 +152,54 @@ public class Oursin {
         p.fill(0);
 
         p.strokeWeight(2);
-        p.stroke(0);
-        p.stroke(16, 91, 136);
-        p.line(xy[0], xy[1], xMoyEntrant / nEntrant + xy[0], yMoyEntrant / nEntrant + xy[1]);
-        p.stroke(182, 92, 96);
-        p.line(xy[0], xy[1], xMoySortant / nSortant + xy[0], yMoySortant / nSortant + xy[1]);
-        p.stroke(0);
-        p.stroke(16, 91, 136);
-        drawVectMoy(xy[0], xy[1], xMoyEntrant / nEntrant + xy[0], yMoyEntrant / nEntrant + xy[1]);
-        p.stroke(182, 92, 96);
-        drawVectMoy(xy[0], xy[1], xMoySortant / nSortant + xy[0], yMoySortant / nSortant + xy[1]);
+
+        if (Application.session.isArrow()){
+
+            p.stroke(0);
+            p.stroke(16, 91, 136);
+            p.line(xy[0], xy[1], xMoyEntrant / nEntrant + xy[0], yMoyEntrant / nEntrant + xy[1]);
+            p.stroke(182, 92, 96);
+            p.line(xy[0], xy[1], xMoySortant / nSortant + xy[0], yMoySortant / nSortant + xy[1]);
+            p.stroke(0);
+            p.stroke(16, 91, 136);
+
+            //drawVectMoy(xy[0], xy[1], xMoyEntrant / nEntrant + xy[0], yMoyEntrant / nEntrant + xy[1], true);
+            drawVectMoy(xy[0], xy[1], xMoyEntrant / nEntrant + xy[0], yMoyEntrant / nEntrant + xy[1], true);
+            p.stroke(182, 92, 96);
+            drawVectMoy(xy[0], xy[1], xMoySortant / nSortant + xy[0], yMoySortant / nSortant + xy[1], false);
+            //drawVectMoy(xy[0], xy[1], xMoySortant / nSortant + xy[0], yMoySortant / nSortant + xy[1], false);
+
+        }
         p.stroke(0);
 
     }
 
-    public void drawVectMoy(float x1, float y1, float x2, float y2) {
+    public void drawVectMoy(float x1, float y1, float x2, float y2, boolean sens) {
         PApplet p = Application.session.getPApplet();
+        Location l = Application.session.getMap().getLocationFromScreenPosition(x2,y2);
         float a = PApplet.atan2(y2 - y1, x2 - x1);
+        //float a = PApplet.atan2(y2, x2);
         a = -a;
         if (a < 0) {
             a = 2 * PConstants.PI + a;
         }
-        float d = PApplet.dist(x2, y2, x1, y1);
-        d = PApplet.map(d, 0, 10, 0, 100);
-        float x = d * PApplet.cos(-a);
-        float y = d * PApplet.sin(-a);
+        //float d = PApplet.dist(x2, y2, x1, y1);
 
-        p.line(x1, y1, x + x1, y + y1);
+        if (sens) {
+            arrow = new Arrow(xNative, yNative, -a, l.getLat(), l.getLon(), sens);
+            Application.session.arrowsIN.add(arrow);
+
+        } else {
+            arrow = new Arrow(xNative, yNative, -a + PConstants.PI, l.getLat(), l.getLon(), sens);
+            Application.session.arrowsOUT.add(arrow);
+        }
+
+        //float x = d * PApplet.cos(-a);
+        //float y = d * PApplet.sin(-a);
+        p.stroke(0);
+        //p.line(x1, y1, x + x1, y + y1);
+
+
     }
 
     public void drawArc(float angle, float poids, float rayon, boolean sens) {
@@ -253,4 +280,6 @@ public class Oursin {
             status = statusNormal;
         }
     }
+
+
 }
