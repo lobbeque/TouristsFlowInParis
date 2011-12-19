@@ -56,6 +56,9 @@ public class Oursin {
     nordEstPoids, nordEstDist = 28, 29
     nordEstEstPoids, nordEstEstDist = 30, 31
      */
+    
+    
+    // constructeur
     Oursin(float[] pointsCardinauxEntrant, float[] pointsCardinauxSortant, float x, float y, float xN, float yN) {
         branchesSortantes = new float[32];
         branchesEntrantes = new float[32];
@@ -104,6 +107,10 @@ public class Oursin {
         }
     }
 
+    /*
+     * draw() va dessiner chaque élément de l'oursin, les branches via drawArc(...) et le cercle central plus bas avec ellipse()
+     * pour créer une flèche/vecteur moyen depuis un oursin il faut décommenter à partir de "if (Application.session.isArrow())"
+     */
     public void draw() {
         PApplet p = Application.session.getPApplet();
         Location l = new Location(xNative, yNative);
@@ -124,10 +131,7 @@ public class Oursin {
             drawArc(i * PConstants.PI / 8 - PConstants.PI / 64, branchesSortantes[i * 2], branchesSortantes[i * 2 + 1], false);
         }
         p.ellipseMode(PApplet.RADIUS);
-        //float rayon1 = PApplet.map(PApplet.log(PApplet.max(somEntrant, somSortant)), 0, PApplet.log(Application.session.getNodeMax()), 0, 15);
-        //float rayon2 = PApplet.map(PApplet.log(PApplet.min(somEntrant, somSortant)), 0, PApplet.log(Application.session.getNodeMax()), 0, 15);
         float rayon1 = PApplet.map(PApplet.max(somEntrant, somSortant), 0, 200, 0, (float) (p.width / 46.6730));
-        //float rayon2 = PApplet.map(PApplet.min(somEntrant, somSortant), 0, 200, 0, (float) (p.width / 46.6730));
         p.strokeWeight(2);
         if (PApplet.max(somEntrant, somSortant) == somEntrant) {
             p.fill(16, 91, 136);
@@ -136,8 +140,6 @@ public class Oursin {
                 p.ellipse(xy[0], xy[1], rayon1, rayon1);
             }
             p.noStroke();
-            //p.fill(182, 92, 96);
-            //p.ellipse(xy[0], xy[1], rayon2, rayon2);
         } else {
             p.fill(182, 92, 96);
             p.stroke(10);
@@ -145,46 +147,39 @@ public class Oursin {
                 p.ellipse(xy[0], xy[1], rayon1, rayon1);
             }
             p.noStroke();
-            //p.fill(16, 91, 136);
-            //p.ellipse(xy[0], xy[1], rayon2, rayon2);
         }
         p.ellipseMode(PApplet.CENTER);
         p.fill(0);
 
         p.strokeWeight(2);
 
-        if (Application.session.isArrow()){
-
+        
+        /*if (Application.session.isArrow()){
             p.stroke(0);
             p.stroke(16, 91, 136);
-            p.line(xy[0], xy[1], xMoyEntrant / nEntrant + xy[0], yMoyEntrant / nEntrant + xy[1]);
-            p.stroke(182, 92, 96);
-            p.line(xy[0], xy[1], xMoySortant / nSortant + xy[0], yMoySortant / nSortant + xy[1]);
-            p.stroke(0);
-            p.stroke(16, 91, 136);
-
-            //drawVectMoy(xy[0], xy[1], xMoyEntrant / nEntrant + xy[0], yMoyEntrant / nEntrant + xy[1], true);
             drawVectMoy(xy[0], xy[1], xMoyEntrant / nEntrant + xy[0], yMoyEntrant / nEntrant + xy[1], true);
             p.stroke(182, 92, 96);
             drawVectMoy(xy[0], xy[1], xMoySortant / nSortant + xy[0], yMoySortant / nSortant + xy[1], false);
-            //drawVectMoy(xy[0], xy[1], xMoySortant / nSortant + xy[0], yMoySortant / nSortant + xy[1], false);
-
-        }
+        }*/
+        
         p.stroke(0);
 
     }
 
+    /*
+     * Cette fonction transforme les infos entrantes/sortantes d'un oursin en flèche/vecteur_moyen entrante/sortante 
+     * on a juste besoin des coordonnées ( en lat et lon ) du vecteur moyen (x1, y1, x2, y2) et de l'angle moyen
+     * chaque nouvelle flèche est rangée dans la liste ArrowIN/ArrowOUT correspondante
+     * c'est depuis ces listes que l'on accèdera alors aux flèches
+     */
     public void drawVectMoy(float x1, float y1, float x2, float y2, boolean sens) {
         PApplet p = Application.session.getPApplet();
         Location l = Application.session.getMap().getLocationFromScreenPosition(x2,y2);
         float a = PApplet.atan2(y2 - y1, x2 - x1);
-        //float a = PApplet.atan2(y2, x2);
         a = -a;
         if (a < 0) {
             a = 2 * PConstants.PI + a;
         }
-        //float d = PApplet.dist(x2, y2, x1, y1);
-
         if (sens) {
             arrow = new Arrow(xNative, yNative, -a, l.getLat(), l.getLon(), sens);
             Application.session.arrowsIN.add(arrow);
@@ -194,14 +189,13 @@ public class Oursin {
             Application.session.arrowsOUT.add(arrow);
         }
 
-        //float x = d * PApplet.cos(-a);
-        //float y = d * PApplet.sin(-a);
         p.stroke(0);
-        //p.line(x1, y1, x + x1, y + y1);
-
-
     }
 
+    /*
+     * cette fonction dessine la branche de l'oursin voulue
+     * au passage on complète les sommes x/yMoyEntrant/Sortant qui serviront à calculer le poids et l'angle moyen de l'oursin en vue de la création des flèches 
+     */
     public void drawArc(float angle, float poids, float rayon, boolean sens) {
         PApplet p = Application.session.getPApplet();
         Location l = new Location(xNative, yNative);
@@ -211,8 +205,6 @@ public class Oursin {
             p.ellipseMode(PApplet.RADIUS);
             float x1 = (Bibliotheque.meter2Pixel(rayon) - poids) * PApplet.cos(angle) + xy[0];
             float y1 = (Bibliotheque.meter2Pixel(rayon) - poids) * PApplet.sin(angle) + xy[1];
-            //float x2 = Bibliotheque.meter2Pixel(rayon) * PApplet.cos(angle) + xy[0];
-            //float y2 = Bibliotheque.meter2Pixel(rayon) * PApplet.sin(angle) + xy[1];
 
             if (sens) {
                 xMoyEntrant = xMoyEntrant + Bibliotheque.meter2Pixel(rayon) * PApplet.cos(angle);
@@ -273,6 +265,9 @@ public class Oursin {
         this.status = stat;
     }
 
+    /*
+     * afficher ou non un oursin
+     */
     public void pressed() {
         if (status.equals(statusNormal)) { // si le status est normal alors celui devient selected
             status = statusSelected;

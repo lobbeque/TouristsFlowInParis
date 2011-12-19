@@ -17,7 +17,6 @@ public class Smooth {
 
     // Grille utilisée pour les Arrows
     public static float[][] Grille;
-    
     public static float[][] buff1;
     public static float[][] buff2;
     public static float[] buff1Score;
@@ -28,6 +27,10 @@ public class Smooth {
     //public static boolean nonInit = false;
     public static float ca = 0;
 
+    /*
+     * Cette fonction est appelée à chaque lancement de la carte lissée ou du champ de flêches 
+     * Elle initialise tous les tableaux et buffeurs nécessaires ont bon fonctionnement de la viz
+     */
     public static void initBuff1() {
         PApplet p = Application.session.getPApplet();
         buff1 = new float[2][p.width * p.height / 8];
@@ -59,6 +62,17 @@ public class Smooth {
         init = false;
     }
 
+    
+    /* *********** pour afficher la carte lissée ************* */
+    
+
+    /*
+     * Pour chaque cellule du maillage on calcule un score de lissage via "calculScore1()"
+     * Les coordonnées des cellules sont rangés dans buff1[][]
+     * Les scores des cellules sont rangés dans buff1Score[][]
+     * On transforme alors les scores en couleurs
+     * Tant que la carte n'est pas déplacée on ne refait pas les calculs
+     */
     public static void lissage() {
         PApplet p = Application.session.getPApplet();
         int cpt = 0;
@@ -91,16 +105,13 @@ public class Smooth {
                     int c = p.color(219, 158, 54);
                     p.fill(c, 100);
                     p.rect(buff1[0][i], buff1[1][i], 3, 3);
-                } else if (percent > 0.8) {
-                    int c = p.color(255, 211, 78);
-                    p.fill(c, 100);
-                    p.rect(buff1[0][i], buff1[1][i], 3, 3);
-                } else if (percent > 0.1) {
+                } else if (percent > 0.07) {
                     int c = p.color(255, 250, 213);
                     p.fill(c, 100);
                     p.rect(buff1[0][i], buff1[1][i], 3, 3);
                 } else {
-                    int c = p.color(16, 91, 99);
+                    //int c = p.color(16, 91, 99);
+                    int c = p.color(116, 162, 207);
                     p.fill(c, 100);
                     p.rect(buff1[0][i], buff1[1][i], 3, 3);
                 }
@@ -112,6 +123,11 @@ public class Smooth {
 
     }
 
+    
+    /*
+     * Pour chaque cellule de la grille visible à l'écran 
+     * on calcule le score de l'issage entrant et sortant via "Biweight" ou "Shepard"
+     */
     public static void calculScore1() {
 
         PApplet p = Application.session.getPApplet();
@@ -135,46 +151,57 @@ public class Smooth {
         }
     }
 
+    
+   
     /*
-     * Pour revenir à une carte lissée sur les degrés rempacler 
-     * Application.session.getNBRoamBTSMoy(1,i) == > Application.session.getMatNode(0, i)
-     * Application.session.getNBRoamBTSMoy(2,i) == > Application.session.getMatNode(1, i)
-     * Application.session.getNBRoamBTSMoy(k,i) == > Application.session.getMatNode(2, i)
+     * Lors du lissage nous ne regardons pas les noeuds trop éloignés ( distance trés supérieures à DMaxOnScreen )
+     * On va donc travailer sur une série de noeuds proches rangés dans NodePourLissage[][]
      */
     public static void miseAJourCarteLissee() {
         PApplet p = Application.session.getPApplet();
         Application.session.setNodePourLissageCount(0);
         Application.session.setNodePourLissageHold(Application.session.getNodePourLissage());
-        Application.session.setNodePourLissage(new float[3][Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount]);
-        for (int i = 0; i < Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount; i++) {
-            Location l = new Location(Application.session.getNBRoamBTSMoy(1, i), Application.session.getNBRoamBTSMoy(2, i));
-            float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
-            if (Application.session.getMap().getZoom() >= 16384) {
-                if ((xy[0] < p.width + p.width) && (xy[1] < p.height + p.height) && (xy[0] > 0 - p.width) && (xy[1] > 0 - p.height)) { // nous travaillons sur un tableau regroupant les BTS visible à l'écran et non tout ceux visibles sur la carte
-                    Application.session.setNodePourLissage(0, Application.session.getNodePourLissageCount(), xy[0]);
-                    Application.session.setNodePourLissage(1, Application.session.getNodePourLissageCount(), xy[1]);
-                    Application.session.setNodePourLissage(2, Application.session.getNodePourLissageCount(), Application.session.getNBRoamBTSMoy(10, i));
-                    Application.session.setNodePourLissageCount(Application.session.getNodePourLissageCount() + 1);
-                }
-            } else if (Application.session.getMap().getZoom() >= 8192) {
-                if ((xy[0] < p.width + p.width / 2) && (xy[1] < p.height + p.height / 2) && (xy[0] > 0 - p.width / 2) && (xy[1] > 0 - p.height / 2)) { // nous travaillons sur un tableau regroupant les BTS visible à l'écran et non tout ceux visibles sur la carte
-                    Application.session.setNodePourLissage(0, Application.session.getNodePourLissageCount(), xy[0]);
-                    Application.session.setNodePourLissage(1, Application.session.getNodePourLissageCount(), xy[1]);
-                    Application.session.setNodePourLissage(2, Application.session.getNodePourLissageCount(), Application.session.getNBRoamBTSMoy(10, i));
-                    Application.session.setNodePourLissageCount(Application.session.getNodePourLissageCount() + 1);
-                }
-            } else {
-                if ((xy[0] < p.width) && (xy[1] < p.height) && (xy[0] > 0) && (xy[1] > 0)) { // nous travaillons sur un tableau regroupant les BTS visible à l'écran et non tout ceux visibles sur la carte
-                    Application.session.setNodePourLissage(0, Application.session.getNodePourLissageCount(), xy[0]);
-                    Application.session.setNodePourLissage(1, Application.session.getNodePourLissageCount(), xy[1]);
-                    Application.session.setNodePourLissage(2, Application.session.getNodePourLissageCount(), Application.session.getNBRoamBTSMoy(10, i));
-                    Application.session.setNodePourLissageCount(Application.session.getNodePourLissageCount() + 1);
+        Application.session.setNodePourLissage(new float[3][Application.session.getNBRoamBTSMoy(0).length]);
+        
+        int nbInterval = 24/Temps.getHourCount();
+        
+        for (int i = 0; i < Application.session.getNBRoamBTSMoy(0).length; i++) {
+            if (Application.session.getNBRoamBTSMoy(2, i) > 0) {
+                Location l1 = new Location(Application.session.getNBRoamBTSMoy(2, i), Application.session.getNBRoamBTSMoy(1, i));
+                float xy[] = Application.session.getMap().getScreenPositionFromLocation(l1);
+
+                if (Application.session.getMap().getZoom() >= 16384) {
+                    if ((xy[0] < p.width + p.width) && (xy[1] < p.height + p.height) && (xy[0] > 0 - p.width) && (xy[1] > 0 - p.height)) { 
+                        Application.session.setNodePourLissage(0, Application.session.getNodePourLissageCount(), xy[0]);
+                        Application.session.setNodePourLissage(1, Application.session.getNodePourLissageCount(), xy[1]);
+                        Application.session.setNodePourLissage(2, Application.session.getNodePourLissageCount(), Application.session.getNBRoamBTSMoy(Application.session.getIndex()*nbInterval + 3, i));
+                        Application.session.setNodePourLissageCount(Application.session.getNodePourLissageCount() + 1);
+                    }
+                } else if (Application.session.getMap().getZoom() >= 8192) {
+                    if ((xy[0] < p.width + p.width / 2) && (xy[1] < p.height + p.height / 2) && (xy[0] > 0 - p.width / 2) && (xy[1] > 0 - p.height / 2)) { 
+                        Application.session.setNodePourLissage(0, Application.session.getNodePourLissageCount(), xy[0]);
+                        Application.session.setNodePourLissage(1, Application.session.getNodePourLissageCount(), xy[1]);
+                        Application.session.setNodePourLissage(2, Application.session.getNodePourLissageCount(), Application.session.getNBRoamBTSMoy(Application.session.getIndex()*nbInterval + 3, i));
+                        Application.session.setNodePourLissageCount(Application.session.getNodePourLissageCount() + 1);
+                    }
+                } else {
+                    if ((xy[0] < p.width) && (xy[1] < p.height) && (xy[0] > 0) && (xy[1] > 0)) { 
+                        Application.session.setNodePourLissage(0, Application.session.getNodePourLissageCount(), xy[0]);
+                        Application.session.setNodePourLissage(1, Application.session.getNodePourLissageCount(), xy[1]);
+                        Application.session.setNodePourLissage(2, Application.session.getNodePourLissageCount(), Application.session.getNBRoamBTSMoy(Application.session.getIndex()*nbInterval + 3, i));
+                        Application.session.setNodePourLissageCount(Application.session.getNodePourLissageCount() + 1);
+                    }
                 }
             }
         }
         Application.session.setDmaxOnScreen(Bibliotheque.meter2Pixel(Application.session.getDmax()));
     }
 
+     /*
+     * Pour une cellule donnée, on observe toutes les antennes visibles dans le rayon de lissage "DmaxOnScreen"
+     * Grâce à la méthode de Biweight on calcule une moyenne pondérée du poids de celles ci
+     * fonction de pondération : ( 1 - ( d / Dmax )² )² 
+     */
     public static float Biweight(float i, float j, int count, int zoom, float DmaxOnScreen, float[][] tabNode) {
         PApplet p = Application.session.getPApplet();
         float sum1 = 1;
@@ -204,6 +231,11 @@ public class Smooth {
         return poids;
     }
 
+    /*
+     * Pour une cellule donnée, on observe toutes les antennes visibles dans le rayon de lissage "DmaxOnScreen"
+     * Grâce à la méthode de Shepard on calcule une moyenne pondérée du poids de celles ci
+     * fonstion de pondération : 1/(d^p)
+     */
     public static float Shepard(float i, float j) {
         PApplet p = Application.session.getPApplet();
         float sum1 = 1;
@@ -226,19 +258,29 @@ public class Smooth {
         init = true;
         //nonInit = true;
     }
+    
+    
 
-    /* *********** pour effectuer le champ de flèches ************* */
+    /* *********** pour afficher le champ de flèches ************* */
+    
+    
+    
+    
+    /*
+     * Pour chaque cellule du maillage on calcule un score de lissage via "calculScore2()"
+     * Les coordonnées des cellules sont rangés dans buff2[][]
+     * Les scores des cellules sont rangés dans buff2ScoreIN/OUT[][]
+     * On transforme alors les scores en flèches via "new Arrow ..." et "updateLight()"
+     * Tant que la carte n'est pas déplacée on ne refait pas les calculs
+     */
     public static void lissageArrow() {
         PApplet p = Application.session.getPApplet();
         int cpt = 0;
-        System.out.println("entree dans lissage arrow");
         if (!init) {
-            System.out.println("non init");
             premiereUtilisationBuffeur();
             calculScore2();
         } else {
             if (Application.session.isDraged()) {
-                System.out.println("init ok");
                 calculScore2();
                 Application.session.setDraged(false);
             }
@@ -246,7 +288,7 @@ public class Smooth {
 
         cpt = 0;
         for (int i = 0; i < buff2[0].length; i++) {
-            if (buff2[0][i] > 0) {              
+            if (buff2[0][i] > 0) {
                 Arrow a = new Arrow(buff2[0][i], buff2[1][i], buff2ScoreIN[1][cpt], buff2ScoreIN[0][cpt], true);
                 a.updateLight();
                 Arrow b = new Arrow(buff2[0][i], buff2[1][i], buff2ScoreOUT[1][cpt], buff2ScoreOUT[0][cpt], false);
@@ -258,12 +300,16 @@ public class Smooth {
 
     }
 
+    /*
+     * Pour chaque cellule de la grille "Grille[i][j]" visible à l'écran 
+     * on calcule le score de l'issage entrant et sortant via "CalculeLissageArrow( ..., true/false )"
+     */
     public static void calculScore2() {
-        
+
         PApplet p = Application.session.getPApplet();
         float DmaxOnScreen = Bibliotheque.meter2Pixel(Application.session.getDmax());
         int cpt = 0;
-        
+
         for (int i = 0; i < Grille[0].length; i++) {
             if (Grille[0][i] > 0) {
                 Location l = new Location(Grille[0][i], Grille[1][i]);
@@ -294,6 +340,10 @@ public class Smooth {
 
     }
 
+    /*
+     * Pour une cellule donnée, on observe toutes les flèches visibles dans le rayon de lissage "DmaxOnScreen"
+     * Grâce à la méthode de Biweight on calcule une moyenne pondérée de l'angle et de la taille de la flêche
+     */
     public static float[] CalculeLissageArrow(float i, float j, float DmaxOnScreen, boolean sens) {
 
         // size
@@ -305,12 +355,12 @@ public class Smooth {
 
         float[] ret = new float[2];
         if (sens) {
-            
+
             for (int k = 0; k < Application.session.arrowsIN.size(); k++) {
 
                 Arrow a = (Arrow) Application.session.arrowsIN.get(k);
                 a.calculeSize();
-                
+
                 Location l = new Location(a.x, a.y);
                 float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
 
@@ -330,7 +380,7 @@ public class Smooth {
 
                 Arrow a = (Arrow) Application.session.arrowsOUT.get(k);
                 a.calculeSize();
-                
+
                 Location l = new Location(a.x, a.y);
                 float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
 
@@ -339,24 +389,24 @@ public class Smooth {
                     float tmp1 = PApplet.sq(1 - PApplet.sq(d / DmaxOnScreen));
                     sum1 = sum1 + tmp1 * a.getSize();
                     sum2 = sum2 + tmp1;
-                    
+
                     sum3 = sum3 + tmp1 * a.getAngle();
                     sum4 = sum4 + tmp1;
-                    
+
                 }
 
             }
         }
-        
-        
+
+
         ret[0] = sum1 / sum2;
         ret[1] = sum3 / sum4;
 
-        
+
         return ret;
     }
 
     public static void setGrille(float[][] mat) {
-       Grille = mat;
+        Grille = mat;
     }
 }

@@ -243,14 +243,7 @@ public class TouristFlow extends PApplet {
         if (Application.session.isArrow()) {
             Affichage.afficheArrow();
         }
-
-
-
-
         
-
-        //Location location = Application.session.getMap().getLocationFromScreenPosition(mouseX, mouseY);
-        //text(location.toString(), mouseX, mouseY);
         fill(255);
 
     }
@@ -263,6 +256,10 @@ public class TouristFlow extends PApplet {
         if (key == 's' || key == 'S') {
             save("roaming_2009_03_29-custom-num_" + compteurImage + ".png");
             compteurImage++;
+        }
+        
+        if ( key == '1' ){
+            Bibliotheque.effectif("lissage");
         }
     }
 
@@ -338,6 +335,16 @@ public class TouristFlow extends PApplet {
         } else {
             if ((width / 70 + 2 * 175 - 15 <= mouseX) && (width / 70 + 2 * 175 >= mouseX) && (height - 335 <= mouseY) && (height - 320 >= mouseY)) {
                 Application.session.setNodeBoxCoxDistri(false);
+            }
+        }
+        
+        if (!Application.session.isLissageDistri()) {
+            if ((width / 56 <= mouseX) && (width / 56 + 15 >= mouseX) && (height - 150 <= mouseY) && (height - 150 + 15 >= mouseY)) {
+                Application.session.setLissageDistri(true);
+            }
+        } else {
+            if ((width / 56 <= mouseX) && (width / 56 + 15 >= mouseX) && (height - 150 - 15 <= mouseY) && (height - 150 >= mouseY)) {
+                Application.session.setLissageDistri(false);
             }
         }
 

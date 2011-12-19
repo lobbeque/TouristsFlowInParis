@@ -184,7 +184,12 @@ public class Affichage {
             p.fill(190, 201, 186, 100);
             p.rect(x, y, l, h);
 
+            //rectangle clic distribution
+            p.fill(182, 92, 96);
+            p.rect(x, y, (float) (15), (float) (15));
+
             // dégradé
+            p.fill(190, 201, 186, 100);
             drawDegrade(x + 25, y + 75, l - 200, 20);
             p.strokeWeight(2);
             p.stroke(10, 150);
@@ -223,13 +228,17 @@ public class Affichage {
                 p.text("DENSITE D'OCCUPATION DES BTS ", p.width / 2, (float) (p.height / 16.317));
                 p.text("Méthode de SHEPARD", p.width / 2, (float) (p.height / 12.238));
             }
-        } 
+
+            if (Application.session.isLissageDistri()) {
+                afficheDistributionLissage(x, y, 175, h);
+            }
+        }
     }
 
     // dessine le dégradé de la carte lissée, c'est une série de petits batons côte à côte
     public static void drawDegrade(float x, float y, float l, float h) {
         PApplet p = Application.session.getPApplet();
-        int c1 = p.color(16, 91, 99);
+        int c1 = p.color(116, 162, 207);
         int c2 = p.color(194, 190, 201);
         int c4 = p.color(219, 158, 54);
         int c5 = p.color(189, 73, 50);
@@ -949,39 +958,39 @@ public class Affichage {
         p.textFont(font1);
     }
 
+    // fonction d'affichage en mide Arrow
     public static void afficheArrow() {
         PApplet p = Application.session.getPApplet();
-        
+
+        // si le champ de flèche est activé
         float zoom = Application.session.getMap().getZoom();
         if ((temp != zoom) && (zoom <= 8192) && (drawArrow)) {
-            
+            // si le niveau de zoom a changé on recalcule une nouvelle grille et on initialise les buffeurs
             Smooth.setGrille(Bibliotheque.getGrille(40));
             Smooth.initBuff1();
-            temp = (int)zoom;
+            temp = (int) zoom;
         }
-        
-        
-        
+
+
+
         if (drawArrow) {
-            
+            // champ de flèches 
             Smooth.lissageArrow();
         } else {
+            // flèches classiques
             for (int i = 0; i < Application.session.arrowsIN.size(); i++) {
                 Arrow a = (Arrow) Application.session.arrowsIN.get(i);
-
-                    a.update();
+                a.update();
 
             }
             for (int i = 0; i < Application.session.arrowsOUT.size(); i++) {
                 Arrow a = (Arrow) Application.session.arrowsOUT.get(i);
-
-                    a.update();
+                a.update();
 
             }
         }
-        
-       // p.strokeWeight(2);
-        
+
+
         // coordonnées du rectangle de base 
         float x = p.width / 70;
         float y = p.height - 500;
@@ -993,38 +1002,29 @@ public class Affichage {
         p.fill(190, 201, 186, 100);
         // rectangle de base 
         p.rect(x, y, l, h);
-
         p.line(x, y + h / 3, x + l, y + h / 3);
         p.line(x, y + 2 * h / 3 + 10, x + l, y + 2 * h / 3 + 10);
-
         p.line(x, y + 2 * h / 3 + h / 9 + 10, x + l, y + 2 * h / 3 + h / 9 + 10);
         p.line(x, y + 2 * h / 3 + 2 * h / 9 + 5, x + l, y + 2 * h / 3 + 2 * h / 9 + 5);
-
         p.fill(0);
-        
 
-        
-        
+        // texte 
         p.text("sens :", x + 22, y + 15);
         p.text("entrant", x + l / 2, y + h / 9);
         p.text("sortant", x + l / 2, y + 2 * h / 9);
-
         p.text("anisotropie :", x + 44, y + h / 3 + 15);
         p.text("taille :", x + l / 4, y + h / 3 + 32);
         p.text("rayon :", x + l / 4, y + h / 3 + 75);
-
         p.text("champs", x + l / 2, y + 2 * h / 3 + 30);
         p.text("créer", x + l / 2, y + 2 * h / 3 + 60);
         p.text("supprimer", x + l / 2, y + 2 * h / 3 + 90);
-        
-        Arrow A1 = new Arrow(x + l / 2 + l / 4 - 10, y + 2 * h / 9 + h / 18 - 5, PConstants.PI, (float)2.5, true);
-        Arrow A2 = new Arrow(x + l / 2 - l / 4 + 10, y + h / 9 + h / 18 - 5, PConstants.PI, (float)2.5, false);
-        
+        Arrow A1 = new Arrow(x + l / 2 + l / 4 - 10, y + 2 * h / 9 + h / 18 - 5, PConstants.PI, (float) 2.5, true);
+        Arrow A2 = new Arrow(x + l / 2 - l / 4 + 10, y + h / 9 + h / 18 - 5, PConstants.PI, (float) 2.5, false);
         A1.updateLightBis();
         A2.updateLightBis();
-
         p.noStroke();
-        
+
+        // curseurs
         Application.session.getCurseur7().drawStep();
         Application.session.setDmax(Application.session.getCurseur7().getCurs());
         Application.session.getCurseur6().drawStep();
@@ -1036,4 +1036,105 @@ public class Affichage {
         Affichage.temp = temp;
     }
 
+    public static void afficheDistributionLissage(float x, float y, float l, float h) {
+        PApplet p = Application.session.getPApplet();
+        p.strokeWeight(2);
+        p.stroke(10, 150);
+        p.fill(224);
+        // rectangle gris de base
+        p.rect(x, y - 175, l, h + 75);
+        p.fill(182, 92, 96);
+        // rectangle rouge clicable
+        p.rect((float) x, (float) (y - l / 11.6), (float) (l / 11.6), (float) (l / 11.6));
+        p.fill(224);
+        p.noStroke();
+        p.fill(255);
+        // rectangle blanc 
+        p.rect(x + 30, y - 155, l - 35, h + 25);
+
+        // on se place dans le coin inférieur gauche du rectangle blanc 
+        float x1 = x + 30;
+        float y1 = y - 155 + h + 25;
+        float l1 = l - 35;
+        float h1 = h + 25;
+
+
+        p.strokeWeight(1);
+        p.stroke(0);
+        PFont font2 = p.createFont("DejaVuSans-ExtraLight-", 8);
+        p.textFont(font2);
+        p.fill(0);
+
+        // dessiner les graduations de l'axe des ordonnées
+        //  619 correspond au nombre max de répartition pour un poids, on peut le retrouver grâce à la fonction effectif(String cas) de la bibliotheque
+        for (int j = 0; j < 5; j++) {
+            p.fill(10);
+            float yLabel = PApplet.map(j * h1 / 4, 0, h1, 0, 619);
+            p.text((int) yLabel, x1 - 17, y1 - j * h1 / 4 + 2);
+            p.line(x1 - 3, y1 - j * h1 / 4, x1 + 2, y1 - j * h1 / 4);
+        }
+        // desssiner les graduations de l'axe des absisses
+        // 3507.5715 correspond au poids max d'un noeud sur l'ensemble de la journée ==> calculé à la main  
+        /*for (int k = 0; k < 5; k++) {
+            float xLabel = PApplet.map(k * l1 / 4, 0, l1, 0, (float) 3507.5715);
+            p.line(x1 + k * l1 / 4, y1 - 3, x1 + k * l1 / 4, y1 + 3);
+            p.text((int) xLabel, x1 + k * l1 / 4, y - 18);
+        }*/
+        
+        for (int k = 0; k < 4; k++) {
+            float xLabel = 0;
+            xLabel = PApplet.map(PApplet.log(1 * PApplet.pow(10, k)), 0, PApplet.log((float) 3507.5715), 0, 130);
+
+                float bob = 1 * PApplet.pow(10, k);
+                p.text((int) bob, x + 25 + 4 + xLabel, y - 18);
+            
+            if (!Application.session.isPetit()) {
+                p.line(x + 25 + 4 + xLabel, y - 31, x + 25 + 4 + xLabel, y - 28);
+            }
+        }
+
+        p.strokeWeight(2);
+        PFont font1 = p.createFont("DejaVuSans-ExtraLight-", 12);
+        p.textFont(font1);
+        p.text(" effectif ", x + 50, y - 160);
+        p.text(" poids ", x + 82, y - 5);
+
+        float[] temp = new float[Application.session.getNBRoamBTSMoy(0).length];
+        int comp = 1;
+
+        float tab[] = new float[Application.session.getNBRoamBTSMoy(0).length];
+        for (int k = 0; k < Application.session.getNBRoamBTSMoy(0).length; k++) {
+            tab[k] = Application.session.getNBRoamBTSMoy(Application.session.getIndex() * (24 / Temps.getHourCount()) + 3, k);
+        }
+        tab = PApplet.sort(tab);
+
+        temp[0] = tab[0];
+        temp[1] = comp;
+        p.fill(0);
+
+        for (int i = 1; i < Application.session.getNBRoamBTSMoy(0).length; i++) {
+            if (tab[i] != temp[0]) {
+                drawStickLiss(temp, x1, y1, l1, h1);
+                temp[0] = tab[i];
+                comp = 1;
+                temp[1] = comp;
+            } else {
+                comp++;
+                temp[1] = comp;
+            }
+        }
+
+    }
+
+    public static void drawStickLiss(float[] temp, float X, float Y, float l, float h) {
+        PApplet p = Application.session.getPApplet();
+        p.stroke(0);
+        if (temp[0] != 0) {
+            float x = PApplet.map(PApplet.log(temp[0] + 1), 0, PApplet.log((float) 3507.5715), 0, l);
+            float y = PApplet.map(PApplet.log(temp[1]), 0, PApplet.log(619), 0, h);
+            p.line(X + x, Y, X + x, Y - y);
+            //p.point(X + x, Y - y);
+        }
+        p.noStroke();
+    }
 }

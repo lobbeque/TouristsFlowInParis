@@ -16,9 +16,7 @@ import static java.lang.System.*;
  * @author Quentin Lobbé
  */
 public class Bibliotheque {
-    
 
-    
     static void loadGraph() {
         Application.session.setTableauGephi(0, new Gephi());
         Application.session.getTableauGephi()[0].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-0-4.gexf");
@@ -115,15 +113,15 @@ public class Bibliotheque {
 
 
 
-        
+
 
         for (int i = 0; i < Application.session.getTableauGephiCount(Application.session.getIndex(), 0); i++) {
             Application.session.setMatNode(0, i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 1, i));
             Application.session.setMatNode(1, i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 0, i));
             Application.session.setMatNode(2, i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 2, i));
             Application.session.setNodePoids(i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 2, i));
-            
-          
+
+
         }
         //TriRapide.trirapide(Application.session.getMatNode(), (int) Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount, 3);
 
@@ -365,6 +363,7 @@ public class Bibliotheque {
 
     // fonction de calcule des effectifs max pour les distributions
     public static void effectif(String cas) {
+
         float count = 0;
         float cpt = 0;
         float max = PConstants.MIN_FLOAT;
@@ -411,6 +410,35 @@ public class Bibliotheque {
             }
             Application.session.setEdgeEffMax(max);
             Application.session.setNodeEffMax(max);
+        } else if ("lissage".equals(cas)) {
+            count = Application.session.getNBRoamBTSMoy(0).length;
+            float tab[] = new float[(int) count];
+            for (int z = 3; z < 27; z++) {
+                for (int k = 0; k < count; k++) {
+                    tab[k] = Application.session.getNBRoamBTSMoy(z, k);
+                }
+                tab = PApplet.sort(tab);
+                cpt = 0;
+                float temp = 0;
+                for (int i = 1; i < count; i++) {
+
+                    if (cpt == 0) {
+                        temp = tab[i];
+                        cpt = 1;
+                    } else {
+                        if (tab[i] == temp) {
+                            cpt++;
+                        } else {
+                            max = PApplet.max(cpt, max);
+                            cpt = 1;
+                            temp = tab[i];
+                        }
+                    }
+                }
+
+                out.println("max effect :" + max);
+                out.println("max poids :" + tab[(int)(count - 1)]);
+            }
         }
     }
 
@@ -418,34 +446,32 @@ public class Bibliotheque {
      * décommenter cette version de creerArrow et commmenter la suivante s'il on veut 
      * à nouveau créer les arrow en direct depuis les oursins, sinon on travail sur des fichiers csv préparés
      */
-    
     /*public static void creerArrow() {
-        Bibliotheque.creerOursinsVue();
-        for (int z = 0; z < Application.session.getOursins().size(); z++) {
-            Oursin oursin = (Oursin) Application.session.getOursins().get(z);
-            oursin.draw();
-        }
-        Bibliotheque.effacerOursins();
+    Bibliotheque.creerOursinsVue();
+    for (int z = 0; z < Application.session.getOursins().size(); z++) {
+    Oursin oursin = (Oursin) Application.session.getOursins().get(z);
+    oursin.draw();
+    }
+    Bibliotheque.effacerOursins();
     }*/
-    
     public static void creerArrow() {
         PApplet p = Application.session.getPApplet();
-        
-        
-        
+
+
+
         String[] lines = p.loadStrings(Application.session.getReferencesArrows(Application.session.getIndex()));
         for (int i = 1; i < lines.length; i++) {
-            
+
             String[] mots = PApplet.split(lines[i], ';');
-            
-            Arrow a = new Arrow(Float.parseFloat(mots[0]),Float.parseFloat(mots[1]), Float.parseFloat(mots[2]), Float.parseFloat(mots[3]), Float.parseFloat(mots[4]), Boolean.parseBoolean(mots[5]));
-            out.println("oursin " + i + " crée" );    
-            
-            if ( Boolean.parseBoolean(mots[5]) ){
+
+            Arrow a = new Arrow(Float.parseFloat(mots[0]), Float.parseFloat(mots[1]), Float.parseFloat(mots[2]), Float.parseFloat(mots[3]), Float.parseFloat(mots[4]), Boolean.parseBoolean(mots[5]));
+            out.println("oursin " + i + " crée");
+
+            if (Boolean.parseBoolean(mots[5])) {
                 Application.session.arrowsIN.add(a);
             } else {
                 Application.session.arrowsOUT.add(a);
-            } 
+            }
         }
     }
 
@@ -470,6 +496,7 @@ public class Bibliotheque {
                 mat[j][i - 1] = Float.parseFloat(mots[j]);
             }
         }
+
         return mat;
     }
 
@@ -477,7 +504,7 @@ public class Bibliotheque {
     public static void writeArrowData() {
         PApplet p = Application.session.getPApplet();
         String[] lines = {};
-        lines = PApplet.append(lines,"xSource ; ySource ; angle ; xTarget ; yTarget ; sens");
+        lines = PApplet.append(lines, "xSource ; ySource ; angle ; xTarget ; yTarget ; sens");
         for (int i = 0; i < Application.session.arrowsIN.size(); i++) {
             Arrow a = (Arrow) Application.session.arrowsIN.get(i);
 
@@ -491,33 +518,34 @@ public class Bibliotheque {
             lines = PApplet.append(lines, words);
 
         }
-        
+
         p.saveStrings("Anisotropie_" + Temps.getDateText() + ".csv", lines);
     }
-    
-    public static float[][] getGrille (float n){
+
+    /*
+     * définir une grille de lissage sur l'écran 
+     * le paramêtre "n" correspond à la taille en pixel sur l'écran celle ci est retranscrite m sur la carte
+     * donc plus on zoom plus la grille est précise en mêtre mais l'éccartement à l'écran reste le même
+     */
+    public static float[][] getGrille(float n) {
         PApplet p = Application.session.getPApplet();
-        Location l1 = Application.session.getMap().getLocationFromScreenPosition(0,0);
-        Location l2 = Application.session.getMap().getLocationFromScreenPosition(n,n);
+        Location l1 = Application.session.getMap().getLocationFromScreenPosition(0, 0);
+        Location l2 = Application.session.getMap().getLocationFromScreenPosition(n, n);
         float pas_X = l1.getLat() - l2.getLat();
-        float pas_Y = l2.getLon()- l1.getLon();
+        float pas_Y = l2.getLon() - l1.getLon();
         out.println(pas_X);
         out.println(pas_Y);
         int cpt = 0;
         float[][] mat = new float[2][20000];
-        for ( float i = (float)49.066; i > 48.511; i = (float)(i - pas_X) ){
-           for ( float j = (float)2.893; j > 1.979; j = (float)(j - pas_Y) ){ 
-               mat[0][cpt] = i;
-               mat[1][cpt] = j;
-               cpt ++;
-           }
+        for (float i = (float) 49.066; i > 48.511; i = (float) (i - pas_X)) {
+            for (float j = (float) 2.893; j > 1.979; j = (float) (j - pas_Y)) {
+                mat[0][cpt] = i;
+                mat[1][cpt] = j;
+                cpt++;
+            }
         }
         out.println("done");
         out.println(cpt);
         return mat;
     }
-
-
-    
-    
 }

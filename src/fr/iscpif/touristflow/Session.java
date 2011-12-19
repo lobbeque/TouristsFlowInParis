@@ -106,6 +106,7 @@ public class Session {
     boolean chaud = false;
     boolean nodeDistri = false;
     boolean edgeDistri = false;
+    boolean lissageDistri = false;
     boolean edgeBoxCoxDistri = false;
     boolean nodeBoxCoxDistri = false;
     boolean Log = false;
@@ -136,6 +137,10 @@ public class Session {
 
     public float[][] getNBRoamBTSMoy() {
         return NBRoamBTSMoy;
+    }
+    
+    public float[] getNBRoamBTSMoy(int i) {
+        return NBRoamBTSMoy[i];
     }
     
     public float getNBRoamBTSMoy( int i, int j ) {
@@ -828,5 +833,15 @@ public class Session {
     
     public void setReferencesArrows(int i, String str) {
         this.referencesArrows[i] = str;
-    }  
+    }
+
+    public boolean isLissageDistri() {
+        return lissageDistri;
+    }
+
+    public void setLissageDistri(boolean lissageDistri) {
+        this.lissageDistri = lissageDistri;
+    }
+    
+    
 }
