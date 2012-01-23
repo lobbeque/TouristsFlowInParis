@@ -16,7 +16,6 @@ import processing.core.*;
 public class Oursin {
 
     Arrow arrow;
-
     // les coordonnées du centre de l'oursin dans le plan
     public float x;
     public float y;
@@ -56,8 +55,6 @@ public class Oursin {
     nordEstPoids, nordEstDist = 28, 29
     nordEstEstPoids, nordEstEstDist = 30, 31
      */
-    
-    
     // constructeur
     Oursin(float[] pointsCardinauxEntrant, float[] pointsCardinauxSortant, float x, float y, float xN, float yN) {
         branchesSortantes = new float[32];
@@ -137,14 +134,14 @@ public class Oursin {
             p.fill(16, 91, 136);
             p.stroke(10);
             if (status.equals(statusNormal)) {
-                p.ellipse(xy[0], xy[1], rayon1, rayon1);
+                //p.ellipse(xy[0], xy[1], 5, 5);
             }
             p.noStroke();
         } else {
             p.fill(182, 92, 96);
             p.stroke(10);
             if (status.equals(statusNormal)) {
-                p.ellipse(xy[0], xy[1], rayon1, rayon1);
+                //p.ellipse(xy[0], xy[1], 5, 5);
             }
             p.noStroke();
         }
@@ -153,15 +150,15 @@ public class Oursin {
 
         p.strokeWeight(2);
 
-        
-        /*if (Application.session.isArrow()){
+        // pour créer des flèches 
+        if (Application.session.isArrow()) {
             p.stroke(0);
             p.stroke(16, 91, 136);
             drawVectMoy(xy[0], xy[1], xMoyEntrant / nEntrant + xy[0], yMoyEntrant / nEntrant + xy[1], true);
             p.stroke(182, 92, 96);
             drawVectMoy(xy[0], xy[1], xMoySortant / nSortant + xy[0], yMoySortant / nSortant + xy[1], false);
-        }*/
-        
+        }
+
         p.stroke(0);
 
     }
@@ -174,18 +171,22 @@ public class Oursin {
      */
     public void drawVectMoy(float x1, float y1, float x2, float y2, boolean sens) {
         PApplet p = Application.session.getPApplet();
-        Location l = Application.session.getMap().getLocationFromScreenPosition(x2,y2);
+        Location l = Application.session.getMap().getLocationFromScreenPosition(x2, y2);
         float a = PApplet.atan2(y2 - y1, x2 - x1);
+        
+        float xi = Bibliotheque.distFrom(xNative, yNative, l.getLat(), yNative);
+        float yi = Bibliotheque.distFrom(xNative, yNative, xNative, l.getLon());
+        
         a = -a;
         if (a < 0) {
             a = 2 * PConstants.PI + a;
         }
         if (sens) {
-            arrow = new Arrow(xNative, yNative, -a, l.getLat(), l.getLon(), sens);
+            arrow = new Arrow(xNative, yNative, -a, l.getLat(), l.getLon(), xi, yi, somEntrant, sens);
             Application.session.arrowsIN.add(arrow);
 
         } else {
-            arrow = new Arrow(xNative, yNative, -a + PConstants.PI, l.getLat(), l.getLon(), sens);
+            arrow = new Arrow(xNative, yNative, -a + PConstants.PI, l.getLat(), l.getLon(), xi, yi, somSortant, sens);
             Application.session.arrowsOUT.add(arrow);
         }
 
@@ -265,6 +266,7 @@ public class Oursin {
         this.status = stat;
     }
 
+
     /*
      * afficher ou non un oursin
      */
@@ -276,5 +278,13 @@ public class Oursin {
         }
     }
 
+    public float getSomEntrant() {
+        return somEntrant;
+    }
 
+    public float getSomSortant() {
+        return somSortant;
+    }
+    
+    
 }

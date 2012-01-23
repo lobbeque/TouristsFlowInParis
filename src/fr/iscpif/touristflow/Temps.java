@@ -24,7 +24,7 @@ public class Temps {
     public static String lastHourStamp = "2009033124";
     public static String nowHour;
 
-    public static final long MILLIS_PER_4HOURS = 4 * 60 * 60 * 1000; // nombre de millisecondes dans un interval de 4 heures
+    public static final long MILLIS_PER_4HOURS = 1 * 60 * 60 * 1000; // nombre de millisecondes dans un interval de 4 heures
 
 
     public static int hourCount; // nb d'intervals en une journée
@@ -83,7 +83,7 @@ public class Temps {
         if (i == hourIndex) {
           p.stroke(0);
           p.fill( 0 );
-          p.line(x, 0, x, (float)(p.height/75.307));
+          //p.line(x, 0, x, (float)(p.height/75.307));
           p.textAlign(PConstants.CENTER, PConstants.TOP);
           p.text(hourPretty[hourIndex] + "h", p.width/2, (float)(p.height/65.266));
           DateText = hourPretty[hourIndex] + "h";
@@ -94,7 +94,7 @@ public class Temps {
           } else {
             p.stroke(204); 
           }
-          p.line(x, 0, x, (float)(p.height/139.857));
+          //p.line(x, 0, x, (float)(p.height/139.857));
         }
       }
       p.fill(190, 201, 186,200);

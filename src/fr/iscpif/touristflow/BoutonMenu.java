@@ -298,7 +298,6 @@ public class BoutonMenu {
         }
         if (this.nom.equals("Arrow")) {
             Application.session.setArrow(false);
-            
         }
     }
 }

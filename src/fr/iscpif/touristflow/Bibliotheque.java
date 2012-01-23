@@ -18,20 +18,81 @@ import static java.lang.System.*;
 public class Bibliotheque {
 
     static void loadGraph() {
-        Application.session.setTableauGephi(0, new Gephi());
-        Application.session.getTableauGephi()[0].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-0-4.gexf");
-        Application.session.setTableauGephi(1, new Gephi());
-        Application.session.getTableauGephi()[1].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-4-8.gexf");
-        Application.session.setTableauGephi(2, new Gephi());
-        Application.session.getTableauGephi()[2].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-8-12.gexf");
-        Application.session.setTableauGephi(3, new Gephi());
-        Application.session.getTableauGephi()[3].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-12-16.gexf");
-        Application.session.setTableauGephi(4, new Gephi());
-        Application.session.getTableauGephi()[4].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-16-20.gexf");
-        Application.session.setTableauGephi(5, new Gephi());
-        Application.session.getTableauGephi()[5].loadGraph("/home/guest/Bureau/quentin/roaming_2009_03_31-prepa-20-24.gexf");
-        Application.session.setIndex(0);
+    
+    Application.session.setTableauGephi(0, new Gephi());
+    Application.session.getTableauGephi()[0].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_00-01.gexf");
+    Application.session.setTableauGephi(1, new Gephi());
+    Application.session.getTableauGephi()[1].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_01-02.gexf");
+    Application.session.setTableauGephi(2, new Gephi());
+    Application.session.getTableauGephi()[2].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_02-03.gexf");
+    Application.session.setTableauGephi(3, new Gephi());
+    Application.session.getTableauGephi()[3].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_03-04.gexf");
+    Application.session.setTableauGephi(4, new Gephi());
+    Application.session.getTableauGephi()[4].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_04-05.gexf");
+    Application.session.setTableauGephi(5, new Gephi());
+    Application.session.getTableauGephi()[5].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_05-06.gexf");
+    
+    
+    Application.session.setTableauGephi(6, new Gephi());
+    Application.session.getTableauGephi()[6].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_06-07.gexf");
+    Application.session.setTableauGephi(7, new Gephi());
+    Application.session.getTableauGephi()[7].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_07-08.gexf");
+    Application.session.setTableauGephi(8, new Gephi());
+    Application.session.getTableauGephi()[8].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_08-09.gexf");
+    Application.session.setTableauGephi(9, new Gephi());
+    Application.session.getTableauGephi()[9].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_09-10.gexf");
+    Application.session.setTableauGephi(10, new Gephi());
+    Application.session.getTableauGephi()[10].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_10-11.gexf");
+    Application.session.setTableauGephi(11, new Gephi());
+    Application.session.getTableauGephi()[11].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_11-12.gexf");
+
+    Application.session.setTableauGephi(12, new Gephi());
+    Application.session.getTableauGephi()[12].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_12-13.gexf");
+    Application.session.setTableauGephi(13, new Gephi());
+    Application.session.getTableauGephi()[13].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_13-14.gexf");
+    Application.session.setTableauGephi(14, new Gephi());
+    Application.session.getTableauGephi()[14].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_14-15.gexf");
+    Application.session.setTableauGephi(15, new Gephi());
+    Application.session.getTableauGephi()[15].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_15-16.gexf");
+    Application.session.setTableauGephi(16, new Gephi());
+    Application.session.getTableauGephi()[16].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_16-17.gexf");
+    Application.session.setTableauGephi(17, new Gephi());
+    Application.session.getTableauGephi()[17].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_17-18.gexf");
+    
+    Application.session.setTableauGephi(18, new Gephi());
+    Application.session.getTableauGephi()[18].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_18-19.gexf");
+    Application.session.setTableauGephi(19, new Gephi());
+    Application.session.getTableauGephi()[19].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_19-20.gexf");
+    Application.session.setTableauGephi(20, new Gephi());
+    Application.session.getTableauGephi()[20].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_20-21.gexf");
+    Application.session.setTableauGephi(21, new Gephi());
+    Application.session.getTableauGephi()[21].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_21-22.gexf");
+    Application.session.setTableauGephi(22, new Gephi());
+    Application.session.getTableauGephi()[22].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_22-23.gexf");
+    Application.session.setTableauGephi(23, new Gephi());
+    Application.session.getTableauGephi()[23].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_23-00.gexf");
+    
+    Application.session.setIndex(0);
+    
     }
+    
+    /*static void loadGraph() {
+
+        Application.session.setTableauGephi(0, new Gephi());
+        Application.session.getTableauGephi()[0].loadG("/home/guest/Bureau/quentin/Roaming/roaming_2009_03_31-prepa-0-4.gexf");
+        Application.session.setTableauGephi(1, new Gephi());
+        Application.session.getTableauGephi()[1].loadG("/home/guest/Bureau/quentin/Roaming/roaming_2009_03_31-prepa-4-8.gexf");
+        Application.session.setTableauGephi(2, new Gephi());
+        Application.session.getTableauGephi()[2].loadG("/home/guest/Bureau/quentin/Roaming/roaming_2009_03_31-prepa-8-12.gexf");
+        Application.session.setTableauGephi(3, new Gephi());
+        Application.session.getTableauGephi()[3].loadG("/home/guest/Bureau/quentin/Roaming/roaming_2009_03_31-prepa-12-16.gexf");
+        Application.session.setTableauGephi(4, new Gephi());
+        Application.session.getTableauGephi()[4].loadG("/home/guest/Bureau/quentin/Roaming/roaming_2009_03_31-prepa-16-20.gexf");
+        Application.session.setTableauGephi(5, new Gephi());
+        Application.session.getTableauGephi()[5].loadG("/home/guest/Bureau/quentin/Roaming/roaming_2009_03_31-prepa-20-24.gexf");
+        Application.session.setIndex(0);
+
+    }*/
 
     static void maxEdgeTot(int i) {
         if (i > Application.session.getMaxEdgeTotal()) {
@@ -123,7 +184,7 @@ public class Bibliotheque {
 
 
         }
-        //TriRapide.trirapide(Application.session.getMatNode(), (int) Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount, 3);
+
 
         Application.session.setNodePoids(PApplet.sort(Application.session.getNodePoids()));
         Application.session.setEdgePoids(PApplet.sort(Application.session.getEdgePoids()));
@@ -146,7 +207,7 @@ public class Bibliotheque {
         for (int j = 0; j < Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount; j++) {
             Location l1 = new Location(Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
             float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
-            if ((xy1[1] > 0) && (xy1[0] > 0) && (xy1[0] < p.width) && (xy1[1] < p.height) && (Application.session.getMatNode(2, j) > 30)) {
+            if ((xy1[1] > 0) && (xy1[0] > 0) && (xy1[0] < p.width) && (xy1[1] < p.height) && (Application.session.getMatNode(2, j) > 100)) {
                 out.println("Création Oursin " + i);
                 Affichage.selectionOursins(xy1[0], xy1[1], Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
                 i++;
@@ -191,14 +252,14 @@ public class Bibliotheque {
 
     }
 
-    // matrice regroupant les distances de tous les edges de la plus à la plus petite
+    // matrice regroupant les distances de tous les edges de la plus grande à la plus petite
     static void miseAJourMatriceDistance(int index) {
         Application.session.setTabEdgeDist(new float[(int) Application.session.getMaxEdgeTotal()]);
         for (int j = 0; j < Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount; j++) {
             Application.session.setTabEdgeDist(j, distFrom(Application.session.getMatEdge(0, j), Application.session.getMatEdge(1, j), Application.session.getMatEdge(2, j), Application.session.getMatEdge(3, j)));
         }
 
-        TriRapide.trirapide2(Application.session.getTabEdgeDist(), (int) Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount);
+        //TriRapide.trirapide2(Application.session.getTabEdgeDist(), (int) Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount);
 
     }
 
@@ -351,7 +412,7 @@ public class Bibliotheque {
             }
             // sinon on calcul la moyenne des distances et la somme des poids 
             moy = moy / pointCardinal.length;
-            moy = PApplet.map(Affichage.CoxBoxLambda(moy, (float) 0.4), 0, Affichage.CoxBoxLambda(Application.session.getDistMax(), (float) 0.4), 0, 1500);
+            moy = PApplet.map(CoxBoxLambda(moy, (float) 0.4), 0, CoxBoxLambda(Application.session.getDistMax(), (float) 0.4), 0, 1500);
             sum = PApplet.map(PApplet.log(sum), 0, PApplet.log(Application.session.getEdgeMax()), (float) 0.5, 15);
 
         }
@@ -368,48 +429,61 @@ public class Bibliotheque {
         float cpt = 0;
         float max = PConstants.MIN_FLOAT;
         if ("node".equals(cas)) {
-            count = Application.session.getNodePoids().length;
-            cpt = 0;
-            float temp = 0;
-            for (int i = 1; i < count; i++) {
-                if (Application.session.getNodePoids(i) > 0) {
-                    if (cpt == 0) {
-                        temp = Application.session.getNodePoids(i);
-                        cpt = 1;
-                    } else {
-                        if (Application.session.getNodePoids(i) == temp) {
-                            cpt++;
-                        } else {
-                            max = PApplet.max(cpt, max);
-                            cpt = 1;
+            for (int k = 0; k < Temps.getHourCount(); k++) {
+                count = count = Application.session.getTableauGephi()[k].nodeCount;
+                for (int i = 1; i < count; i++) {
+                    Application.session.setNodePoids(i, (float) Application.session.getTableauGephi()[k].btsDegree[i]);
+                }
+                Application.session.setNodePoids(PApplet.sort(Application.session.getNodePoids()));
+                cpt = 0;
+                float temp = 0;
+                for (int i = 1; i < count; i++) {
+                    if (Application.session.getNodePoids(i) > 0) {
+                        if (cpt == 0) {
                             temp = Application.session.getNodePoids(i);
+                            cpt = 1;
+                        } else {
+                            if (Application.session.getNodePoids(i) == temp) {
+                                cpt++;
+                            } else {
+                                max = PApplet.max(cpt, max);
+                                cpt = 1;
+                                temp = Application.session.getNodePoids(i);
+                            }
                         }
                     }
                 }
             }
             Application.session.setNodeEffMax(max);
         } else if ("edge".equals(cas)) {
-            count = Application.session.getEdgePoids().length;
-            cpt = 0;
-            float temp = 0;
-            for (int i = 1; i < count; i++) {
-                if (Application.session.getEdgePoids(i) > 0) {
-                    if (cpt == 0) {
-                        temp = Application.session.getEdgePoids(i);
-                        cpt = 1;
-                    } else {
-                        if (Application.session.getEdgePoids(i) == temp) {
-                            cpt++;
-                        } else {
-                            max = PApplet.max(cpt, max);
-                            cpt = 1;
+            for (int k = 0; k < Temps.getHourCount(); k++) {
+
+                count = Application.session.getTableauGephi()[k].edgeCount;
+
+                for (int i = 1; i < count; i++) {
+                    Application.session.setEdgePoids(i, (float) Application.session.getTableauGephi()[k].edge[i][4]);
+                }
+                Application.session.setEdgePoids(PApplet.sort(Application.session.getEdgePoids()));
+                cpt = 0;
+                float temp = 0;
+                for (int i = 1; i < count; i++) {
+                    if (Application.session.getEdgePoids(i) > 0) {
+                        if (cpt == 0) {
                             temp = Application.session.getEdgePoids(i);
+                            cpt = 1;
+                        } else {
+                            if (Application.session.getEdgePoids(i) == temp) {
+                                cpt++;
+                            } else {
+                                max = PApplet.max(cpt, max);
+                                cpt = 1;
+                                temp = Application.session.getEdgePoids(i);
+                            }
                         }
                     }
                 }
             }
             Application.session.setEdgeEffMax(max);
-            Application.session.setNodeEffMax(max);
         } else if ("lissage".equals(cas)) {
             count = Application.session.getNBRoamBTSMoy(0).length;
             float tab[] = new float[(int) count];
@@ -436,24 +510,29 @@ public class Bibliotheque {
                     }
                 }
 
-                out.println("max effect :" + max);
-                out.println("max poids :" + tab[(int)(count - 1)]);
+                //out.println("max effect :" + max);
+                //out.println("max poids :" + tab[(int)(count - 1)]);
             }
         }
     }
 
     /*
-     * décommenter cette version de creerArrow et commmenter la suivante s'il on veut 
-     * à nouveau créer les arrow en direct depuis les oursins, sinon on travail sur des fichiers csv préparés
+     * décommenter cette version de creerArrow et commmenter la suivante s'il on veut créer les flèches depuis les oursins
+     * sinon on travail sur des fichiers csv préparés
      */
+    
     /*public static void creerArrow() {
-    Bibliotheque.creerOursinsVue();
+    
+    creerOursinsVue();
     for (int z = 0; z < Application.session.getOursins().size(); z++) {
     Oursin oursin = (Oursin) Application.session.getOursins().get(z);
     oursin.draw();
     }
-    Bibliotheque.effacerOursins();
+    effacerOursins();
+    
     }*/
+    
+    
     public static void creerArrow() {
         PApplet p = Application.session.getPApplet();
 
@@ -464,10 +543,10 @@ public class Bibliotheque {
 
             String[] mots = PApplet.split(lines[i], ';');
 
-            Arrow a = new Arrow(Float.parseFloat(mots[0]), Float.parseFloat(mots[1]), Float.parseFloat(mots[2]), Float.parseFloat(mots[3]), Float.parseFloat(mots[4]), Boolean.parseBoolean(mots[5]));
-            out.println("oursin " + i + " crée");
+            Arrow a = new Arrow(Float.parseFloat(mots[0]), Float.parseFloat(mots[1]), Float.parseFloat(mots[2]), Float.parseFloat(mots[3]), Float.parseFloat(mots[4]), Float.parseFloat(mots[5]), Float.parseFloat(mots[6]), Float.parseFloat(mots[7]), Boolean.parseBoolean(mots[8]));
+            out.println("flèche " + i + " créée");
 
-            if (Boolean.parseBoolean(mots[5])) {
+            if (Boolean.parseBoolean(mots[8])) {
                 Application.session.arrowsIN.add(a);
             } else {
                 Application.session.arrowsOUT.add(a);
@@ -504,22 +583,24 @@ public class Bibliotheque {
     public static void writeArrowData() {
         PApplet p = Application.session.getPApplet();
         String[] lines = {};
-        lines = PApplet.append(lines, "xSource ; ySource ; angle ; xTarget ; yTarget ; sens");
+        lines = PApplet.append(lines, "xSource ; ySource ; angle ; xTarget ; yTarget ; xi ; yi ; poids ; sens");
         for (int i = 0; i < Application.session.arrowsIN.size(); i++) {
             Arrow a = (Arrow) Application.session.arrowsIN.get(i);
 
-            String words = Float.toString(a.getX()) + ';' + Float.toString(a.getY()) + ';' + Float.toString(a.getAngle()) + ';' + Float.toString(a.get_X()) + ';' + Float.toString(a.get_Y()) + ';' + Boolean.toString(a.getSens());
+            String words = Float.toString(a.getX()) + ';' + Float.toString(a.getY()) + ';' + Float.toString(a.getAngle()) + ';' + Float.toString(a.get_X()) + ';' + Float.toString(a.get_Y()) + ';' + Float.toString(a.getXi()) + ';' + Float.toString(a.getYi()) + ';' + Float.toString(a.getPoids()) + ';' + Boolean.toString(a.getSens());
             lines = PApplet.append(lines, words);
         }
         for (int i = 0; i < Application.session.arrowsOUT.size(); i++) {
             Arrow a = (Arrow) Application.session.arrowsOUT.get(i);
 
-            String words = Float.toString(a.getX()) + ';' + Float.toString(a.getY()) + ';' + Float.toString(a.getAngle()) + ';' + Float.toString(a.get_X()) + ';' + Float.toString(a.get_Y()) + ';' + Boolean.toString(a.getSens());
+            String words = Float.toString(a.getX()) + ';' + Float.toString(a.getY()) + ';' + Float.toString(a.getAngle()) + ';' + Float.toString(a.get_X()) + ';' + Float.toString(a.get_Y()) + ';' + Float.toString(a.getXi()) + ';' + Float.toString(a.getYi()) + ';' + Float.toString(a.getPoids()) + ';' + Boolean.toString(a.getSens());
             lines = PApplet.append(lines, words);
 
         }
 
-        p.saveStrings("Anisotropie_" + Temps.getDateText() + ".csv", lines);
+        out.println("Csv crée");
+
+        p.saveStrings("Arrow" + Temps.getDateText() + ".csv", lines);
     }
 
     /*
@@ -536,16 +617,49 @@ public class Bibliotheque {
         out.println(pas_X);
         out.println(pas_Y);
         int cpt = 0;
-        float[][] mat = new float[2][20000];
-        for (float i = (float) 49.066; i > 48.511; i = (float) (i - pas_X)) {
-            for (float j = (float) 2.893; j > 1.979; j = (float) (j - pas_Y)) {
+        float[][] mat = new float[2][100000];
+        for (float i = (float) 49.1729; i > 48.1437; i = (float) (i - pas_X)) {
+            for (float j = (float) 3.4472; j > 1.48335; j = (float) (j - pas_Y)) {
                 mat[0][cpt] = i;
                 mat[1][cpt] = j;
                 cpt++;
             }
         }
+
+
         out.println("done");
         out.println(cpt);
         return mat;
+    }
+
+    // calcule la fonction coxbox
+    public static float CoxBox(float y, char i) {
+        // T(Y) = ((Y^lambda)-1)/lambda si lambda != 0
+        float lambda = 1;
+        if (i == 'e') {
+            lambda = Application.session.getLambdaE();
+        } else if (i == 'n') {
+            lambda = Application.session.getLambdaN();
+        }
+        float ret = 0;
+        if (lambda == 0) {
+            ret = PApplet.log(y);
+        } else {
+            ret = (PApplet.pow(y, lambda) - 1) / lambda;
+        }
+        return ret;
+    }
+
+    // calcule de la fonction coxbox en rentrant un lambda donné 
+    public static float CoxBoxLambda(float y, float lambda) {
+        // T(Y) = ((Y^lambda)-1)/lambda si lambda != 0
+
+        float ret = 0;
+        if (lambda == 0) {
+            ret = PApplet.log(y);
+        } else {
+            ret = (PApplet.pow(y, lambda) - 1) / lambda;
+        }
+        return ret;
     }
 }

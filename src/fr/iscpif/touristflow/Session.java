@@ -8,6 +8,7 @@ import de.fhpotsdam.unfolding.Map;
 import de.fhpotsdam.unfolding.geo.Location;
 import java.util.ArrayList;
 import processing.core.*; 
+
 /**
  *
  * @author Quentin Lobbé
@@ -37,7 +38,7 @@ public class Session {
     PImage myPoints;
 
     // pour le gephi
-    Gephi[] TableauGephi = new Gephi[6]; 
+    Gephi[] TableauGephi = new Gephi[24]; 
 
     // index du Graph courant
     int index; 
@@ -64,6 +65,7 @@ public class Session {
     
     // pour les arraws
     String[] referencesArrows;
+    
     
     // pour le box cox 
     float lambdaE = 1;
@@ -115,6 +117,8 @@ public class Session {
     boolean draged = false;
     boolean kmeansDraw = false;
     boolean arrow = false;
+    boolean IN = true;
+    boolean OUT = true;
 
     // Définition de constantes pour le calcul des Min et Max 
     float nodeMin = PConstants.MAX_FLOAT;
@@ -842,6 +846,24 @@ public class Session {
     public void setLissageDistri(boolean lissageDistri) {
         this.lissageDistri = lissageDistri;
     }
+
+    public boolean isIN() {
+        return IN;
+    }
+
+    public boolean isOUT() {
+        return OUT;
+    }
+
+    public void setIN(boolean IN) {
+        this.IN = IN;
+    }
+
+    public void setOUT(boolean OUT) {
+        this.OUT = OUT;
+    }
+    
+    
     
     
 }

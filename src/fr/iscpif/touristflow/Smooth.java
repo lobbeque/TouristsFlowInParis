@@ -47,25 +47,24 @@ public class Smooth {
         for (int k = 0; k < buff1Score.length; k++) {
             buff1Score[k] = -1;
         }
-        buff2ScoreIN = new float[2][p.width * p.height / 8];
+        buff2ScoreIN = new float[3][p.width * p.height / 8];
         for (int k = 0; k < buff2ScoreIN.length; k++) {
             buff2ScoreIN[0][k] = -1;
             buff2ScoreIN[1][k] = -1;
+            buff2ScoreIN[2][k] = -1;
         }
-        buff2ScoreOUT = new float[2][p.width * p.height / 8];
+        buff2ScoreOUT = new float[3][p.width * p.height / 8];
         for (int k = 0; k < buff2ScoreOUT.length; k++) {
             buff2ScoreOUT[0][k] = -1;
             buff2ScoreOUT[1][k] = -1;
+            buff2ScoreOUT[2][k] = -1;
         }
 
 
         init = false;
     }
 
-    
     /* *********** pour afficher la carte lissée ************* */
-    
-
     /*
      * Pour chaque cellule du maillage on calcule un score de lissage via "calculScore1()"
      * Les coordonnées des cellules sont rangés dans buff1[][]
@@ -76,17 +75,13 @@ public class Smooth {
     public static void lissage() {
         PApplet p = Application.session.getPApplet();
         int cpt = 0;
+        if (Application.session.isDraged()) {
+            init = false;
+        }
+
         if (!init) {
             premiereUtilisationBuffeur();
             calculScore1();
-        } else {
-            if (Application.session.isDraged()) {
-
-                calculScore1();
-                Application.session.setDraged(false);
-            }
-
-
         }
         cpt = 0;
 
@@ -123,7 +118,6 @@ public class Smooth {
 
     }
 
-    
     /*
      * Pour chaque cellule de la grille visible à l'écran 
      * on calcule le score de l'issage entrant et sortant via "Biweight" ou "Shepard"
@@ -151,8 +145,6 @@ public class Smooth {
         }
     }
 
-    
-   
     /*
      * Lors du lissage nous ne regardons pas les noeuds trop éloignés ( distance trés supérieures à DMaxOnScreen )
      * On va donc travailer sur une série de noeuds proches rangés dans NodePourLissage[][]
@@ -162,42 +154,28 @@ public class Smooth {
         Application.session.setNodePourLissageCount(0);
         Application.session.setNodePourLissageHold(Application.session.getNodePourLissage());
         Application.session.setNodePourLissage(new float[3][Application.session.getNBRoamBTSMoy(0).length]);
-        
-        int nbInterval = 24/Temps.getHourCount();
-        
+
+        int nbInterval = 24 / Temps.getHourCount();
+
         for (int i = 0; i < Application.session.getNBRoamBTSMoy(0).length; i++) {
             if (Application.session.getNBRoamBTSMoy(2, i) > 0) {
                 Location l1 = new Location(Application.session.getNBRoamBTSMoy(2, i), Application.session.getNBRoamBTSMoy(1, i));
                 float xy[] = Application.session.getMap().getScreenPositionFromLocation(l1);
 
-                if (Application.session.getMap().getZoom() >= 16384) {
-                    if ((xy[0] < p.width + p.width) && (xy[1] < p.height + p.height) && (xy[0] > 0 - p.width) && (xy[1] > 0 - p.height)) { 
-                        Application.session.setNodePourLissage(0, Application.session.getNodePourLissageCount(), xy[0]);
-                        Application.session.setNodePourLissage(1, Application.session.getNodePourLissageCount(), xy[1]);
-                        Application.session.setNodePourLissage(2, Application.session.getNodePourLissageCount(), Application.session.getNBRoamBTSMoy(Application.session.getIndex()*nbInterval + 3, i));
-                        Application.session.setNodePourLissageCount(Application.session.getNodePourLissageCount() + 1);
-                    }
-                } else if (Application.session.getMap().getZoom() >= 8192) {
-                    if ((xy[0] < p.width + p.width / 2) && (xy[1] < p.height + p.height / 2) && (xy[0] > 0 - p.width / 2) && (xy[1] > 0 - p.height / 2)) { 
-                        Application.session.setNodePourLissage(0, Application.session.getNodePourLissageCount(), xy[0]);
-                        Application.session.setNodePourLissage(1, Application.session.getNodePourLissageCount(), xy[1]);
-                        Application.session.setNodePourLissage(2, Application.session.getNodePourLissageCount(), Application.session.getNBRoamBTSMoy(Application.session.getIndex()*nbInterval + 3, i));
-                        Application.session.setNodePourLissageCount(Application.session.getNodePourLissageCount() + 1);
-                    }
-                } else {
-                    if ((xy[0] < p.width) && (xy[1] < p.height) && (xy[0] > 0) && (xy[1] > 0)) { 
-                        Application.session.setNodePourLissage(0, Application.session.getNodePourLissageCount(), xy[0]);
-                        Application.session.setNodePourLissage(1, Application.session.getNodePourLissageCount(), xy[1]);
-                        Application.session.setNodePourLissage(2, Application.session.getNodePourLissageCount(), Application.session.getNBRoamBTSMoy(Application.session.getIndex()*nbInterval + 3, i));
-                        Application.session.setNodePourLissageCount(Application.session.getNodePourLissageCount() + 1);
-                    }
+
+                if ((xy[0] < p.width + p.width / 2) && (xy[1] < p.height + p.height / 2) && (xy[0] > 0 - p.width / 2) && (xy[1] > 0 - p.height / 2)) {
+                    Application.session.setNodePourLissage(0, Application.session.getNodePourLissageCount(), xy[0]);
+                    Application.session.setNodePourLissage(1, Application.session.getNodePourLissageCount(), xy[1]);
+                    // commenter l'instruction ci dessous et décommenter la suivante pour revenir à la carte lissée depuis le graphe et non les csv
+                    Application.session.setNodePourLissage(2, Application.session.getNodePourLissageCount(), Application.session.getNBRoamBTSMoy(Application.session.getIndex() * nbInterval + 3, i));
+                    //Application.session.setNodePourLissage(2, Application.session.getNodePourLissageCount(), Application.session.getMatNode(2, i));
+                    Application.session.setNodePourLissageCount(Application.session.getNodePourLissageCount() + 1);
                 }
             }
         }
-        Application.session.setDmaxOnScreen(Bibliotheque.meter2Pixel(Application.session.getDmax()));
     }
 
-     /*
+    /*
      * Pour une cellule donnée, on observe toutes les antennes visibles dans le rayon de lissage "DmaxOnScreen"
      * Grâce à la méthode de Biweight on calcule une moyenne pondérée du poids de celles ci
      * fonction de pondération : ( 1 - ( d / Dmax )² )² 
@@ -207,18 +185,9 @@ public class Smooth {
         float sum1 = 1;
         float sum2 = 1;
         for (int k = 0; k < count; k++) {
-            if (zoom <= 4096) {
-                if (tabNode[2][k] > 2) {
-                    float d = PApplet.dist(tabNode[0][k], tabNode[1][k], i, j);
-
-                    if (d < DmaxOnScreen) {
-                        float tmp1 = PApplet.sq(1 - PApplet.sq(d / DmaxOnScreen));
-                        sum1 = sum1 + tmp1 * tabNode[2][k];
-                        sum2 = sum2 + tmp1;
-                    }
-                }
-            } else {
+            if (tabNode[2][k] > 2) {
                 float d = PApplet.dist(tabNode[0][k], tabNode[1][k], i, j);
+
                 if (d < DmaxOnScreen) {
                     float tmp1 = PApplet.sq(1 - PApplet.sq(d / DmaxOnScreen));
                     sum1 = sum1 + tmp1 * tabNode[2][k];
@@ -258,14 +227,8 @@ public class Smooth {
         init = true;
         //nonInit = true;
     }
-    
-    
 
     /* *********** pour afficher le champ de flèches ************* */
-    
-    
-    
-    
     /*
      * Pour chaque cellule du maillage on calcule un score de lissage via "calculScore2()"
      * Les coordonnées des cellules sont rangés dans buff2[][]
@@ -276,23 +239,27 @@ public class Smooth {
     public static void lissageArrow() {
         PApplet p = Application.session.getPApplet();
         int cpt = 0;
+
+        if (Application.session.isDraged()) {
+            init = false;
+        }
+
         if (!init) {
             premiereUtilisationBuffeur();
             calculScore2();
-        } else {
-            if (Application.session.isDraged()) {
-                calculScore2();
-                Application.session.setDraged(false);
-            }
         }
 
         cpt = 0;
         for (int i = 0; i < buff2[0].length; i++) {
             if (buff2[0][i] > 0) {
-                Arrow a = new Arrow(buff2[0][i], buff2[1][i], buff2ScoreIN[1][cpt], buff2ScoreIN[0][cpt], true);
-                a.updateLight();
-                Arrow b = new Arrow(buff2[0][i], buff2[1][i], buff2ScoreOUT[1][cpt], buff2ScoreOUT[0][cpt], false);
-                b.updateLight();
+                if (Application.session.isIN()) {
+                    Arrow a = new Arrow(buff2[0][i], buff2[1][i], buff2ScoreIN[1][cpt] + buff2[0][i], buff2ScoreIN[2][cpt] + buff2[1][i], buff2ScoreIN[0][cpt], true);
+                    a.updateLight();
+                }
+                if (Application.session.isOUT()) {
+                    Arrow b = new Arrow(buff2[0][i], buff2[1][i], buff2ScoreOUT[1][cpt] + buff2[0][i], buff2ScoreOUT[2][cpt] + buff2[1][i], buff2ScoreOUT[0][cpt], false);
+                    b.updateLight();
+                }
                 cpt++;
             }
 
@@ -318,17 +285,19 @@ public class Smooth {
                     buff2[0][cpt] = xy[0];
                     buff2[1][cpt] = xy[1];
 
-                    float[] temp = new float[2];
+                    float[] temp = new float[3];
                     temp = CalculeLissageArrow(xy[0], xy[1], DmaxOnScreen, true);
 
                     buff2ScoreIN[0][cpt] = temp[0];
                     buff2ScoreIN[1][cpt] = temp[1];
+                    buff2ScoreIN[2][cpt] = temp[2];
 
-                    float[] temp2 = new float[2];
+                    float[] temp2 = new float[3];
                     temp2 = CalculeLissageArrow(xy[0], xy[1], DmaxOnScreen, false);
 
                     buff2ScoreOUT[0][cpt] = temp2[0];
                     buff2ScoreOUT[1][cpt] = temp2[1];
+                    buff2ScoreOUT[2][cpt] = temp2[2];
 
                     cpt++;
                 }
@@ -349,11 +318,14 @@ public class Smooth {
         // size
         float sum1 = 0;
         float sum2 = 1;
-        // angle
+        // xi
         float sum3 = 0;
         float sum4 = 1;
+        // yi
+        float sum5 = 0;
+        float sum6 = 1;
 
-        float[] ret = new float[2];
+        float[] ret = new float[3];
         if (sens) {
 
             for (int k = 0; k < Application.session.arrowsIN.size(); k++) {
@@ -363,6 +335,9 @@ public class Smooth {
 
                 Location l = new Location(a.x, a.y);
                 float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
+                
+                Location l1 = new Location(a._x, a._y);
+                float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
 
                 float d = PApplet.dist(xy[0], xy[1], i, j);
                 if (d < DmaxOnScreen) {
@@ -370,8 +345,11 @@ public class Smooth {
                     sum1 = sum1 + tmp1 * a.getSize();
                     sum2 = sum2 + tmp1;
 
-                    sum3 = sum3 + tmp1 * a.getAngle();
+                    sum3 = sum3 + tmp1 *(xy[0] - xy1[0]); 
                     sum4 = sum4 + tmp1;
+                    
+                    sum5 = sum5 + tmp1 * (xy[1] - xy1[1]);
+                    sum6 = sum6 + tmp1;
                 }
 
             }
@@ -383,6 +361,9 @@ public class Smooth {
 
                 Location l = new Location(a.x, a.y);
                 float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
+                
+                Location l1 = new Location(a._x, a._y);
+                float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
 
                 float d = PApplet.dist(xy[0], xy[1], i, j);
                 if (d < DmaxOnScreen) {
@@ -390,8 +371,11 @@ public class Smooth {
                     sum1 = sum1 + tmp1 * a.getSize();
                     sum2 = sum2 + tmp1;
 
-                    sum3 = sum3 + tmp1 * a.getAngle();
+                    sum3 = sum3 + tmp1 * (xy[0] - xy1[0]);
                     sum4 = sum4 + tmp1;
+                    
+                    sum5 = sum5 + tmp1 * (xy[1] - xy1[1]);
+                    sum6 = sum6 + tmp1;
 
                 }
 
@@ -401,6 +385,7 @@ public class Smooth {
 
         ret[0] = sum1 / sum2;
         ret[1] = sum3 / sum4;
+        ret[2] = sum5 / sum6;
 
 
         return ret;
