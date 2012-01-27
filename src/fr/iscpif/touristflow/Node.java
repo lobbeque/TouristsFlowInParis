@@ -32,14 +32,15 @@ public class Node {
 
 
             if (!Application.session.isBoxCoxNode()) {
-                radius = PApplet.map(degree, Application.session.getNodeMin(), Application.session.getNodeMax(), 1, 15);
+                radius = PApplet.map(degree, Application.session.getNodeMin(), Application.session.getNodeMax(), 1, 10);
             } else {
-                radius = PApplet.map(Bibliotheque.CoxBox(degree, 'n'), Bibliotheque.CoxBox(Application.session.getNodeMin(), 'n'), Bibliotheque.CoxBox(Application.session.getNodeMax(), 'n'), 1, 15);
+                radius = PApplet.map(Bibliotheque.CoxBox(degree, 'n'), Bibliotheque.CoxBox(Application.session.getNodeMin(), 'n'), Bibliotheque.CoxBox(Application.session.getNodeMax(), 'n'), 1, 10);
             }
             p.ellipseMode(PConstants.RADIUS);
             float zoom = Application.session.getMap().getZoom();
             if ((Application.session.isNode()) && (!Application.session.isChaud())) {
-                p.fill(182, 92, 96, 200);
+                //p.fill(182, 92, 96, 200);
+                p.fill(38,155,225,200);
                 if (!hide) {
                     p.ellipse(xy[0], xy[1], radius * PApplet.exp(zoom / 20000), radius * PApplet.exp(zoom / 20000));
                 }

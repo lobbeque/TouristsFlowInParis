@@ -28,7 +28,7 @@ public class Arrow {
     // utilisé seulement dans le cadre d'une flèche simple
     float taille = 0;
     
-    public float poids;
+    public float poids = 0;
 
     /*
      * Il existe 2 types de flêches :
@@ -58,6 +58,7 @@ public class Arrow {
         this.yi = yi;
         this.taille = taille;
         this.sens = sens;
+        calculeSize();
     }
     
     public Arrow(float x, float y, float angle, float taille, boolean sens) {
@@ -66,20 +67,11 @@ public class Arrow {
         this.angle = angle;
         this.taille = taille;
         this.sens = sens;
+        calculeSize();
     }
     
     // cette fonction calcule à la volée le coef de grossissement des flêches classiques en fonction du niveau de zoom
     public void calculeSize() {
-        Location l = new Location(x, y);
-        float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
-        Location l1 = new Location(_x, _y);
-        float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
-        PApplet p = Application.session.getPApplet();
-        //size = PApplet.dist(xy1[0], xy1[1], xy[0], xy[1]);
-        
-        //size = PApplet.map(size, 0, 5, 0, 6);
-        
-        //float s = Application.session.getMap().getZoom();
 
         size = PApplet.map(poids,0,200, (float)0, (float)4);
 

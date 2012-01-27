@@ -285,19 +285,17 @@ public class Smooth {
                     buff2[0][cpt] = xy[0];
                     buff2[1][cpt] = xy[1];
 
-                    float[] temp = new float[3];
-                    temp = CalculeLissageArrow(xy[0], xy[1], DmaxOnScreen, true);
+                    float[] temp = new float[6];
+                    temp = CalculeLissageArrow(xy[0], xy[1], DmaxOnScreen);
 
                     buff2ScoreIN[0][cpt] = temp[0];
                     buff2ScoreIN[1][cpt] = temp[1];
                     buff2ScoreIN[2][cpt] = temp[2];
 
-                    float[] temp2 = new float[3];
-                    temp2 = CalculeLissageArrow(xy[0], xy[1], DmaxOnScreen, false);
 
-                    buff2ScoreOUT[0][cpt] = temp2[0];
-                    buff2ScoreOUT[1][cpt] = temp2[1];
-                    buff2ScoreOUT[2][cpt] = temp2[2];
+                    buff2ScoreOUT[0][cpt] = temp[3];
+                    buff2ScoreOUT[1][cpt] = temp[4];
+                    buff2ScoreOUT[2][cpt] = temp[5];
 
                     cpt++;
                 }
@@ -313,7 +311,7 @@ public class Smooth {
      * Pour une cellule donnée, on observe toutes les flèches visibles dans le rayon de lissage "DmaxOnScreen"
      * Grâce à la méthode de Biweight on calcule une moyenne pondérée de l'angle et de la taille de la flêche
      */
-    public static float[] CalculeLissageArrow(float i, float j, float DmaxOnScreen, boolean sens) {
+    /*public static float[] CalculeLissageArrow(float i, float j, float DmaxOnScreen, boolean sens) {
 
         // size
         float sum1 = 0;
@@ -331,7 +329,7 @@ public class Smooth {
             for (int k = 0; k < Application.session.arrowsIN.size(); k++) {
 
                 Arrow a = (Arrow) Application.session.arrowsIN.get(k);
-                a.calculeSize();
+                
 
                 Location l = new Location(a.x, a.y);
                 float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
@@ -357,7 +355,7 @@ public class Smooth {
             for (int k = 0; k < Application.session.arrowsOUT.size(); k++) {
 
                 Arrow a = (Arrow) Application.session.arrowsOUT.get(k);
-                a.calculeSize();
+                
 
                 Location l = new Location(a.x, a.y);
                 float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
@@ -389,7 +387,86 @@ public class Smooth {
 
 
         return ret;
+    }*/
+    
+    
+        public static float[] CalculeLissageArrow(float i, float j, float DmaxOnScreen) {
+
+        // in    
+        // size
+        float sum1 = 0;
+        float sum2 = 1;
+        // xi
+        float sum3 = 0;
+        float sum4 = 1;
+        // yi
+        float sum5 = 0;
+        float sum6 = 1;
+
+        // out
+        // size
+        float sum7 = 0;
+        float sum8 = 1;
+        // xi
+        float sum9 = 0;
+        float sum10 = 1;
+        // yi
+        float sum11 = 0;
+        float sum12 = 1;
+        
+        float[] ret = new float[6];
+        
+
+            for (int k = 0; k < Application.session.arrowsIN.size(); k++) {
+
+                Arrow a = (Arrow) Application.session.arrowsIN.get(k);
+                Arrow b = (Arrow) Application.session.arrowsOUT.get(k);
+
+                Location l = new Location(a.x, a.y);
+                float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
+                
+                Location l1 = new Location(a._x, a._y);
+                float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
+                
+                Location l2 = new Location(b._x, b._y);
+                float xy2[] = Application.session.getMap().getScreenPositionFromLocation(l2);
+
+                float d = PApplet.dist(xy[0], xy[1], i, j);
+                if (d < DmaxOnScreen) {
+                    float tmp1 = PApplet.sq(1 - PApplet.sq(d / DmaxOnScreen));
+                    sum1 = sum1 + tmp1 * a.getSize();
+                    sum2 = sum2 + tmp1;
+
+                    sum3 = sum3 + tmp1 *(xy[0] - xy1[0]); 
+                    sum4 = sum4 + tmp1;
+                    
+                    sum5 = sum5 + tmp1 * (xy[1] - xy1[1]);
+                    sum6 = sum6 + tmp1;
+                    
+                    sum7 = sum7 + tmp1 * b.getSize();
+                    sum8 = sum8 + tmp1;
+
+                    sum9 = sum9 + tmp1 *(xy[0] - xy2[0]); 
+                    sum10 = sum10 + tmp1;
+                    
+                    sum11 = sum11 + tmp1 * (xy[1] - xy2[1]);
+                    sum12 = sum12 + tmp1;
+                    
+                }
+
+            }
+
+        ret[0] = sum1 / sum2;
+        ret[1] = sum3 / sum4;
+        ret[2] = sum5 / sum6;
+        ret[3] = sum7 / sum8;
+        ret[4] = sum9 / sum10;
+        ret[5] = sum11 / sum12;
+        
+        return ret;
     }
+    
+    
 
     public static void setGrille(float[][] mat) {
         Grille = mat;

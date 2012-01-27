@@ -57,7 +57,7 @@ public class Edge {
                 if (value < 2) {
                     transparence = 0;
                 }
-                p.stroke(16, 91, 136, transparence);
+                p.stroke(149, 32, 35, transparence);
             }
             if (Application.session.isGros() && (!Application.session.isPetit())) {
                 if ((((xy1[1] > 0) && (xy1[0] > 0) && (xy1[0] < p.width) && (xy1[1] < p.height)) || ((xy2[0] > 0) && (xy2[1] > 0) && (xy2[0] < p.width) && (xy2[1] < p.height))) && (Application.session.getMatEdge(4, i) > 2)) { // on filtre en affichant uniquement les 2000 liens les plus forts situés dans la zone de viz

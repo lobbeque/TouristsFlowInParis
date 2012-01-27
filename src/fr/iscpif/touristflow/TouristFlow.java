@@ -15,8 +15,6 @@ import static java.lang.System.*;
  * @author Quentin Lobbé
  */
 public class TouristFlow extends PApplet {
-    
-    
 
     /**
      * @param args the command line arguments
@@ -35,6 +33,9 @@ public class TouristFlow extends PApplet {
 
         //size(1200, 979);
         size(1300, 850);
+        
+        MouseHandlerCustom.setWidth(width);
+        MouseHandlerCustom.setHeight(height);
 
         //Si l'on se sert d'un proxy, décommenter et ajouter le nom du proxy  
         /*Properties props = System.getProperties();
@@ -46,8 +47,10 @@ public class TouristFlow extends PApplet {
         // info à rentrer pour créer la carte unfloding
         Application.session.setMap(new de.fhpotsdam.unfolding.Map(this));
         Application.session.map.zoomAndPanTo(new Location(48.866f, 2.359f), 10);// position de départ de la carte 
-        MapUtils.createDefaultEventDispatcher(this, Application.session.getMap());
-
+        MapUtilsCustom.createDefaultEventDispatcherCustom(this, Application.session.getMap());
+        
+        //Application.session.getMap().
+ 
         //initialiser la date courante de la carte
         Temps.setupDates();
         //charger les gexf
@@ -123,7 +126,7 @@ public class TouristFlow extends PApplet {
 
         // charger les liens vers les csv contenant les info sur les flêches d'anisotropie
         Application.session.setReferencesArrows(new String[24]);
-        
+
         Application.session.setReferencesArrows(0, "./Ressources/Arrow31 March 2009 00h.csv");
         Application.session.setReferencesArrows(1, "./Ressources/Arrow31 March 2009 01h.csv");
         Application.session.setReferencesArrows(2, "./Ressources/Arrow31 March 2009 02h.csv");
@@ -148,19 +151,19 @@ public class TouristFlow extends PApplet {
         Application.session.setReferencesArrows(21, "./Ressources/Arrow31 March 2009 21h.csv");
         Application.session.setReferencesArrows(22, "./Ressources/Arrow31 March 2009 22h.csv");
         Application.session.setReferencesArrows(23, "./Ressources/Arrow31 March 2009 23h.csv");
-        
-        
-        
+
+
+
         /*Application.session.setReferencesArrows(0, "./Ressources/Anisotropie_31 March 2009 00h.csv");
         Application.session.setReferencesArrows(1, "./Ressources/Anisotropie_31 March 2009 04h.csv");
         Application.session.setReferencesArrows(2, "./Ressources/Anisotropie_31 March 2009 08h.csv");
         Application.session.setReferencesArrows(3, "./Ressources/Anisotropie_31 March 2009 12h.csv");
         Application.session.setReferencesArrows(4, "./Ressources/Anisotropie_31 March 2009 16h.csv");
         Application.session.setReferencesArrows(5, "./Ressources/Anisotropie_31 March 2009 20h.csv");*/
-        
-        
-        
-        
+
+
+
+
 
         Affichage.setTemp(0);
     }
@@ -293,9 +296,8 @@ public class TouristFlow extends PApplet {
         /*if ( ok ){
         Redistribution.printGrille();
         }*/
-        
-        if ( Application.session.isArrow()){
-            
+
+        if (Application.session.isArrow()) {
         }
 
     }
@@ -316,13 +318,6 @@ public class TouristFlow extends PApplet {
             Bibliotheque.writeArrowData();
         }
 
-        if (key == '2') {
-            if (ok) {
-                ok = false;
-            } else {
-                ok = true;
-            }
-        }
     }
 
     @Override
@@ -436,16 +431,16 @@ public class TouristFlow extends PApplet {
                     if ((Application.session.getMap().getZoom() <= 8192) && (Application.session.arrowsIN.size() > 0)) {
                         Affichage.setDrawArrow(true);
                     } else {
-                        
+
                         out.println("il faut dézoomer ou appuyer sur créer avant d'afficher le champ");
                     }
 
                 }
             }
-            
-            float dist7 = dist(width / 70 + 60, height - 500 + 300/9 + 300/18 - 5, mouseX, mouseY);
-            float dist8 = dist(width / 70 + 60, height - 500 + 600/9 + 300/18 - 5, mouseX, mouseY);
-            
+
+            float dist7 = dist(width / 70 + 60, height - 500 + 300 / 9 + 300 / 18 - 5, mouseX, mouseY);
+            float dist8 = dist(width / 70 + 60, height - 500 + 600 / 9 + 300 / 18 - 5, mouseX, mouseY);
+
             if (!Application.session.isIN()) {
                 if (dist8 <= 10) {
                     Application.session.setIN(true);
@@ -455,7 +450,7 @@ public class TouristFlow extends PApplet {
                     Application.session.setIN(false);
                 }
             }
-            
+
             if (!Application.session.isOUT()) {
                 if (dist7 <= 10) {
                     Application.session.setOUT(true);
@@ -492,6 +487,17 @@ public class TouristFlow extends PApplet {
                 Application.session.setKmeansDraw(false);
                 KMeans.KMeansClean();
                 out.println("Cluster Clean");
+            }
+        }
+
+        if (Application.session.isNode()) {
+            float dist = dist((float) (width / 70 + 35), (float) (height - 320 + 25), mouseX, mouseY);
+            if (dist < 15) {
+                if (ok) {
+                    ok = false;
+                } else {
+                    ok = true;
+                }
             }
         }
 

@@ -1,0 +1,212 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package fr.iscpif.touristflow;
+
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import processing.core.PApplet;
+import processing.core.PConstants;
+import de.fhpotsdam.unfolding.Map;
+import de.fhpotsdam.unfolding.events.MapEventBroadcaster;
+import de.fhpotsdam.unfolding.events.PanMapEvent;
+import de.fhpotsdam.unfolding.events.ZoomMapEvent;
+import de.fhpotsdam.unfolding.geo.Location;
+import de.fhpotsdam.unfolding.interactions.MouseHandler;
+
+
+
+public class MouseHandlerCustom extends MouseHandler {
+    
+        public static float width = 0;
+        public static float height = 0;
+
+        public static Logger log = Logger.getLogger(MouseHandler.class);
+
+
+        public MouseHandlerCustom(PApplet p, Map... maps) {
+                this(p, Arrays.asList(maps));
+        }
+
+        public MouseHandlerCustom(PApplet p, List<Map> maps) {
+                super(p, maps);
+
+                p.registerMouseEvent(this);
+
+                p.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+                        public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                                mouseWheel(evt.getWheelRotation());
+                        }
+                });
+        }
+
+        public void mouseClicked() {
+                for (Map map : maps) {
+                        if (map.isHit(mouseX, mouseY)) {
+                                if (mouseEvent.getClickCount() == 2) {
+
+                                        // FIXME Pan + Zoom does not work without tweening
+
+                                        // Pan + Zoom (order is important)
+
+                                        PanMapEvent panMapEvent = new PanMapEvent(this, map.getId());
+                                        Location location = map.mapDisplay
+                                                        .getLocationFromScreenPosition(mouseX, mouseY);
+                                        panMapEvent.setToLocation(location);
+                                        eventDispatcher.fireMapEvent(panMapEvent);
+
+                                        ZoomMapEvent zoomMapEvent = new ZoomMapEvent(this, map.getId(),
+                                                        ZoomMapEvent.ZOOM_BY, 1);
+                                        zoomMapEvent.setTransformationCenterLocation(location);
+                                        eventDispatcher.fireMapEvent(zoomMapEvent);
+                                }
+                        }
+                }
+        }
+
+        public void mouseWheel(float delta) {
+                for (Map map : maps) {
+                        if (map.isHit(mouseX, mouseY)) {
+                                //log.debug("mouse: fire zoomBy for " + map.getId());
+
+                                ZoomMapEvent zoomMapEvent = new ZoomMapEvent(this, map.getId(),
+                                                ZoomMapEvent.ZOOM_BY);
+
+                                // Use location as zoom center, so listening maps can zoom correctly
+                                Location location = map.mapDisplay.getLocationFromScreenPosition(mouseX, mouseY);
+                                zoomMapEvent.setTransformationCenterLocation(location);
+
+                                // Zoom in or out
+                                if (delta < 0) {
+                                        zoomMapEvent.setZoomLevelDelta(1);
+                                } else if (delta > 0) {
+                                        zoomMapEvent.setZoomLevelDelta(-1);
+                                }
+
+                                eventDispatcher.fireMapEvent(zoomMapEvent);
+                        }
+                }
+        }
+
+        public void mouseDragged() {
+            
+            if (Application.session.isHeat() && mouseX > width/56 && mouseX < (width/56 + 320) && mouseY > height - 150 && mouseY < height - 150 + 100){
+                return;
+            }
+            
+            if ((Application.session.isBoxCox() || Application.session.isBoxCoxNode()) && mouseX > width/56 + 175 && mouseX < width/56 + 175 + 175 && mouseY > height - 320 && mouseY < height - 320 + 100){
+                return;
+            } 
+            
+            if ( Application.session.isOursin() && mouseX > width - 250 && mouseX < width - 250 + 220 && mouseY > height/18 && mouseY < height/18 + 50 ) {
+                return;
+            }
+            
+            if ( Application.session.isArrow() && mouseX > width/70 && mouseX < width/70 + 120 && mouseY > height - 500 && mouseY < height - 500 + 300 ){
+                return;
+            }
+
+                for (Map map : maps) {
+                        if (map.isHit(mouseX, mouseY)) {
+                                //log.debug("mouse: fire panTo for " + map.getId());
+
+                                // Pan between two locations, so other listening maps can pan correctly
+
+                                Location oldLocation = map.mapDisplay.getLocationFromScreenPosition(pmouseX,
+                                                pmouseY);
+                                Location newLocation = map.mapDisplay.getLocationFromScreenPosition(mouseX, mouseY);
+
+                                PanMapEvent panMapEvent = new PanMapEvent(this, map.getId(), PanMapEvent.PAN_BY);
+                                panMapEvent.setFromLocation(oldLocation);
+                                panMapEvent.setToLocation(newLocation);
+                                eventDispatcher.fireMapEvent(panMapEvent);
+                        }
+                }
+        }
+
+        public void mouseMoved() {
+        }
+        
+        public static void setWidth(float a){
+            width = a;
+        }
+        
+        public static void setHeight(float a){
+            height = a;
+        }
+
+        // --------------------------------------------------------------
+        // Shamelessly copied code from Processing PApplet. No other way to hook into
+        // register Processing mouse event and still have the same functionality with pmouseX, etc.
+        // --------------------------------------------------------------
+
+        private int mouseX;
+        private int mouseY;
+        private int pmouseX, pmouseY;
+        private int dmouseX, dmouseY;
+        private int emouseX, emouseY;
+        private boolean firstMouse;
+        private int mouseButton;
+        private boolean mousePressed;
+        private MouseEvent mouseEvent;
+
+        public void mouseEvent(MouseEvent event) {
+                int id = event.getID();
+                mouseEvent = event;
+
+                if ((id == MouseEvent.MOUSE_DRAGGED) || (id == MouseEvent.MOUSE_MOVED)) {
+                        pmouseX = emouseX;
+                        pmouseY = emouseY;
+                        mouseX = event.getX();
+                        mouseY = event.getY();
+                }
+
+                int modifiers = event.getModifiers();
+                if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
+                        mouseButton = PConstants.LEFT;
+                } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0) {
+                        mouseButton = PConstants.CENTER;
+                } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0) {
+                        mouseButton = PConstants.RIGHT;
+                }
+
+                if (firstMouse) {
+                        pmouseX = mouseX;
+                        pmouseY = mouseY;
+                        dmouseX = mouseX;
+                        dmouseY = mouseY;
+                        firstMouse = false;
+                }
+
+                switch (id) {
+                case MouseEvent.MOUSE_PRESSED:
+                        mousePressed = true;
+                        // mousePressed();
+                        break;
+                case MouseEvent.MOUSE_RELEASED:
+                        mousePressed = false;
+                        // mouseReleased();
+                        break;
+                case MouseEvent.MOUSE_CLICKED:
+                        mouseClicked();
+                        break;
+                case MouseEvent.MOUSE_DRAGGED:
+                        mouseDragged();
+                        break;
+                case MouseEvent.MOUSE_MOVED:
+                        mouseMoved();
+                        break;
+                }
+
+                if ((id == MouseEvent.MOUSE_DRAGGED) || (id == MouseEvent.MOUSE_MOVED)) {
+                        emouseX = mouseX;
+                        emouseY = mouseY;
+                }
+        }
+}

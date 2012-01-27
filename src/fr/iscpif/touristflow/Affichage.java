@@ -294,9 +294,9 @@ public class Affichage {
         p.rect(x, y, l, h);
 
         // rectangles d'affichage des distributions 
-        p.fill(182, 92, 96);
+        p.fill(38,155,225);
         p.rect(x, y, (float) (15), (float) (15));
-        p.fill(16, 91, 136);
+        p.fill(149, 32, 35);
         p.rect((float) (x + l - 15), (float) (y + h - 15), (float) (15), (float) (15));
         p.fill(190, 201, 186, 100);
 
@@ -304,10 +304,10 @@ public class Affichage {
         p.line(x + l / 2, y + 10, x + l / 2, y + 90);
         p.stroke(255);
         p.ellipseMode(PConstants.RADIUS);
-        p.fill(182, 92, 96);
+        p.fill(38,155,225);
         p.ellipse(x + 35, y + 25, 15, 15);
         p.ellipse(x + 35, y + 70, 1, 1);
-        p.fill(16, 91, 136);
+        p.fill(149, 32, 35);
         p.rect(x + 115, y + 20, 40, 10);
         p.rect(x + 115, y + 65, 40, 1);
 
@@ -444,7 +444,7 @@ public class Affichage {
         p.fill(224);
         // rectangle gris de base
         p.rect(x, y - 175, l, h + 75);
-        p.fill(182, 92, 96);
+        p.fill(38,155,225);
         // rectangle rouge clicable
         p.rect((float) x, (float) (y - l / 11.6), (float) (l / 11.6), (float) (l / 11.6));
         p.fill(224);
@@ -515,8 +515,8 @@ public class Affichage {
         // rectangle gris
         p.rect(x, y - 175, l, h + 75);
 
-        p.fill(16, 91, 136);
-        // rectangle clicable bleu ( en haut à droite du gris )
+        p.fill(149, 32, 35);
+        // rectangle clicable rouge( en haut à droite du gris )
         p.rect((float) (x + l - 15), (float) (y - h - 75), (float) (15), (float) (15));
         p.noStroke();
         p.fill(255);
@@ -668,7 +668,7 @@ public class Affichage {
             PFont font2 = p.createFont("DejaVuSans-ExtraLight-", (float) 12);
             p.textFont(font2);
             p.text("lambda :", x + 30, y - h - 50 + 14);
-            p.fill(16, 91, 136);
+            p.fill(149, 32, 35);
             p.rect(x + l - 15, y - h - 15, 15, 15);
 
             // curseur 
@@ -680,7 +680,7 @@ public class Affichage {
             if (Application.session.isEdgeBoxCoxDistri()) {
                 p.fill(224);
                 p.rect(x, y - h, l, h);
-                p.fill(16, 91, 136);
+                p.fill(149, 32, 35);
                 p.rect(x + l - 15, y - h, 15, 15);
                 p.noStroke();
                 p.fill(255);
@@ -703,7 +703,7 @@ public class Affichage {
             PFont font2 = p.createFont("DejaVuSans-ExtraLight-", (float) 12);
             p.textFont(font2);
             p.text("lambda :", x + 30, p.height - 320 + 14);
-            p.fill(182, 92, 96);
+            p.fill(38,155,225);
             p.rect(x + l - 15, p.height - 320, 15, 15);
 
             // curseur 
@@ -715,7 +715,7 @@ public class Affichage {
             if (Application.session.isNodeBoxCoxDistri()) {
                 p.fill(224);
                 p.rect(x, p.height - 320 - l, l, h);
-                p.fill(182, 92, 96);
+                p.fill(38,155,225);
                 p.rect(x + l - 15, p.height - 320 - 15, 15, 15);
                 p.noStroke();
                 p.fill(255);
@@ -900,18 +900,19 @@ public class Affichage {
         p.strokeWeight(2);
         // rectangle de base 
         p.rect(x, y, l, h);
+        //p.rect(x + 60, y + h, 100, 25);
 
 
 
 
         // boutons selections
-        p.fill(138, 184, 51);
+        p.fill(150,255,166);
         p.triangle(x + 95, y + 20, x + 95, y + 44, x + 120, y + 32);
 
-        p.fill(16, 91, 136);
+        p.fill(106,217,123);
         p.ellipse(x + 150, y + 30, 12, 12);
-
-        p.fill(182, 92, 96);
+        
+        p.fill(55,140,68);
         p.rectMode(PConstants.CENTER);
         p.rect(x + 195, y + 30, 24, 24);
         p.rectMode(PConstants.CORNER);
