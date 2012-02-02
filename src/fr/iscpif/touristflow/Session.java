@@ -38,7 +38,7 @@ public class Session {
     PImage myPoints;
 
     // pour le gephi
-    Gephi[] TableauGephi = new Gephi[24]; 
+    Gephi[] TableauGephi = new Gephi[6]; 
 
     // index du Graph courant
     int index; 
@@ -46,6 +46,7 @@ public class Session {
 
     // pour la carte lissée
     float Dmax = 500;
+    float DmaxSmooth = 500;
     float DmaxPas = 50; 
     float DmaxOnScreen; 
     float P = (float) 0.4;
@@ -861,6 +862,14 @@ public class Session {
 
     public void setOUT(boolean OUT) {
         this.OUT = OUT;
+    }
+
+    public float getDmaxSmooth() {
+        return DmaxSmooth;
+    }
+
+    public void setDmaxSmooth(float DmaxSmooth) {
+        this.DmaxSmooth = DmaxSmooth;
     }
     
     

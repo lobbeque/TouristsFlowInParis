@@ -46,59 +46,38 @@ public class Arrow {
         this.sens = sens;
         this.xi = xi;
         this.yi = yi;
-        this.poids = poids;
-        calculeSize();
+        this.size = PApplet.map(poids,0,200, (float)0, (float)4);
     }
     
-    // flèches "simples"
-    public Arrow(float x, float y, float xi, float yi, float taille, boolean sens) {
-        this.x = x;
-        this.y = y;
-        this.xi = xi;
-        this.yi = yi;
-        this.taille = taille;
-        this.sens = sens;
-        calculeSize();
-    }
-    
-    public Arrow(float x, float y, float angle, float taille, boolean sens) {
+    // flèches "lissee"
+    public Arrow(float x, float y, float taille, float angle, boolean sens) {
         this.x = x;
         this.y = y;
         this.angle = angle;
         this.taille = taille;
         this.sens = sens;
-        calculeSize();
+
     }
     
-    // cette fonction calcule à la volée le coef de grossissement des flêches classiques en fonction du niveau de zoom
-    public void calculeSize() {
-
-        size = PApplet.map(poids,0,200, (float)0, (float)4);
-
-        
-    }
+   /* public Arrow(float x, float y, float angle, float taille, boolean sens) {
+        this.x = x;
+        this.y = y;
+        this.angle = angle;
+        this.taille = taille;
+        this.sens = sens;
+    }*/
     
-    public void calculeAngle() {
-       angle = PApplet.atan2(yi - y, xi - x);  
-        angle = -angle;
-        if (angle < 0) {
-            angle = 2 * PConstants.PI + angle;
-        }
-    }
 
     // cette fonction dessine, oriente et grossit la flèche "classique" 
     public void update() {
-        calculeSize();
         Location l = new Location(x, y);
         float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
         PApplet p = Application.session.getPApplet();
-        //size = PApplet.dist(t1, t2, xy[0], xy[1]);
         p.pushMatrix();
         p.translate(xy[0], xy[1]);
         p.rotate(angle);
         p.strokeWeight((float) 0.5);
-        p.stroke(0);
-        
+        p.stroke(0);       
         p.scale(size);
         if (sens) {
             p.fill(16, 91, 136);
@@ -129,16 +108,15 @@ public class Arrow {
     
     // cette fonction dessine, oriente et grossit la flèche "simple" 
     public void updateLight(){
-        calculeAngle();
+        Location l = new Location(x, y);
+        float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
         PApplet p = Application.session.getPApplet();
         p.pushMatrix();
-        p.translate(x, y);  
-        
+        p.translate(xy[0], xy[1]);  
         p.strokeWeight((float) 0.5);
         p.stroke(0);
-        taille = p.map(taille, 0, 5, 0, Application.session.getArrowsMax());
-       
-        p.scale(taille);
+        float t = PApplet.map(taille, 0, 5, 0, Application.session.getArrowsMax());  
+        p.scale(t);
         if (sens) {
             p.rotate(- angle + PConstants.PI);
             p.fill(16, 91, 136);

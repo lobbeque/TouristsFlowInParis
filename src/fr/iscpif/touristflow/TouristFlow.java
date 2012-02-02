@@ -112,7 +112,7 @@ public class TouristFlow extends PApplet {
         zoom = Application.session.getMap().getZoom();
 
         // création des deux curseurs de sélection pour le lissage
-        Application.session.setCurseur(new Stick(10, (float) (width / 56 + 165), (float) (height - 150 + 53), Application.session.getDmax(), (float) (320 - 10 - 165), 0, 1500, (float) 1 / 3));
+        Application.session.setCurseur(new Stick(10, (float) (width / 56 + 165), (float) (height - 150 + 53), Application.session.getDmaxSmooth(), (float) (320 - 10 - 165), 0, 1500, (float) 1 / 3));
         Application.session.setCurseur2(new Stick(10, (float) (width / 56 + 165), (float) (height - 150 + 18), Application.session.getP(), (float) (320 - 10 - 165), 0, (float) 1.2, (float) 1 / 3));
         // création des deux curseurs pour le box cox
         Application.session.setCurseur3(new Stick(10, (float) (width / 56 + 175 + 30), (float) (height - 245), Application.session.getLambdaE(), 115, (float) -1.5, (float) 1.5, (float) 5 / 6));
@@ -125,9 +125,9 @@ public class TouristFlow extends PApplet {
         Application.session.setNBRoamBTSMoy(Bibliotheque.readData());
 
         // charger les liens vers les csv contenant les info sur les flêches d'anisotropie
-        Application.session.setReferencesArrows(new String[24]);
+        Application.session.setReferencesArrows(new String[6]);
 
-        Application.session.setReferencesArrows(0, "./Ressources/Arrow31 March 2009 00h.csv");
+        /*Application.session.setReferencesArrows(0, "./Ressources/Arrow31 March 2009 00h.csv");
         Application.session.setReferencesArrows(1, "./Ressources/Arrow31 March 2009 01h.csv");
         Application.session.setReferencesArrows(2, "./Ressources/Arrow31 March 2009 02h.csv");
         Application.session.setReferencesArrows(3, "./Ressources/Arrow31 March 2009 03h.csv");
@@ -150,22 +150,23 @@ public class TouristFlow extends PApplet {
         Application.session.setReferencesArrows(20, "./Ressources/Arrow31 March 2009 20h.csv");
         Application.session.setReferencesArrows(21, "./Ressources/Arrow31 March 2009 21h.csv");
         Application.session.setReferencesArrows(22, "./Ressources/Arrow31 March 2009 22h.csv");
-        Application.session.setReferencesArrows(23, "./Ressources/Arrow31 March 2009 23h.csv");
+        Application.session.setReferencesArrows(23, "./Ressources/Arrow31 March 2009 23h.csv");*/
 
 
 
-        /*Application.session.setReferencesArrows(0, "./Ressources/Anisotropie_31 March 2009 00h.csv");
-        Application.session.setReferencesArrows(1, "./Ressources/Anisotropie_31 March 2009 04h.csv");
-        Application.session.setReferencesArrows(2, "./Ressources/Anisotropie_31 March 2009 08h.csv");
-        Application.session.setReferencesArrows(3, "./Ressources/Anisotropie_31 March 2009 12h.csv");
-        Application.session.setReferencesArrows(4, "./Ressources/Anisotropie_31 March 2009 16h.csv");
-        Application.session.setReferencesArrows(5, "./Ressources/Anisotropie_31 March 2009 20h.csv");*/
+        Application.session.setReferencesArrows(0, "./arrow/Arrow roaming 31 March 2009 00h.csv");
+        Application.session.setReferencesArrows(1, "./arrow/Arrow roaming 31 March 2009 04h.csv");
+        Application.session.setReferencesArrows(2, "./arrow/Arrow roaming 31 March 2009 08h.csv");
+        Application.session.setReferencesArrows(3, "./arrow/Arrow roaming 31 March 2009 12h.csv");
+        Application.session.setReferencesArrows(4, "./arrow/Arrow roaming 31 March 2009 16h.csv");
+        Application.session.setReferencesArrows(5, "./arrow/Arrow roaming 31 March 2009 20h.csv");
 
 
 
 
 
         Affichage.setTemp(0);
+        Affichage.setTemp2(0);
     }
 
     @Override
@@ -296,9 +297,6 @@ public class TouristFlow extends PApplet {
         /*if ( ok ){
         Redistribution.printGrille();
         }*/
-
-        if (Application.session.isArrow()) {
-        }
 
     }
     // compteur pour les captures

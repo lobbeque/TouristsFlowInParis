@@ -15,6 +15,7 @@ import static java.lang.System.*;
 public class Affichage {
 
     public static int temp;
+    public static int temp2;
     static boolean drawArrow = false;
 
     public static boolean isDrawArrow() {
@@ -216,8 +217,8 @@ public class Affichage {
             }
             p.text("rayon de lissage (m)", x + 7, y + 47);
             p.line(x + 165, y + 58, x + l - 10, y + 58);
-            Application.session.getCurseur().draw();
-            Application.session.setDmax(Application.session.getCurseur().getCurs());
+            Application.session.getCurseur().drawStep();
+            Application.session.setDmaxSmooth(Application.session.getCurseur().getCurs());
             if (!Application.session.isBiweight()) {
                 Application.session.getCurseur2().draw();
                 Application.session.setP(Application.session.getCurseur2().getCurs());
@@ -942,11 +943,29 @@ public class Affichage {
 
         // si le champ de flèche est activé
         float zoom = Application.session.getMap().getZoom();
+        float dist = Application.session.getDmax();
+        
         if ((temp != zoom) && (zoom <= 8192) && (drawArrow)) {
             // si le niveau de zoom a changé on recalcule une nouvelle grille et on initialise les buffeurs
-            Smooth.setGrille(Bibliotheque.getGrille(40));
+            if(zoom <= 1024){
+                Smooth.setGrille(Bibliotheque.getGrille(4000));
+            }
+            if(zoom == 2048){
+                Smooth.setGrille(Bibliotheque.getGrille(2000));
+            }
+            if(zoom == 4096){
+                Smooth.setGrille(Bibliotheque.getGrille(1000));
+            }
+            if(zoom == 8192){
+                Smooth.setGrille(Bibliotheque.getGrille(500));
+            }
             Smooth.initBuff1();
             temp = (int) zoom;
+        }
+        
+        if ((temp2 != dist) && drawArrow){
+            Smooth.initBuff1();
+            temp2 = (int) dist;
         }
 
 
@@ -1023,6 +1042,10 @@ public class Affichage {
 
     public static void setTemp(int temp) {
         Affichage.temp = temp;
+    }
+    
+    public static void setTemp2(int temp) {
+        Affichage.temp2 = temp;
     }
 
     public static void afficheDistributionLissage(float x, float y, float l, float h) {

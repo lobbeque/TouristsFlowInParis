@@ -4,6 +4,7 @@
  */
 package fr.iscpif.touristflow;
 
+import java.util.ArrayList;
 import processing.core.*;
 import de.fhpotsdam.unfolding.geo.Location;
 import java.util.Arrays;
@@ -18,11 +19,10 @@ public class Smooth {
     // Grille utilisée pour les Arrows
     public static float[][] Grille;
     public static float[][] buff1;
-    public static float[][] buff2;
     public static float[] buff1Score;
     // pour le nuage de flèches
-    public static float[][] buff2ScoreIN;
-    public static float[][] buff2ScoreOUT;
+    public static ArrayList arrowsINsmooth = new ArrayList();
+    public static ArrayList arrowsOUTsmooth = new ArrayList();
     public static boolean init;
     //public static boolean nonInit = false;
     public static float ca = 0;
@@ -38,29 +38,16 @@ public class Smooth {
             buff1[0][i] = -1;
             buff1[1][i] = -1;
         }
-        buff2 = new float[2][p.width * p.height / 8];
-        for (int i = 0; i < buff2[0].length; i++) {
-            buff2[0][i] = -1;
-            buff2[1][i] = -1;
-        }
         buff1Score = new float[p.width * p.height / 8];
         for (int k = 0; k < buff1Score.length; k++) {
             buff1Score[k] = -1;
+        } 
+        while (arrowsINsmooth.size() > 0) {
+            arrowsINsmooth.remove(0);
         }
-        buff2ScoreIN = new float[3][p.width * p.height / 8];
-        for (int k = 0; k < buff2ScoreIN.length; k++) {
-            buff2ScoreIN[0][k] = -1;
-            buff2ScoreIN[1][k] = -1;
-            buff2ScoreIN[2][k] = -1;
+        while (arrowsOUTsmooth.size() > 0) {
+            arrowsOUTsmooth.remove(0);
         }
-        buff2ScoreOUT = new float[3][p.width * p.height / 8];
-        for (int k = 0; k < buff2ScoreOUT.length; k++) {
-            buff2ScoreOUT[0][k] = -1;
-            buff2ScoreOUT[1][k] = -1;
-            buff2ScoreOUT[2][k] = -1;
-        }
-
-
         init = false;
     }
 
@@ -129,7 +116,7 @@ public class Smooth {
         int height = p.height;
         int count = Application.session.getNodePourLissageCount() - 1;
         int zoom = (int) Application.session.getMap().getZoom();
-        float DmaxOnScreen = Bibliotheque.meter2Pixel(Application.session.getDmax());
+        float DmaxOnScreen = Bibliotheque.meter2Pixel(Application.session.getDmaxSmooth());
         int cpt = 0;
         for (float i = 0; i < width; i = i + 3) {//l'écran est découpé en petits carrés
             for (float j = 0; j < height; j = j + 3) {
@@ -238,7 +225,7 @@ public class Smooth {
      */
     public static void lissageArrow() {
         PApplet p = Application.session.getPApplet();
-        int cpt = 0;
+
 
         if (Application.session.isDraged()) {
             init = false;
@@ -249,22 +236,20 @@ public class Smooth {
             calculScore2();
         }
 
-        cpt = 0;
-        for (int i = 0; i < buff2[0].length; i++) {
-            if (buff2[0][i] > 0) {
-                if (Application.session.isIN()) {
-                    Arrow a = new Arrow(buff2[0][i], buff2[1][i], buff2ScoreIN[1][cpt] + buff2[0][i], buff2ScoreIN[2][cpt] + buff2[1][i], buff2ScoreIN[0][cpt], true);
+        for (int i = 0; i < arrowsINsmooth.size() ; i++) {
+            Arrow a = (Arrow) arrowsINsmooth.get(i);
+            Arrow b = (Arrow) arrowsOUTsmooth.get(i);
+            Location l = new Location(a.getX(), a.getY());
+            float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
+            if ((0 < xy[0]) && (xy[0] < p.width) && (0 < xy[1]) && (xy[1] < p.height)) {
+                if (Application.session.isIN()) {             
                     a.updateLight();
                 }
                 if (Application.session.isOUT()) {
-                    Arrow b = new Arrow(buff2[0][i], buff2[1][i], buff2ScoreOUT[1][cpt] + buff2[0][i], buff2ScoreOUT[2][cpt] + buff2[1][i], buff2ScoreOUT[0][cpt], false);
                     b.updateLight();
                 }
-                cpt++;
             }
-
         }
-
     }
 
     /*
@@ -275,30 +260,48 @@ public class Smooth {
 
         PApplet p = Application.session.getPApplet();
         float DmaxOnScreen = Bibliotheque.meter2Pixel(Application.session.getDmax());
-        int cpt = 0;
-
+        float angle = 0;
         for (int i = 0; i < Grille[0].length; i++) {
             if (Grille[0][i] > 0) {
                 Location l = new Location(Grille[0][i], Grille[1][i]);
                 float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
                 if ((0 < xy[0]) && (xy[0] < p.width) && (0 < xy[1]) && (xy[1] < p.height)) {
-                    buff2[0][cpt] = xy[0];
-                    buff2[1][cpt] = xy[1];
 
-                    float[] temp = new float[6];
-                    temp = CalculeLissageArrow(xy[0], xy[1], DmaxOnScreen);
+                    // vérifier qu'une flèche n'a pas été calculée
+                    boolean deja = false;
+                    for (int z = 0; z < arrowsINsmooth.size(); z++) {
+                        Arrow a = (Arrow) arrowsINsmooth.get(z);
+                        Arrow b = (Arrow) arrowsOUTsmooth.get(z);
+                        if (((a.getX() == Grille[0][i]) && (a.getY() == Grille[1][i])) || ((b.getX() == Grille[0][i]) && (b.getY() == Grille[1][i]))) {
+                            deja = true;
+                        }
+                    }
 
-                    buff2ScoreIN[0][cpt] = temp[0];
-                    buff2ScoreIN[1][cpt] = temp[1];
-                    buff2ScoreIN[2][cpt] = temp[2];
 
+                    if (!deja) {
+                        float[] temp = new float[6];
+                        temp = CalculeLissageArrow(xy[0], xy[1], DmaxOnScreen);
 
-                    buff2ScoreOUT[0][cpt] = temp[3];
-                    buff2ScoreOUT[1][cpt] = temp[4];
-                    buff2ScoreOUT[2][cpt] = temp[5];
+                        angle = PApplet.atan2(temp[2], temp[1]);
+                        angle = -angle;
+                        if (angle < 0) {
+                            angle = 2 * PConstants.PI + angle;
+                        }
 
-                    cpt++;
+                        Arrow a = new Arrow(Grille[0][i], Grille[1][i], temp[0], angle, true);
+                        arrowsINsmooth.add(a);
+
+                        angle = PApplet.atan2(temp[5], temp[4]);
+                        angle = -angle;
+                        if (angle < 0) {
+                            angle = 2 * PConstants.PI + angle;
+                        }
+
+                        Arrow b = new Arrow(Grille[0][i], Grille[1][i], temp[3], angle, false);
+                        arrowsOUTsmooth.add(b);
+                    }
                 }
+
             }
         }
 
@@ -311,86 +314,7 @@ public class Smooth {
      * Pour une cellule donnée, on observe toutes les flèches visibles dans le rayon de lissage "DmaxOnScreen"
      * Grâce à la méthode de Biweight on calcule une moyenne pondérée de l'angle et de la taille de la flêche
      */
-    /*public static float[] CalculeLissageArrow(float i, float j, float DmaxOnScreen, boolean sens) {
-
-        // size
-        float sum1 = 0;
-        float sum2 = 1;
-        // xi
-        float sum3 = 0;
-        float sum4 = 1;
-        // yi
-        float sum5 = 0;
-        float sum6 = 1;
-
-        float[] ret = new float[3];
-        if (sens) {
-
-            for (int k = 0; k < Application.session.arrowsIN.size(); k++) {
-
-                Arrow a = (Arrow) Application.session.arrowsIN.get(k);
-                
-
-                Location l = new Location(a.x, a.y);
-                float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
-                
-                Location l1 = new Location(a._x, a._y);
-                float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
-
-                float d = PApplet.dist(xy[0], xy[1], i, j);
-                if (d < DmaxOnScreen) {
-                    float tmp1 = PApplet.sq(1 - PApplet.sq(d / DmaxOnScreen));
-                    sum1 = sum1 + tmp1 * a.getSize();
-                    sum2 = sum2 + tmp1;
-
-                    sum3 = sum3 + tmp1 *(xy[0] - xy1[0]); 
-                    sum4 = sum4 + tmp1;
-                    
-                    sum5 = sum5 + tmp1 * (xy[1] - xy1[1]);
-                    sum6 = sum6 + tmp1;
-                }
-
-            }
-        } else {
-            for (int k = 0; k < Application.session.arrowsOUT.size(); k++) {
-
-                Arrow a = (Arrow) Application.session.arrowsOUT.get(k);
-                
-
-                Location l = new Location(a.x, a.y);
-                float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
-                
-                Location l1 = new Location(a._x, a._y);
-                float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
-
-                float d = PApplet.dist(xy[0], xy[1], i, j);
-                if (d < DmaxOnScreen) {
-                    float tmp1 = PApplet.sq(1 - PApplet.sq(d / DmaxOnScreen));
-                    sum1 = sum1 + tmp1 * a.getSize();
-                    sum2 = sum2 + tmp1;
-
-                    sum3 = sum3 + tmp1 * (xy[0] - xy1[0]);
-                    sum4 = sum4 + tmp1;
-                    
-                    sum5 = sum5 + tmp1 * (xy[1] - xy1[1]);
-                    sum6 = sum6 + tmp1;
-
-                }
-
-            }
-        }
-
-
-        ret[0] = sum1 / sum2;
-        ret[1] = sum3 / sum4;
-        ret[2] = sum5 / sum6;
-
-
-        return ret;
-    }*/
-    
-    
-        public static float[] CalculeLissageArrow(float i, float j, float DmaxOnScreen) {
+    public static float[] CalculeLissageArrow(float i, float j, float DmaxOnScreen) {
 
         // in    
         // size
@@ -413,48 +337,48 @@ public class Smooth {
         // yi
         float sum11 = 0;
         float sum12 = 1;
-        
+
         float[] ret = new float[6];
-        
 
-            for (int k = 0; k < Application.session.arrowsIN.size(); k++) {
 
-                Arrow a = (Arrow) Application.session.arrowsIN.get(k);
-                Arrow b = (Arrow) Application.session.arrowsOUT.get(k);
+        for (int k = 0; k < Application.session.arrowsIN.size(); k++) {
 
-                Location l = new Location(a.x, a.y);
-                float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
-                
-                Location l1 = new Location(a._x, a._y);
-                float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
-                
-                Location l2 = new Location(b._x, b._y);
-                float xy2[] = Application.session.getMap().getScreenPositionFromLocation(l2);
+            Arrow a = (Arrow) Application.session.arrowsIN.get(k);
+            Arrow b = (Arrow) Application.session.arrowsOUT.get(k);
 
-                float d = PApplet.dist(xy[0], xy[1], i, j);
-                if (d < DmaxOnScreen) {
-                    float tmp1 = PApplet.sq(1 - PApplet.sq(d / DmaxOnScreen));
-                    sum1 = sum1 + tmp1 * a.getSize();
-                    sum2 = sum2 + tmp1;
+            Location l = new Location(a.x, a.y);
+            float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
 
-                    sum3 = sum3 + tmp1 *(xy[0] - xy1[0]); 
-                    sum4 = sum4 + tmp1;
-                    
-                    sum5 = sum5 + tmp1 * (xy[1] - xy1[1]);
-                    sum6 = sum6 + tmp1;
-                    
-                    sum7 = sum7 + tmp1 * b.getSize();
-                    sum8 = sum8 + tmp1;
+            Location l1 = new Location(a._x, a._y);
+            float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
 
-                    sum9 = sum9 + tmp1 *(xy[0] - xy2[0]); 
-                    sum10 = sum10 + tmp1;
-                    
-                    sum11 = sum11 + tmp1 * (xy[1] - xy2[1]);
-                    sum12 = sum12 + tmp1;
-                    
-                }
+            Location l2 = new Location(b._x, b._y);
+            float xy2[] = Application.session.getMap().getScreenPositionFromLocation(l2);
+
+            float d = PApplet.dist(xy[0], xy[1], i, j);
+            if (d < DmaxOnScreen) {
+                float tmp1 = PApplet.sq(1 - PApplet.sq(d / DmaxOnScreen));
+                sum1 = sum1 + tmp1 * a.getSize();
+                sum2 = sum2 + tmp1;
+
+                sum3 = sum3 + tmp1 * (xy[0] - xy1[0]);
+                sum4 = sum4 + tmp1;
+
+                sum5 = sum5 + tmp1 * (xy[1] - xy1[1]);
+                sum6 = sum6 + tmp1;
+
+                sum7 = sum7 + tmp1 * b.getSize();
+                sum8 = sum8 + tmp1;
+
+                sum9 = sum9 + tmp1 * (xy[0] - xy2[0]);
+                sum10 = sum10 + tmp1;
+
+                sum11 = sum11 + tmp1 * (xy[1] - xy2[1]);
+                sum12 = sum12 + tmp1;
 
             }
+
+        }
 
         ret[0] = sum1 / sum2;
         ret[1] = sum3 / sum4;
@@ -462,11 +386,9 @@ public class Smooth {
         ret[3] = sum7 / sum8;
         ret[4] = sum9 / sum10;
         ret[5] = sum11 / sum12;
-        
+
         return ret;
     }
-    
-    
 
     public static void setGrille(float[][] mat) {
         Grille = mat;

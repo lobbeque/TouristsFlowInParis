@@ -17,7 +17,7 @@ import static java.lang.System.*;
  */
 public class Bibliotheque {
 
-    static void loadGraph() {
+    /*static void loadGraph() {
     
     Application.session.setTableauGephi(0, new Gephi());
     Application.session.getTableauGephi()[0].loadG("/home/guest/Bureau/24h/fran_sans4080_03_31_00-01.gexf");
@@ -74,9 +74,9 @@ public class Bibliotheque {
     
     Application.session.setIndex(0);
     
-    }
+    }*/
     
-    /*static void loadGraph() {
+    static void loadGraph() {
 
         Application.session.setTableauGephi(0, new Gephi());
         Application.session.getTableauGephi()[0].loadG("/home/guest/Bureau/quentin/Roaming/roaming_2009_03_31-prepa-0-4.gexf");
@@ -92,7 +92,7 @@ public class Bibliotheque {
         Application.session.getTableauGephi()[5].loadG("/home/guest/Bureau/quentin/Roaming/roaming_2009_03_31-prepa-20-24.gexf");
         Application.session.setIndex(0);
 
-    }*/
+    }
 
     static void maxEdgeTot(int i) {
         if (i > Application.session.getMaxEdgeTotal()) {
@@ -207,7 +207,7 @@ public class Bibliotheque {
         for (int j = 0; j < Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount; j++) {
             Location l1 = new Location(Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
             float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
-            if ((xy1[1] > 0) && (xy1[0] > 0) && (xy1[0] < p.width) && (xy1[1] < p.height) && (Application.session.getMatNode(2, j) > 100)) {
+            if ((xy1[1] > 0) && (xy1[0] > 0) && (xy1[0] < p.width) && (xy1[1] < p.height) && (Application.session.getMatNode(2, j) > 50)) {
                 out.println("Création Oursin " + i);
                 Affichage.selectionOursins(xy1[0], xy1[1], Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
                 i++;
@@ -600,7 +600,7 @@ public class Bibliotheque {
 
         out.println("Csv crée");
 
-        p.saveStrings("Arrow" + Temps.getDateText() + ".csv", lines);
+        p.saveStrings("Arrow roaming " + Temps.getDateText() + ".csv", lines);
     }
 
     /*
@@ -610,12 +610,15 @@ public class Bibliotheque {
      */
     public static float[][] getGrille(float n) {
         PApplet p = Application.session.getPApplet();
+        n = Bibliotheque.meter2Pixel(n);
         Location l1 = Application.session.getMap().getLocationFromScreenPosition(0, 0);
         Location l2 = Application.session.getMap().getLocationFromScreenPosition(n, n);
+        Location l3 = Application.session.getMap().getLocationFromScreenPosition(0, n);
         float pas_X = l1.getLat() - l2.getLat();
         float pas_Y = l2.getLon() - l1.getLon();
         out.println(pas_X);
         out.println(pas_Y);
+        out.println(distFrom(l1.getLat(), l1.getLon(), l3.getLat(), l3.getLon()));
         int cpt = 0;
         float[][] mat = new float[2][100000];
         for (float i = (float) 49.1729; i > 48.1437; i = (float) (i - pas_X)) {
