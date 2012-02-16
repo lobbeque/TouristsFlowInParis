@@ -1,7 +1,46 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+
+Copyright Quentin Lobbé (2012)
+Author : Quentin Lobbé <quentin.lobbe@gmail.com>
+Contributor : Julian Bilcke
+
+This file is a part of TouristsFlowInParis Project
+
+Build with Processing ( Ben Fry, Casey Reas ) ( GNU GPL )
+Build with Unfloding ( Till Nagel, Felix Lange ) ( BSD )
+
+
+This software is a computer program whose purpose is to manipulate, 
+explore and visualize large graphs of flow through time and space .
+This software is governed by the CeCILL license under French law and 
+abiding by the rules of distribution of free software. You can use, 
+modify and/ or redistribute the software under the terms of the CeCILL 
+license as circulated by CEA, CNRS and INRIA at the following URL 
+"http://www.cecill.info".
+
+
+As a counterpart to the access to the source code and rights to copy, 
+modify and redistribute granted by the license, users are provided only with a 
+limited warranty and the software's author, the holder of the economic rights, 
+and the successive licensors have only limited liability.
+
+
+In this respect, the user's attention is drawn to the risks associated with loading, 
+using, modifying and/or developing or reproducing the software by the user in light 
+of its specific status of free software, that may mean that it is complicated to manipulate, 
+and that also therefore means that it is reserved for developers and experienced professionals 
+having in-depth computer knowledge. Users are therefore encouraged to load and test 
+the software's suitability as regards their requirements in conditions enabling the security 
+of their systems and/or data to be ensured and, more generally, to use and operate it in 
+the same conditions as regards security.
+
+
+The fact that you are presently reading this means that you have had knowledge of the CeCILL 
+license and that you accept its terms.
+ 
  */
+
+
 package fr.iscpif.touristflow;
 
 import processing.core.*;
@@ -1024,8 +1063,8 @@ public class Affichage {
         p.text("créer", x + l / 2, y + 2 * h / 3 + 60);
         //p.text("-",x + l / 2, y + 2 * h / 3 + 90);
         p.text("supprimer", x + l / 2, y + 2 * h / 3 + 90);
-        Arrow A1 = new Arrow(x + l / 2 + l / 4 - 10, y + 2 * h / 9 + h / 18 - 5, PConstants.PI, (float) 2.5, true);
-        Arrow A2 = new Arrow(x + l / 2 - l / 4 + 10, y + h / 9 + h / 18 - 5, PConstants.PI, (float) 2.5, false);
+        Arrow A1 = new Arrow(x + l / 2 + l / 4 - 10, y + 2 * h / 9 + h / 18 - 5, (float) 2.5,PConstants.PI ,  true);
+        Arrow A2 = new Arrow(x + l / 2 - l / 4 + 10, y + h / 9 + h / 18 - 5, (float) 2.5,PConstants.PI ,  false);
         A1.updateLightBis();
         A2.updateLightBis();
         p.noStroke();
