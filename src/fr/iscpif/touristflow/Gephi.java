@@ -1,12 +1,16 @@
 /*
 
-Copyright Quentin Lobbé (2012)
-Author : Quentin Lobbé <quentin.lobbe@gmail.com>
-Contributors : Julian Bilcke && Fabien Pfaender 
+Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
+
+Authors : 
+Quentin Lobbé <quentin.lobbe@gmail.com>
+Julie Fen-Chong <julie.fenchong@gmail.com>
+Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
 
-Build with Gephi ( Mathieu Bastian, Gephi.org ) ( GNU GPL )
+Build with Processing ( Ben Fry, Casey Reas ) ( GNU GPL )
+Build with Unfolding ( Till Nagel, Felix Lange ) ( BSD )
 
 
 This software is a computer program whose purpose is to manipulate, 
@@ -38,6 +42,7 @@ The fact that you are presently reading this means that you have had knowledge o
 license and that you accept its terms.
  
  */
+
 
 
 package fr.iscpif.touristflow;

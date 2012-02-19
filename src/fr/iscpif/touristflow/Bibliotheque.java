@@ -1,13 +1,16 @@
 /*
 
-Copyright Quentin Lobbé (2012)
-Author : Quentin Lobbé <quentin.lobbe@gmail.com>
-Contributor : Julian Bilcke
+Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
+
+Authors : 
+Quentin Lobbé <quentin.lobbe@gmail.com>
+Julie Fen-Chong <julie.fenchong@gmail.com>
+Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
 
 Build with Processing ( Ben Fry, Casey Reas ) ( GNU GPL )
-Build with Unfloding ( Till Nagel, Felix Lange ) ( BSD )
+Build with Unfolding ( Till Nagel, Felix Lange ) ( BSD )
 
 
 This software is a computer program whose purpose is to manipulate, 
@@ -39,6 +42,7 @@ The fact that you are presently reading this means that you have had knowledge o
 license and that you accept its terms.
  
  */
+
 
 
 package fr.iscpif.touristflow;
@@ -605,7 +609,7 @@ public class Bibliotheque {
     // extraire les données du csv nb_roam_bts_moy
     public static float[][] readData() {
         PApplet p = Application.session.getPApplet();
-        String[] lines = p.loadStrings("./Ressources/nb_roam_bts_moy.csv");
+        String[] lines = p.loadStrings("./ressources/nb_roam_bts_moy.csv");
         int count = lines.length;
         float[][] mat = new float[27][count];
         for (int i = 1; i < lines.length; i++) {

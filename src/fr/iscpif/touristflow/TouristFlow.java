@@ -1,13 +1,16 @@
 /*
 
-Copyright Quentin Lobbé (2012)
-Author : Quentin Lobbé <quentin.lobbe@gmail.com>
-Contributor : Julian Bilcke
+Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
+
+Authors : 
+Quentin Lobbé <quentin.lobbe@gmail.com>
+Julie Fen-Chong <julie.fenchong@gmail.com>
+Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
 
 Build with Processing ( Ben Fry, Casey Reas ) ( GNU GPL )
-Build with Unfloding ( Till Nagel, Felix Lange ) ( BSD )
+Build with Unfolding ( Till Nagel, Felix Lange ) ( BSD )
 
 
 This software is a computer program whose purpose is to manipulate, 
@@ -39,6 +42,7 @@ The fact that you are presently reading this means that you have had knowledge o
 license and that you accept its terms.
  
  */
+
 
 
 package fr.iscpif.touristflow;
@@ -113,7 +117,7 @@ public class TouristFlow extends PApplet {
         Bibliotheque.effectif("node");
 
         // chargement du points pour le heatmap
-        Application.session.setMyPoints(loadImage("./Ressources/ppp.png"));
+        Application.session.setMyPoints(loadImage("./ressources/ppp.png"));
 
         smooth();
 
@@ -168,7 +172,7 @@ public class TouristFlow extends PApplet {
 
         // charger les liens vers les csv contenant les info sur les flêches d'anisotropie
         Application.session.setReferencesArrows(new String[25]);
-        String prefix = "./Ressources/Arrow31 March 2009 ";
+        String prefix = "./ressources/Arrow31 March 2009 ";
         
         for (int i=0;i<24;i++) {
             Application.session.setReferencesArrows(i, prefix + nf(i, 2)+"h.csv");
@@ -321,7 +325,7 @@ public class TouristFlow extends PApplet {
         if (key == 's' || key == 'S') {
             showLegend=false;
             draw();
-            save("touristflows31-March-2009-num_" + compteurImage + ".png");
+            save("captures/touristflows31-March-2009-num_" + compteurImage + ".png");
             showLegend=true;
             compteurImage++;
         }
