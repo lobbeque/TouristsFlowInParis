@@ -77,7 +77,7 @@ public class Session {
     PImage myPoints;
 
     // pour le gephi
-    Gephi[] TableauGephi = new Gephi[6]; 
+    Gephi[] TableauGephi = new Gephi[25]; 
 
     // index du Graph courant
     int index; 

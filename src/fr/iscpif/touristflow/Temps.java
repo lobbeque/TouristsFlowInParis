@@ -62,7 +62,7 @@ public class Temps {
     public static String lastHourStamp = "2009033124";
     public static String nowHour;
 
-    public static final long MILLIS_PER_4HOURS = 4 * 60 * 60 * 1000; // nombre de millisecondes dans un interval de 4 heures
+    public static final long MILLIS_PER_4HOURS = 1 * 60 * 60 * 1000; // nombre de millisecondes dans un interval de 4 heures
 
 
     public static int hourCount; // nb d'intervals en une journée
@@ -110,7 +110,7 @@ public class Temps {
     static int hourSelectorY = 30;
 
     // affichage de la barre de sélection
-    static public void drawDateSelector( ) {
+    static public void drawDateSelector() {
       PApplet p = Application.session.getPApplet();
         
       hourSelectorX = (p.width - hourCount*2) / 2;

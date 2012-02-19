@@ -62,6 +62,7 @@ public class TouristFlow extends PApplet {
      */
     float zoom;
     boolean ok = false;
+    boolean showLegend = true;
 
     public static void main(String[] args) {
         // must match the name of your class ie "letsp5.Main" = packageName.className 
@@ -166,45 +167,12 @@ public class TouristFlow extends PApplet {
         Application.session.setNBRoamBTSMoy(Bibliotheque.readData());
 
         // charger les liens vers les csv contenant les info sur les flêches d'anisotropie
-        Application.session.setReferencesArrows(new String[6]);
-
-        /*Application.session.setReferencesArrows(0, "./Ressources/Arrow31 March 2009 00h.csv");
-        Application.session.setReferencesArrows(1, "./Ressources/Arrow31 March 2009 01h.csv");
-        Application.session.setReferencesArrows(2, "./Ressources/Arrow31 March 2009 02h.csv");
-        Application.session.setReferencesArrows(3, "./Ressources/Arrow31 March 2009 03h.csv");
-        Application.session.setReferencesArrows(4, "./Ressources/Arrow31 March 2009 04h.csv");
-        Application.session.setReferencesArrows(5, "./Ressources/Arrow31 March 2009 05h.csv");
-        Application.session.setReferencesArrows(6, "./Ressources/Arrow31 March 2009 06h.csv");
-        Application.session.setReferencesArrows(7, "./Ressources/Arrow31 March 2009 07h.csv");
-        Application.session.setReferencesArrows(8, "./Ressources/Arrow31 March 2009 08h.csv");
-        Application.session.setReferencesArrows(9, "./Ressources/Arrow31 March 2009 09h.csv");
-        Application.session.setReferencesArrows(10, "./Ressources/Arrow31 March 2009 10h.csv");
-        Application.session.setReferencesArrows(11, "./Ressources/Arrow31 March 2009 11h.csv");
-        Application.session.setReferencesArrows(12, "./Ressources/Arrow31 March 2009 12h.csv");
-        Application.session.setReferencesArrows(13, "./Ressources/Arrow31 March 2009 13h.csv");
-        Application.session.setReferencesArrows(14, "./Ressources/Arrow31 March 2009 14h.csv");
-        Application.session.setReferencesArrows(15, "./Ressources/Arrow31 March 2009 15h.csv");
-        Application.session.setReferencesArrows(16, "./Ressources/Arrow31 March 2009 16h.csv");
-        Application.session.setReferencesArrows(17, "./Ressources/Arrow31 March 2009 17h.csv");
-        Application.session.setReferencesArrows(18, "./Ressources/Arrow31 March 2009 18h.csv");
-        Application.session.setReferencesArrows(19, "./Ressources/Arrow31 March 2009 19h.csv");
-        Application.session.setReferencesArrows(20, "./Ressources/Arrow31 March 2009 20h.csv");
-        Application.session.setReferencesArrows(21, "./Ressources/Arrow31 March 2009 21h.csv");
-        Application.session.setReferencesArrows(22, "./Ressources/Arrow31 March 2009 22h.csv");
-        Application.session.setReferencesArrows(23, "./Ressources/Arrow31 March 2009 23h.csv");*/
-
-
-
-        Application.session.setReferencesArrows(0, "./arrow/Arrow roaming 31 March 2009 00h.csv");
-        Application.session.setReferencesArrows(1, "./arrow/Arrow roaming 31 March 2009 04h.csv");
-        Application.session.setReferencesArrows(2, "./arrow/Arrow roaming 31 March 2009 08h.csv");
-        Application.session.setReferencesArrows(3, "./arrow/Arrow roaming 31 March 2009 12h.csv");
-        Application.session.setReferencesArrows(4, "./arrow/Arrow roaming 31 March 2009 16h.csv");
-        Application.session.setReferencesArrows(5, "./arrow/Arrow roaming 31 March 2009 20h.csv");
-
-
-
-
+        Application.session.setReferencesArrows(new String[25]);
+        String prefix = "./Ressources/Arrow31 March 2009 ";
+        
+        for (int i=0;i<24;i++) {
+            Application.session.setReferencesArrows(i, prefix + nf(i, 2)+"h.csv");
+        }
 
         Affichage.setTemp(0);
         Affichage.setTemp2(0);
@@ -281,9 +249,10 @@ public class TouristFlow extends PApplet {
         stroke(255);
         fill(255);
         strokeWeight(2);
-        Affichage.afficheEchelle();
+        if (showLegend) Affichage.afficheEchelle();
 
         noStroke();
+        if (showLegend) {
 
         // affiche la légende en mode edge ou node 
         if ((!Application.session.isHeat()) && (!Application.session.isChaud()) && (!Application.session.isArrow())) {
@@ -304,13 +273,16 @@ public class TouristFlow extends PApplet {
         if (Application.session.isOursin()) {
             Affichage.afficheCluster();
         }
+        }
 
         ellipseMode(CENTER);
 
+        if (showLegend) {
         // dessiner les boutons du menu
         for (int i = 0; i < Application.session.getBoutons().size(); i++) {
             BoutonMenu boutonMenu = (BoutonMenu) Application.session.getBoutons().get(i);
             boutonMenu.draw();
+        }
         }
 
         // dessiner les oursins crées  
@@ -347,7 +319,10 @@ public class TouristFlow extends PApplet {
     public void keyReleased() {
         // capture écran
         if (key == 's' || key == 'S') {
-            save("french-flow-31-March-2009-num_" + compteurImage + ".png");
+            showLegend=false;
+            draw();
+            save("touristflows31-March-2009-num_" + compteurImage + ".png");
+            showLegend=true;
             compteurImage++;
         }
 
