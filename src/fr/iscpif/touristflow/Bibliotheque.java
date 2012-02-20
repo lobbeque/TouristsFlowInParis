@@ -61,81 +61,15 @@ import static java.lang.System.*;
 public class Bibliotheque {
 
     static void loadGraph() {
-    
-    Application.session.setTableauGephi(0, new Gephi());
-    Application.session.getTableauGephi()[0].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-0-1.gexf");
-    Application.session.setTableauGephi(1, new Gephi());
-    Application.session.getTableauGephi()[1].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-1-2.gexf");
-    Application.session.setTableauGephi(2, new Gephi());
-    Application.session.getTableauGephi()[2].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-2-3.gexf");
-    Application.session.setTableauGephi(3, new Gephi());
-    Application.session.getTableauGephi()[3].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-3-4.gexf");
-    Application.session.setTableauGephi(4, new Gephi());
-    Application.session.getTableauGephi()[4].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-4-5.gexf");
-    Application.session.setTableauGephi(5, new Gephi());
-    Application.session.getTableauGephi()[5].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-5-6.gexf");
-    
-    
-    Application.session.setTableauGephi(6, new Gephi());
-    Application.session.getTableauGephi()[6].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-6-7.gexf");
-    Application.session.setTableauGephi(7, new Gephi());
-    Application.session.getTableauGephi()[7].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-7-8.gexf");
-    Application.session.setTableauGephi(8, new Gephi());
-    Application.session.getTableauGephi()[8].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-8-9.gexf");
-    Application.session.setTableauGephi(9, new Gephi());
-    Application.session.getTableauGephi()[9].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-9-10.gexf");
-    Application.session.setTableauGephi(10, new Gephi());
-    Application.session.getTableauGephi()[10].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-10-11.gexf");
-    Application.session.setTableauGephi(11, new Gephi());
-    Application.session.getTableauGephi()[11].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-11-12.gexf");
-
-    Application.session.setTableauGephi(12, new Gephi());
-    Application.session.getTableauGephi()[12].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-12-13.gexf");
-    Application.session.setTableauGephi(13, new Gephi());
-    Application.session.getTableauGephi()[13].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-13-14.gexf");
-    Application.session.setTableauGephi(14, new Gephi());
-    Application.session.getTableauGephi()[14].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-14-15.gexf");
-    Application.session.setTableauGephi(15, new Gephi());
-    Application.session.getTableauGephi()[15].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-15-16.gexf");
-    Application.session.setTableauGephi(16, new Gephi());
-    Application.session.getTableauGephi()[16].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-16-17.gexf");
-    Application.session.setTableauGephi(17, new Gephi());
-    Application.session.getTableauGephi()[17].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-17-18.gexf");
-    
-    Application.session.setTableauGephi(18, new Gephi());
-    Application.session.getTableauGephi()[18].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-18-19.gexf");
-    Application.session.setTableauGephi(19, new Gephi());
-    Application.session.getTableauGephi()[19].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-19-20.gexf");
-    Application.session.setTableauGephi(20, new Gephi());
-    Application.session.getTableauGephi()[20].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-20-21.gexf");
-    Application.session.setTableauGephi(21, new Gephi());
-    Application.session.getTableauGephi()[21].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-21-22.gexf");
-    Application.session.setTableauGephi(22, new Gephi());
-    Application.session.getTableauGephi()[22].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-22-23.gexf");
-    Application.session.setTableauGephi(23, new Gephi());
-    Application.session.getTableauGephi()[23].loadG("/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-23-00.gexf");
-    
-    Application.session.setIndex(0);
+        String prefix = "/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-";
+        for (int i=0; i < 24; i++) {
+            Application.session.setTableauGephi(i, new Gephi());
+            Application.session.getTableauGephi()[i].loadG(prefix + i+"-"+( (i < 23) ? (i+1) : "00")+".gexf");
+        }
+        Application.session.setIndex(0);
     
     }
     
- /*   static void loadGraph() {
-
-        Application.session.setTableauGephi(0, new Gephi());
-        Application.session.getTableauGephi()[0].loadG("/home/guest/Bureau/quentin/Roaming/roaming_2009_03_31-prepa-0-4.gexf");
-        Application.session.setTableauGephi(1, new Gephi());
-        Application.session.getTableauGephi()[1].loadG("/home/guest/Bureau/quentin/Roaming/roaming_2009_03_31-prepa-4-8.gexf");
-        Application.session.setTableauGephi(2, new Gephi());
-        Application.session.getTableauGephi()[2].loadG("/home/guest/Bureau/quentin/Roaming/roaming_2009_03_31-prepa-8-12.gexf");
-        Application.session.setTableauGephi(3, new Gephi());
-        Application.session.getTableauGephi()[3].loadG("/home/guest/Bureau/quentin/Roaming/roaming_2009_03_31-prepa-12-16.gexf");
-        Application.session.setTableauGephi(4, new Gephi());
-        Application.session.getTableauGephi()[4].loadG("/home/guest/Bureau/quentin/Roaming/roaming_2009_03_31-prepa-16-20.gexf");
-        Application.session.setTableauGephi(5, new Gephi());
-        Application.session.getTableauGephi()[5].loadG("/home/guest/Bureau/quentin/Roaming/roaming_2009_03_31-prepa-20-24.gexf");
-        Application.session.setIndex(0);
-
-    } */
 
     static void maxEdgeTot(int i) {
         if (i > Application.session.getMaxEdgeTotal()) {
