@@ -144,16 +144,16 @@ public class Gephi {
             }
 
             //calcul des min et max
-            if (btsDegree[i] > Application.session.getNodeMax()) {
-                Application.session.setNodeMax((float) btsDegree[i]);
+            if (btsDegree[i] > App.db.getNodeMax()) {
+                App.db.setNodeMax((float) btsDegree[i]);
             }
-            if (btsDegree[i] < Application.session.getNodeMin()) {
-                Application.session.setNodeMin((float) btsDegree[i]);
+            if (btsDegree[i] < App.db.getNodeMin()) {
+                App.db.setNodeMin((float) btsDegree[i]);
             }
 
             i++;
         }
-        Bibliotheque.maxNodeTot(nodeCount);
+        Misc.maxNodeTot(nodeCount);
 
         i = 0;
         for (org.gephi.graph.api.Edge e : directedGraph.getEdges()) {
@@ -167,16 +167,16 @@ public class Gephi {
             edge[i][4] = new Double(e.getWeight());
 
             //calcul des min et max
-            if (edge[i][4] > Application.session.getEdgeMax()) {
-                Application.session.setEdgeMax((float) edge[i][4]);
+            if (edge[i][4] > App.db.getEdgeMax()) {
+                App.db.setEdgeMax((float) edge[i][4]);
             }
-            if (edge[i][4] < Application.session.getEdgeMin()) {
-                Application.session.setEdgeMin((float) edge[i][4]);
+            if (edge[i][4] < App.db.getEdgeMin()) {
+                App.db.setEdgeMin((float) edge[i][4]);
             }
 
             i++;
         }
-        Bibliotheque.maxEdgeTot(edgeCount);
+        Misc.maxEdgeTot(edgeCount);
         out.println(btsLon[1] + " " + btsLat[1]);
 
     }

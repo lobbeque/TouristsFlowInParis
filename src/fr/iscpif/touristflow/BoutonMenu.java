@@ -73,7 +73,7 @@ public class BoutonMenu {
         this.x = x;
         this.y = y;
         this.nom = nom;
-        enfants = new String[Application.session.getNbMaxEnfants()];
+        enfants = new String[App.db.getNbMaxEnfants()];
         System.arraycopy(enfant, 0, this.enfants, 0, enfant.length);
     }
 
@@ -82,7 +82,7 @@ public class BoutonMenu {
         this.x = x;
         this.y = y;
         this.nom = nom;
-        enfants = new String[Application.session.getNbMaxEnfants()];
+        enfants = new String[App.db.getNbMaxEnfants()];
     }
 
     public BoutonMenu(float size, float x, float y, String nom, boolean accordParental, String[] enfant) { // constructeur type 3
@@ -91,7 +91,7 @@ public class BoutonMenu {
         this.y = y;
         this.nom = nom;
         this.accordParental = accordParental;
-        enfants = new String[Application.session.getNbMaxEnfants()];
+        enfants = new String[App.db.getNbMaxEnfants()];
         System.arraycopy(enfant, 0, this.enfants, 0, enfant.length);
     }
 
@@ -104,7 +104,7 @@ public class BoutonMenu {
     }
 
     public void draw() {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         p.strokeWeight(2);
         p.stroke(10, 150);
         if (accordParental) { // si le père est selectionné
@@ -137,7 +137,7 @@ public class BoutonMenu {
     }
 
     protected void drawNormal() { // draw si le noeud n'est pas cliqué 
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         p.fill(190, 201, 186, 100);
         p.ellipse(x, y, size, size);
         if ((xPapa != 0) && (yPapa != 0)) {
@@ -152,7 +152,7 @@ public class BoutonMenu {
     }
 
     protected void drawSelected() { // draw si le père est cliqué
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         p.fill(16, 91, 136, 200);
 
         p.ellipse(x, y, size, size);
@@ -170,8 +170,8 @@ public class BoutonMenu {
     protected void propagation() {
         if (this.status.equals(statusNormal)) {
             for (int i = 0; i < enfants.length; i++) {
-                for (int j = 0; j < Application.session.getBoutons().size(); j++) {
-                    BoutonMenu boutonMenu = (BoutonMenu) Application.session.getBoutons().get(j); // on "etteind" les noeuds dont le père n'est pas cliqué
+                for (int j = 0; j < App.db.getBoutons().size(); j++) {
+                    BoutonMenu boutonMenu = (BoutonMenu) App.db.getBoutons().get(j); // on "etteind" les noeuds dont le père n'est pas cliqué
                     if (boutonMenu.nom.equals(enfants[i])) {
                         boutonMenu.setAccord(false);
                         boutonMenu.setStatus(statusNormal);
@@ -190,8 +190,8 @@ public class BoutonMenu {
                 status = statusSelected;
                 for (int i = 0; i < enfants.length; i++) {
                     String name = enfants[i];
-                    for (int j = 0; j < Application.session.getBoutons().size(); j++) {
-                        BoutonMenu boutonMenu = (BoutonMenu) Application.session.getBoutons().get(j);
+                    for (int j = 0; j < App.db.getBoutons().size(); j++) {
+                        BoutonMenu boutonMenu = (BoutonMenu) App.db.getBoutons().get(j);
                         if (boutonMenu.nom.equals(name)) {
                             boutonMenu.setAccord(true);
                             boutonMenu.setXpapa(x);
@@ -203,8 +203,8 @@ public class BoutonMenu {
                 status = statusNormal;
                 for (int i = 0; i < enfants.length; i++) {
                     String name = enfants[i];
-                    for (int j = 0; j < Application.session.getBoutons().size(); j++) {
-                        BoutonMenu boutonMenu = (BoutonMenu) Application.session.getBoutons().get(j);
+                    for (int j = 0; j < App.db.getBoutons().size(); j++) {
+                        BoutonMenu boutonMenu = (BoutonMenu) App.db.getBoutons().get(j);
                         if (boutonMenu.nom.equals(name)) {
                             boutonMenu.setAccord(false);
                             boutonMenu.setStatus(statusNormal);
@@ -217,76 +217,76 @@ public class BoutonMenu {
 
     protected void incompatib() { // empêche les combinaisons de filtres incompatibles
         if (this.nom.equals("Biweight")) {
-            BoutonMenu boutonMenu2 = (BoutonMenu) Application.session.getBoutons().get(11);
+            BoutonMenu boutonMenu2 = (BoutonMenu) App.db.getBoutons().get(11);
             boutonMenu2.setStatus(statusNormal);
         }
         if (this.nom.equals("Shepard")) {
-            BoutonMenu boutonMenu3 = (BoutonMenu) Application.session.getBoutons().get(10);
+            BoutonMenu boutonMenu3 = (BoutonMenu) App.db.getBoutons().get(10);
             boutonMenu3.setStatus(statusNormal);
         }
         if (this.nom.equals("Box Cox")) {
-            BoutonMenu boutonMenu1 = (BoutonMenu) Application.session.getBoutons().get(8);
+            BoutonMenu boutonMenu1 = (BoutonMenu) App.db.getBoutons().get(8);
             boutonMenu1.setStatus(statusNormal);
         }
         if (this.nom.equals("Log")) {
-            BoutonMenu boutonMenu = (BoutonMenu) Application.session.getBoutons().get(6);
+            BoutonMenu boutonMenu = (BoutonMenu) App.db.getBoutons().get(6);
             boutonMenu.setStatus(statusNormal);
         }
     }
 
     protected void constantesOn() { // activation des constantes de filtres
         if (this.nom.equals("Select")) {
-            Application.session.setSelect(false);
+            App.db.setSelect(false);
         }
         if (this.nom.equals("Box Cox Noeud")) {
-            Application.session.setBoxCoxNode(true);
+            App.db.setBoxCoxNode(true);
         }
         if (this.nom.equals("Lissée")) {
-            Application.session.setHeat(true);
-            Application.session.setPremierLissage(true);
-            Application.session.setBoxCox(false);
+            App.db.setHeat(true);
+            App.db.setFirstSmoothing(true);
+            App.db.setBoxCox(false);
         }
         if (this.nom.equals("Box Cox")) {
-            Application.session.setBoxCox(true);
-            Application.session.setLog(false);
+            App.db.setBoxCox(true);
+            App.db.setLogTransform(false);
         }
         if (this.nom.equals("Exp(1/x)")) {
-            Application.session.setGros(false);
-            Application.session.setPetit(true);
+            App.db.setGros(false);
+            App.db.setPetit(true);
         }
         if (this.nom.equals("Arc")) {
-            Application.session.setEdge(true);
+            App.db.setEdge(true);
         }
         if (this.nom.equals("Noeud")) {
-            Application.session.setNode(true);
+            App.db.setNode(true);
         }
         if (this.nom.equals("Biweight")) {
-            Application.session.setBiweight(true);
-            Application.session.setShepard(false);
+            App.db.setBiweight(true);
+            App.db.setShepard(false);
             if (init) {
                 Smooth.initBuff1();
                 init = false;
             }
         }
         if (this.nom.equals("Shepard")) {
-            Application.session.setShepard(true);
-            Application.session.setBiweight(false);
+            App.db.setShepard(true);
+            App.db.setBiweight(false);
             if (init) {
                 Smooth.initBuff1();
                 init = false;
             }
         }
         if (this.nom.equals("HeatMap")) {
-            Application.session.setChaud(true);
+            App.db.setChaud(true);
         }
         if (this.nom.equals("Log")) {
-            Application.session.setLog(true);
+            App.db.setLogTransform(true);
         }
         if (this.nom.equals("Oursins")) {
-            Application.session.setOursin(true);
+            App.db.isUrchin(true);
         }
         if (this.nom.equals("Arrow")) {
-            Application.session.setArrow(true);
+            App.db.setArrow(true);
             if (init) {
                 Smooth.initBuff1();
                 init = false;
@@ -296,51 +296,51 @@ public class BoutonMenu {
 
     protected void constantesOff() { // désactivation des constantes de filtres
         if (this.nom.equals("Select")) {
-            Application.session.setSelect(true);
+            App.db.setSelect(true);
         }
         if (this.nom.equals("Box Cox Noeud")) {
-            Application.session.setBoxCoxNode(false);
+            App.db.setBoxCoxNode(false);
         }
         if (this.nom.equals("Lissée")) {
-            Application.session.setHeat(false);
-            Application.session.setPremierLissage(false);
+            App.db.setHeat(false);
+            App.db.setFirstSmoothing(false);
         }
         if (this.nom.equals("Box Cox")) {
-            Application.session.setBoxCox(false);
+            App.db.setBoxCox(false);
         }
         if (this.nom.equals("Exp(1/x)")) {
-            Application.session.setGros(true);
-            Application.session.setPetit(false);
+            App.db.setGros(true);
+            App.db.setPetit(false);
         }
         if (this.nom.equals("Arc")) {
-            Application.session.setEdge(false);
+            App.db.setEdge(false);
         }
         if (this.nom.equals("Noeud")) {
-            Application.session.setNode(false);
+            App.db.setNode(false);
         }
         if (this.nom.equals("Biweight")) {
-            Application.session.setBiweight(false);
+            App.db.setBiweight(false);
         }
         if (!init) {
             Smooth.initBuff1();
             init = true;
         }
         if (this.nom.equals("Shepard")) {
-            Application.session.setShepard(false);
+            App.db.setShepard(false);
         }
         if (this.nom.equals("HeatMap")) {
-            Application.session.setChaud(false);
+            App.db.setChaud(false);
         }
         if (this.nom.equals("Log")) {
-            Application.session.setLog(false);
+            App.db.setLogTransform(false);
         }
         if (this.nom.equals("Oursins")) {
-            Application.session.setOursin(false);
+            App.db.isUrchin(false);
             KMeans.KMeansClean();
-            Bibliotheque.effacerOursins();
+            Misc.effacerOursins();
         }
         if (this.nom.equals("Arrow")) {
-            Application.session.setArrow(false);
+            App.db.setArrow(false);
         }
     }
 }

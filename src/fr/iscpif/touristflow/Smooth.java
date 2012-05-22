@@ -75,7 +75,7 @@ public class Smooth {
      * Elle initialise tous les tableaux et buffeurs nécessaires ont bon fonctionnement de la viz
      */
     public static void initBuff1() {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         buff1 = new float[2][p.width * p.height / 8];
         for (int i = 0; i < buff1[0].length; i++) {
             buff1[0][i] = -1;
@@ -103,9 +103,9 @@ public class Smooth {
      * Tant que la carte n'est pas déplacée on ne refait pas les calculs
      */
     public static void lissage() {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         int cpt = 0;
-        if (Application.session.isDraged()) {
+        if (App.db.isDragged()) {
             init = false;
         }
 
@@ -120,7 +120,7 @@ public class Smooth {
             if (buff1[0][i] != -1) {
                 p.noStroke();
                 float percent = 0;
-                percent = PApplet.norm(buff1Score[cpt], 1, Application.session.getNodeMax());//On attribut une color à nos petits carrés en fonction du résultat de la méthode
+                percent = PApplet.norm(buff1Score[cpt], 1, App.db.getNodeMax());//On attribut une color à nos petits carrés en fonction du résultat de la méthode
 
                 if (percent > 0.16) {
                     int c = p.color(189, 73, 50);
@@ -154,19 +154,19 @@ public class Smooth {
      */
     public static void calculScore1() {
 
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         int width = p.width;
         int height = p.height;
-        int count = Application.session.getNodePourLissageCount() - 1;
-        int zoom = (int) Application.session.getMap().getZoom();
-        float DmaxOnScreen = Bibliotheque.meter2Pixel(Application.session.getDmaxSmooth());
+        int count = App.db.getNodePourLissageCount() - 1;
+        int zoom = (int) App.db.getMap().getZoom();
+        float DmaxOnScreen = Misc.meter2Pixel(App.db.getDmaxSmooth());
         int cpt = 0;
         for (float i = 0; i < width; i = i + 3) {//l'écran est découpé en petits carrés
             for (float j = 0; j < height; j = j + 3) {
                 buff1[0][cpt] = i;
                 buff1[1][cpt] = j;
-                if (Application.session.isBiweight()) {
-                    buff1Score[cpt] = Biweight(i, j, count, zoom, DmaxOnScreen, Application.session.getNodePourLissage());//Utilisation de la méthode de Biweight
+                if (App.db.isBiweight()) {
+                    buff1Score[cpt] = Biweight(i, j, count, zoom, DmaxOnScreen, App.db.getNodePourLissage());//Utilisation de la méthode de Biweight
                 } else {
                     buff1Score[cpt] = Shepard(i, j);//Utilisation de la méthode de Biweight
                 }
@@ -180,26 +180,26 @@ public class Smooth {
      * On va donc travailer sur une série de noeuds proches rangés dans NodePourLissage[][]
      */
     public static void miseAJourCarteLissee() {
-        PApplet p = Application.session.getPApplet();
-        Application.session.setNodePourLissageCount(0);
-        Application.session.setNodePourLissageHold(Application.session.getNodePourLissage());
-        Application.session.setNodePourLissage(new float[3][Application.session.getNBRoamBTSMoy(0).length]);
+        PApplet p = App.db.getPApplet();
+        App.db.setNodeforSmoothingCount(0);
+        App.db.setNodePourLissageHold(App.db.getNodePourLissage());
+        App.db.setNodePourLissage(new float[3][App.db.getNBRoamBTSMoy(0).length]);
 
         int nbInterval = 24 / Temps.getHourCount();
 
-        for (int i = 0; i < Application.session.getNBRoamBTSMoy(0).length; i++) {
-            if (Application.session.getNBRoamBTSMoy(2, i) > 0) {
-                Location l1 = new Location(Application.session.getNBRoamBTSMoy(2, i), Application.session.getNBRoamBTSMoy(1, i));
-                float xy[] = Application.session.getMap().getScreenPositionFromLocation(l1);
+        for (int i = 0; i < App.db.getNBRoamBTSMoy(0).length; i++) {
+            if (App.db.getNBRoamBTSMoy(2, i) > 0) {
+                Location l1 = new Location(App.db.getNBRoamBTSMoy(2, i), App.db.getNBRoamBTSMoy(1, i));
+                float xy[] = App.db.getMap().getScreenPositionFromLocation(l1);
 
 
                 if ((xy[0] < p.width + p.width / 2) && (xy[1] < p.height + p.height / 2) && (xy[0] > 0 - p.width / 2) && (xy[1] > 0 - p.height / 2)) {
-                    Application.session.setNodePourLissage(0, Application.session.getNodePourLissageCount(), xy[0]);
-                    Application.session.setNodePourLissage(1, Application.session.getNodePourLissageCount(), xy[1]);
+                    App.db.setNodePourLissage(0, App.db.getNodePourLissageCount(), xy[0]);
+                    App.db.setNodePourLissage(1, App.db.getNodePourLissageCount(), xy[1]);
                     // commenter l'instruction ci dessous et décommenter la suivante pour revenir à la carte lissée depuis le graphe et non les csv
-                    Application.session.setNodePourLissage(2, Application.session.getNodePourLissageCount(), Application.session.getNBRoamBTSMoy(Application.session.getIndex() * nbInterval + 3, i));
+                    App.db.setNodePourLissage(2, App.db.getNodePourLissageCount(), App.db.getNBRoamBTSMoy(App.db.getIndex() * nbInterval + 3, i));
                     //Application.session.setNodePourLissage(2, Application.session.getNodePourLissageCount(), Application.session.getMatNode(2, i));
-                    Application.session.setNodePourLissageCount(Application.session.getNodePourLissageCount() + 1);
+                    App.db.setNodeforSmoothingCount(App.db.getNodePourLissageCount() + 1);
                 }
             }
         }
@@ -211,7 +211,7 @@ public class Smooth {
      * fonction de pondération : ( 1 - ( d / Dmax )² )² 
      */
     public static float Biweight(float i, float j, int count, int zoom, float DmaxOnScreen, float[][] tabNode) {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         float sum1 = 1;
         float sum2 = 1;
         for (int k = 0; k < count; k++) {
@@ -236,14 +236,14 @@ public class Smooth {
      * fonstion de pondération : 1/(d^p)
      */
     public static float Shepard(float i, float j) {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         float sum1 = 1;
         float sum2 = 1;
-        for (int k = 0; k < Application.session.getNodePourLissageCount() - 1; k++) {
-            float d = PApplet.dist(Application.session.getNodePourLissage(0, k), Application.session.getNodePourLissage(1, k), i, j);
-            if (d < Application.session.getDmaxOnScreen()) {
-                float tmp1 = 1 / PApplet.pow(d, Application.session.getP());
-                sum1 = sum1 + tmp1 * Application.session.getNodePourLissage(2, k);
+        for (int k = 0; k < App.db.getNodePourLissageCount() - 1; k++) {
+            float d = PApplet.dist(App.db.getNodePourLissage(0, k), App.db.getNodePourLissage(1, k), i, j);
+            if (d < App.db.getDmaxOnScreen()) {
+                float tmp1 = 1 / PApplet.pow(d, App.db.getP());
+                sum1 = sum1 + tmp1 * App.db.getNodePourLissage(2, k);
                 sum2 = sum2 + tmp1;
             }
         }
@@ -267,10 +267,10 @@ public class Smooth {
      * Tant que la carte n'est pas déplacée on ne refait pas les calculs
      */
     public static void lissageArrow() {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
 
 
-        if (Application.session.isDraged()) {
+        if (App.db.isDragged()) {
             init = false;
         }
 
@@ -283,12 +283,12 @@ public class Smooth {
             Arrow a = (Arrow) arrowsINsmooth.get(i);
             Arrow b = (Arrow) arrowsOUTsmooth.get(i);
             Location l = new Location(a.getX(), a.getY());
-            float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
+            float xy[] = App.db.getMap().getScreenPositionFromLocation(l);
             if ((0 < xy[0]) && (xy[0] < p.width) && (0 < xy[1]) && (xy[1] < p.height)) {
-                if (Application.session.isIN()) {             
+                if (App.db.isIN()) {             
                     a.updateLight();
                 }
-                if (Application.session.isOUT()) {
+                if (App.db.isOUT()) {
                     b.updateLight();
                 }
             }
@@ -301,13 +301,13 @@ public class Smooth {
      */
     public static void calculScore2() {
 
-        PApplet p = Application.session.getPApplet();
-        float DmaxOnScreen = Bibliotheque.meter2Pixel(Application.session.getDmax());
+        PApplet p = App.db.getPApplet();
+        float DmaxOnScreen = Misc.meter2Pixel(App.db.getDmax());
         float angle = 0;
         for (int i = 0; i < Grille[0].length; i++) {
             if (Grille[0][i] > 0) {
                 Location l = new Location(Grille[0][i], Grille[1][i]);
-                float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
+                float xy[] = App.db.getMap().getScreenPositionFromLocation(l);
                 if ((0 < xy[0]) && (xy[0] < p.width) && (0 < xy[1]) && (xy[1] < p.height)) {
 
                     // vérifier qu'une flèche n'a pas été calculée
@@ -384,19 +384,19 @@ public class Smooth {
         float[] ret = new float[6];
 
 
-        for (int k = 0; k < Application.session.arrowsIN.size(); k++) {
+        for (int k = 0; k < App.db.arrowsIN.size(); k++) {
 
-            Arrow a = (Arrow) Application.session.arrowsIN.get(k);
-            Arrow b = (Arrow) Application.session.arrowsOUT.get(k);
+            Arrow a = (Arrow) App.db.arrowsIN.get(k);
+            Arrow b = (Arrow) App.db.arrowsOUT.get(k);
 
             Location l = new Location(a.x, a.y);
-            float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
+            float xy[] = App.db.getMap().getScreenPositionFromLocation(l);
 
             Location l1 = new Location(a._x, a._y);
-            float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
+            float xy1[] = App.db.getMap().getScreenPositionFromLocation(l1);
 
             Location l2 = new Location(b._x, b._y);
-            float xy2[] = Application.session.getMap().getScreenPositionFromLocation(l2);
+            float xy2[] = App.db.getMap().getScreenPositionFromLocation(l2);
 
             float d = PApplet.dist(xy[0], xy[1], i, j);
             if (d < DmaxOnScreen) {

@@ -90,7 +90,7 @@ public class KMeans {
     }
 
     public static void kMeansInit() {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         // création de n Matrices de 2 tableaux de 32 valeurs 
         // création de n Tableaux clusters 
 
@@ -119,8 +119,8 @@ public class KMeans {
         float[] resultat = new float[n];
 
         // placer les oursins dans des classes
-        for (int i = 0; i < Application.session.getOursins().size(); i++) {
-            Oursin oursin = (Oursin) Application.session.Oursins.get(i);
+        for (int i = 0; i < App.db.getOursins().size(); i++) {
+            Urchin oursin = (Urchin) App.db.urchins.get(i);
 
             for (int j = 0; j < n; j++) {
                 float[][] centroide = (float[][]) Centroides.get(j);
@@ -172,8 +172,8 @@ public class KMeans {
         // ce tableau va recueillir les résultats des calculs de distance 
         float[] resultat = new float[n];
         // placer les oursins dans des classes
-        for (int i = 0; i < Application.session.getOursins().size(); i++) {
-            Oursin oursin = (Oursin) Application.session.Oursins.get(i);
+        for (int i = 0; i < App.db.getOursins().size(); i++) {
+            Urchin oursin = (Urchin) App.db.urchins.get(i);
 
             for (int j = 0; j < n; j++) {
                 float[][] centroide = (float[][]) Centroides.get(j);
@@ -196,7 +196,7 @@ public class KMeans {
     }
 
     public static void drawCluster() {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         for (int i = 0; i < n; i++) {
             String[] cluster = (String[]) Clusters.get(i);
 
@@ -206,7 +206,7 @@ public class KMeans {
 
                     String[] coordo = cluster[j].split("_");
                     Location l = new Location(Float.parseFloat(coordo[0]), Float.parseFloat(coordo[1]));
-                    float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
+                    float xy[] = App.db.getMap().getScreenPositionFromLocation(l);
                     p.fill(255 * (i + 1) / n);
                     p.stroke(16, 91, 136);
                     p.ellipse(xy[0], xy[1], 15, 15);
@@ -252,7 +252,7 @@ public class KMeans {
     }
 
     public static void drawArc(float angle, float poids, float rayon, float x, float y) {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         if ((poids != 0) || (rayon != 0)) {
             p.smooth();
 
@@ -275,18 +275,18 @@ public class KMeans {
 
     // création de tableaux représentant des oursins randoms
     public static float[][] matriceInit() {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         float[][] mat = new float[2][32];
         int index = 0;
         out.println(Arrays.toString(oursinsInit));
         do {
-            index = (int) p.random(0, Application.session.getOursins().size());
+            index = (int) p.random(0, App.db.getOursins().size());
             out.println(Arrays.toString(oursinsInit));
             out.println(index);
         } while (member(oursinsInit, index));
         out.println("fin while");
         oursinsInit = PApplet.append(oursinsInit, index);
-        Oursin oursin = (Oursin) Application.session.Oursins.get(index);
+        Urchin oursin = (Urchin) App.db.urchins.get(index);
         for (int i = 0; i < 32; i++) {
             mat[0][i] = oursin.getEntrant(i);
             mat[1][i] = oursin.getSortant(i);
@@ -333,8 +333,8 @@ public class KMeans {
                 float x = Float.parseFloat(coordo[0]);
                 float y = Float.parseFloat(coordo[1]);
                 // et chercher l'oursin correspondant 
-                for (int k = 0; k < Application.session.getOursins().size(); k++) {
-                    Oursin oursin = (Oursin) Application.session.Oursins.get(k);
+                for (int k = 0; k < App.db.getOursins().size(); k++) {
+                    Urchin oursin = (Urchin) App.db.urchins.get(k);
                     if ((oursin.getXN() == x) && (oursin.getYN() == y)) {
                         for (int l = 0; l < 32; l++) {
                             //On somme un à un les paramêtres
@@ -439,7 +439,7 @@ public class KMeans {
     }
 
     public static void pressed(float mouseX, float mouseY) {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         float dist = PApplet.dist(0, p.height / 18 + 50, 0, p.height - 45);
         for (int i = 0; i < n; i++) {
             float x = p.width - 80 - 75;

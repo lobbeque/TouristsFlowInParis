@@ -141,19 +141,19 @@ public class MouseHandlerCustom extends MouseHandler {
 
         public void mouseDragged() {
             
-            if (Application.session.isHeat() && mouseX > width/56 && mouseX < (width/56 + 320) && mouseY > height - 150 && mouseY < height - 150 + 100){
+            if (App.db.isHeat() && mouseX > width/56 && mouseX < (width/56 + 320) && mouseY > height - 150 && mouseY < height - 150 + 100){
                 return;
             }
             
-            if ((Application.session.isBoxCox() || Application.session.isBoxCoxNode()) && mouseX > width/56 + 175 && mouseX < width/56 + 175 + 175 && mouseY > height - 320 && mouseY < height - 320 + 100){
+            if ((App.db.isBoxCox() || App.db.isBoxCoxNode()) && mouseX > width/56 + 175 && mouseX < width/56 + 175 + 175 && mouseY > height - 320 && mouseY < height - 320 + 100){
                 return;
             } 
             
-            if ( Application.session.isOursin() && mouseX > width - 250 && mouseX < width - 250 + 220 && mouseY > height/18 && mouseY < height/18 + 50 ) {
+            if ( App.db.isUrchin() && mouseX > width - 250 && mouseX < width - 250 + 220 && mouseY > height/18 && mouseY < height/18 + 50 ) {
                 return;
             }
             
-            if ( Application.session.isArrow() && mouseX > width/70 && mouseX < width/70 + 120 && mouseY > height - 500 && mouseY < height - 500 + 300 ){
+            if ( App.db.isArrow() && mouseX > width/70 && mouseX < width/70 + 120 && mouseY > height - 500 && mouseY < height - 500 + 300 ){
                 return;
             }
 

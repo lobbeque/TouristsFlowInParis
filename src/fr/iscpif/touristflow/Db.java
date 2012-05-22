@@ -55,7 +55,7 @@ import processing.core.*;
  *
  * @author Quentin Lobbé
  */
-public class Session {
+public class Db {
        
     PApplet p;
     
@@ -64,10 +64,10 @@ public class Session {
     de.fhpotsdam.unfolding.geo.Location locationCourante;
 
     // pour le menu
-    java.util.ArrayList Boutons = new java.util.ArrayList();
+    java.util.ArrayList buttons = new java.util.ArrayList();
     
     // pour les oursins
-    java.util.ArrayList Oursins = new java.util.ArrayList();
+    java.util.ArrayList urchins = new java.util.ArrayList();
     
     // pour les arrows
     ArrayList arrowsIN = new ArrayList();
@@ -80,7 +80,7 @@ public class Session {
     PImage myPoints;
 
     // pour le gephi
-    Gephi[] TableauGephi = new Gephi[25]; 
+    Gephi[] gephiLoaders = new Gephi[25]; 
 
     // index du Graph courant
     int index; 
@@ -93,7 +93,7 @@ public class Session {
     float DmaxOnScreen; 
     float P = (float) 0.4;
     float d;
-    int NodePourLissageCount;
+    int nodeForSmoothingCount;
     float[][] NodePourLissage; 
     float[][] NodePourLissageHold; 
     Stick curseur;
@@ -120,8 +120,8 @@ public class Session {
     // matrices de stockage des noeuds et edges courants ( triées du poids fort au poids faible )
     float[][] matEdge;
     float[][] matNode;
-    float[][] sortant;
-    float[][] entrant; 
+    float[][] outputs;
+    float[][] inputs; 
     
     float[] EdgePoids;
     float[] NodePoids;
@@ -146,7 +146,7 @@ public class Session {
     boolean edge = true;
     boolean node = false;
     boolean Biweight = false;
-    boolean Shepard = false;
+    boolean shepard = false;
     boolean boxcox = false;
     boolean chaud = false;
     boolean nodeDistri = false;
@@ -154,10 +154,10 @@ public class Session {
     boolean lissageDistri = false;
     boolean edgeBoxCoxDistri = false;
     boolean nodeBoxCoxDistri = false;
-    boolean Log = false;
-    boolean premierLissage = false; 
-    boolean oursin = false;
-    boolean draged = false;
+    boolean logTransform = false;
+    boolean firstSmoothing = false; 
+    boolean isUrchin = false;
+    boolean dragged = false;
     boolean kmeansDraw = false;
     boolean arrow = false;
     boolean IN = true;
@@ -209,11 +209,11 @@ public class Session {
     }
 
     public ArrayList getBoutons() {
-        return Boutons;
+        return buttons;
     }
     
     public ArrayList getOursins() {
-        return Oursins;
+        return urchins;
     }
 
     public float getDmax() {
@@ -229,7 +229,7 @@ public class Session {
     }
 
     public boolean isLog() {
-        return Log;
+        return logTransform;
     }
 
     public float[][] getNodePourLissage() {
@@ -241,7 +241,7 @@ public class Session {
     }
 
     public int getNodePourLissageCount() {
-        return NodePourLissageCount;
+        return nodeForSmoothingCount;
     }
 
     public float[][] getNodePourLissageHold() {
@@ -253,29 +253,29 @@ public class Session {
     }
 
     public boolean isShepard() {
-        return Shepard;
+        return shepard;
     }
 
     public Gephi[] getTableauGephi() {
-        return TableauGephi;
+        return gephiLoaders;
     }
     
     public float getTableauGephiNode(int index, int bts, int i){
         if ( bts == 0 ){
-            return (float)TableauGephi[index].btsLon[i];
+            return (float)gephiLoaders[index].btsLon[i];
         } else if ( bts == 1) {
-            return (float)TableauGephi[index].btsLat[i];
+            return (float)gephiLoaders[index].btsLat[i];
         } else if ( bts == 2) {
-            return (float)TableauGephi[index].btsDegree[i];
+            return (float)gephiLoaders[index].btsDegree[i];
         }
         else return 0;
     }
     
     public float getTableauGephiCount(int index, int i){
         if ( i == 0){
-            return (float)TableauGephi[index].nodeCount;
+            return (float)gephiLoaders[index].nodeCount;
         } else if ( i == 1 ){
-            return (float)TableauGephi[index].edgeCount;
+            return (float)gephiLoaders[index].edgeCount;
         }
         else return 0;
     }
@@ -422,19 +422,19 @@ public class Session {
     }
     
     public float[][] getSortant() {
-        return sortant;
+        return outputs;
     }
     
     public float getSortant(int i, int j) {
-        return sortant[i][j];
+        return outputs[i][j];
     }
     
     public float[][] getEntrant() {
-        return entrant;
+        return inputs;
     }
     
     public float getEntrant(int i, int j) {
-        return entrant[i][j];
+        return inputs[i][j];
     }
 
     public float getMaxEdgeTotal() {
@@ -473,12 +473,12 @@ public class Session {
         return nodeMin;
     }
 
-    public void setDraged(boolean draged) {
-        this.draged = draged;
+    public void setDragged(boolean draged) {
+        this.dragged = draged;
     }
 
-    public boolean isDraged() {
-        return draged;
+    public boolean isDragged() {
+        return dragged;
     }
 
     public boolean isPetit() {
@@ -486,7 +486,7 @@ public class Session {
     }
 
     public boolean isPremierLissage() {
-        return premierLissage;
+        return firstSmoothing;
     }
 
     public boolean isSelect() {
@@ -497,12 +497,12 @@ public class Session {
         this.Biweight = Biweight;
     }
 
-    public void setBoutons(ArrayList Boutons) {
-        this.Boutons = Boutons;
+    public void setButtons(ArrayList buttons) {
+        this.buttons = buttons;
     }
     
-    public void setOursins(ArrayList Oursins) {
-        this.Oursins = Oursins;
+    public void setUrchins(ArrayList urchins) {
+        this.urchins = urchins;
     }
 
     public void setDmax(float Dmax) {
@@ -517,8 +517,8 @@ public class Session {
         this.DmaxPas = DmaxPas;
     }
 
-    public void setLog(boolean Log) {
-        this.Log = Log;
+    public void setLogTransform(boolean logTransform) {
+        this.logTransform = logTransform;
     }
 
     public void setNodePourLissage(float[][] NodePourLissage) {
@@ -529,8 +529,8 @@ public class Session {
         this.NodePourLissage[i][j] = a;
     }
 
-    public void setNodePourLissageCount(int NodePourLissageCount) {
-        this.NodePourLissageCount = NodePourLissageCount;
+    public void setNodeforSmoothingCount(int nodeForSmoothingCount) {
+        this.nodeForSmoothingCount = nodeForSmoothingCount;
     }
 
     public void setNodePourLissageHold(float[][] NodePourLissageHold) {
@@ -541,16 +541,16 @@ public class Session {
         this.P = P;
     }
 
-    public void setShepard(boolean Shepard) {
-        this.Shepard = Shepard;
+    public void setShepard(boolean shepard) {
+        this.shepard = shepard;
     }
 
-    public void setTableauGephi(Gephi[] TableauGephi) {
-        this.TableauGephi = TableauGephi;
+    public void setGephiLoaders(Gephi[] gephiLoaders) {
+        this.gephiLoaders = gephiLoaders;
     }
     
-    public void setTableauGephi(int i, Gephi gephi) {
-        this.TableauGephi[i] = gephi;
+    public void setGephiLoader(int i, Gephi gephi) {
+        this.gephiLoaders[i] = gephi;
     }
 
     public void setChaud(boolean chaud) {
@@ -673,20 +673,20 @@ public class Session {
         this.NodePoids[i] = a;
     }
     
-    public void setSortant(float[][] sortant) {
-        this.sortant = sortant;
+    public void setOutputs(float[][] outputs) {
+        this.outputs = outputs;
     }
     
-    public void setSortant(int i, int j, float a) {
-        this.sortant[i][j] = a;
+    public void setOutput(int i, int j, float a) {
+        this.outputs[i][j] = a;
     }
     
-    public void setEntrant(float[][] entrant) {
-        this.entrant = entrant;
+    public void setInputs(float[][] inputs) {
+        this.inputs = inputs;
     }
     
-    public void setEntrant(int i, int j, float a) {
-        this.entrant[i][j] = a;
+    public void setInput(int i, int j, float a) {
+        this.inputs[i][j] = a;
     }
 
     public void setTabEdgeDist(float[] tabEdgeDist) {
@@ -749,20 +749,20 @@ public class Session {
         this.petit = petit;
     }
 
-    public void setPremierLissage(boolean premierLissage) {
-        this.premierLissage = premierLissage;
+    public void setFirstSmoothing(boolean premierLissage) {
+        this.firstSmoothing = premierLissage;
     }
 
     public void setSelect(boolean select) {
         this.select = select;
     }
 
-    public boolean isOursin() {
-        return oursin;
+    public boolean isUrchin() {
+        return isUrchin;
     }
 
-    public void setOursin(boolean oursin) {
-        this.oursin = oursin;
+    public void isUrchin(boolean urchin) {
+        this.isUrchin = urchin;
     }
 
     public boolean isEdgeBoxCoxDistri() {

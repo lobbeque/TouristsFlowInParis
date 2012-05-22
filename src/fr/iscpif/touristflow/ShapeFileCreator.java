@@ -97,20 +97,20 @@ public class ShapeFileCreator {
     // info sur l'utilisation de la librairie PyShp : http://code.google.com/p/pyshp/wiki/PyShpDocs
     public void export() throws ScriptException {
 
-        if (Application.session.isNode()) {
+        if (App.db.isNode()) {
             exportNode();
         }
 
-        if (Application.session.isEdge()) {
+        if (App.db.isEdge()) {
             exportEdge();
         }
 
-        if (Application.session.isArrow() && !Affichage.isDrawArrow()) {
+        if (App.db.isArrow() && !Affichage.isDrawArrow()) {
 
             exportArrow();
         }
 
-        if (Application.session.isArrow() && Affichage.isDrawArrow()) {
+        if (App.db.isArrow() && Affichage.isDrawArrow()) {
 
             exportArrowSmooth();
         }
@@ -125,9 +125,9 @@ public class ShapeFileCreator {
         python.exec("w.field('TYPE')");
         python.exec("w.field('ID','N','40')");
         python.exec("w.field('DEGREE','N','40')");
-        for (int i = 0; i < Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount; i++) {
-            python.exec("w.point('" + Application.session.getMatNode(1, i) + "','" + Application.session.getMatNode(0, i) + "')");
-            python.exec("w.record('BTS','" + i + "','" + Application.session.getMatNode(2, i) + "')");
+        for (int i = 0; i < App.db.getTableauGephi()[App.db.getIndex()].nodeCount; i++) {
+            python.exec("w.point('" + App.db.getMatNode(1, i) + "','" + App.db.getMatNode(0, i) + "')");
+            python.exec("w.record('BTS','" + i + "','" + App.db.getMatNode(2, i) + "')");
         }
         String fichierSortieNodes = "output/nodes_" + Temps.getDateText();
         python.exec("w.save('" + fichierSortieNodes + "')");
@@ -143,9 +143,9 @@ public class ShapeFileCreator {
         python.exec("w1.field('TYPE')");
         python.exec("w1.field('ID')");
         python.exec("w1.field('POIDS','N','40')");
-        for (int i = 0; i < Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount; i++) {
-            python.exec("w1.line(parts=[[[" + Application.session.getMatEdge(1, i) + "," + Application.session.getMatEdge(0, i) + "],[" + Application.session.getMatEdge(3, i) + "," + Application.session.getMatEdge(2, i) + "]]])");
-            python.exec("w1.record('Flow','" + i + "','" + Application.session.getMatEdge(4, i) + "')");
+        for (int i = 0; i < App.db.getTableauGephi()[App.db.getIndex()].edgeCount; i++) {
+            python.exec("w1.line(parts=[[[" + App.db.getMatEdge(1, i) + "," + App.db.getMatEdge(0, i) + "],[" + App.db.getMatEdge(3, i) + "," + App.db.getMatEdge(2, i) + "]]])");
+            python.exec("w1.record('Flow','" + i + "','" + App.db.getMatEdge(4, i) + "')");
         }
         String fichierSortieEdges = "output/edges_" + Temps.getDateText();
         python.exec("w1.save('" + fichierSortieEdges + "')");
@@ -167,9 +167,9 @@ public class ShapeFileCreator {
         python.exec("w1.field('TYPE')");
         python.exec("w1.field('ANGLE','N','40')");
         python.exec("w1.field('POIDS','N','40')");
-        for (int i = 0; i < Application.session.arrowsIN.size(); i++) {
-            Arrow a = (Arrow) Application.session.arrowsIN.get(i);
-            Arrow b = (Arrow) Application.session.arrowsOUT.get(i);
+        for (int i = 0; i < App.db.arrowsIN.size(); i++) {
+            Arrow a = (Arrow) App.db.arrowsIN.get(i);
+            Arrow b = (Arrow) App.db.arrowsOUT.get(i);
             
                 python.exec("w.point('" + a.getY() + "','" + a.getX() + "')");
                 python.exec("w.record('ARROW IN','" + PApplet.degrees(a.getAngle() - PConstants.PI / 2) + "','" + a.getSize() + "')");

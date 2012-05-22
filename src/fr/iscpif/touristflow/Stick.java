@@ -90,7 +90,7 @@ public class Stick {
       }
 
       public void draw () {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         p.stroke(255);
         p.strokeWeight(2);
         // ligne horizontale de base
@@ -116,7 +116,7 @@ public class Stick {
       }
       
       public void drawStep () {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         p.stroke(255);
         p.strokeWeight(2);
         // ligne horizontale de base
@@ -142,7 +142,7 @@ public class Stick {
       }
 
       public void drawlabel () {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         p.textAlign(PConstants.CENTER);
         float temp = PApplet.map ( x - labelCourant, 0, longueur, debut, fin ); 
         p.text( temp, x, y - 3);
@@ -150,7 +150,7 @@ public class Stick {
       }
       
       public void drawlabelStep () {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         p.textAlign(PConstants.CENTER);
         float temp = PApplet.map ( x - labelCourant, 0, longueur, debut, fin ); 
         p.text( (int)temp, x, y - 3);

@@ -66,16 +66,16 @@ public class Redistribution {
     public static float X = 0;
     public static float Y = 0;
     public static final Location[] mat = new Location[100000];
-    public static float Edge[][] = Application.session.getMatEdge();
+    public static float Edge[][] = App.db.getMatEdge();
     public static float Node[][] = new float[4][mat.length];
     public static float cellule = 0;
 
     public static void getGrilleAgreger(float n) {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         cellule = n;
-        float d = Bibliotheque.meter2Pixel(n);
-        Location l1 = Application.session.getMap().getLocationFromScreenPosition(0, 0);
-        Location l2 = Application.session.getMap().getLocationFromScreenPosition(d, d);
+        float d = Misc.meter2Pixel(n);
+        Location l1 = App.db.getMap().getLocationFromScreenPosition(0, 0);
+        Location l2 = App.db.getMap().getLocationFromScreenPosition(d, d);
         X = l1.getLat() - l2.getLat();
         Y = l2.getLon() - l1.getLon();
 
@@ -92,12 +92,12 @@ public class Redistribution {
     }
 
     public static void printGrille() {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         for (int i = 0; i < Node[0].length; i++) {
             if (Node[1][i] > 0) {
                 Location l = new Location(Node[1][i], Node[2][i]);
                 float poids = PApplet.map(Node[3][i], 0, 1000, 0, 15);
-                float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
+                float xy[] = App.db.getMap().getScreenPositionFromLocation(l);
                 if ((0 < xy[0]) && (xy[0] < p.width) && (0 < xy[1]) && (xy[1] < p.height)) {
                     p.ellipse(xy[0], xy[1], 1, 1);
                 }
@@ -107,13 +107,13 @@ public class Redistribution {
             if (Edge[0][j] > 0) {
                 Location l1 = new Location(Edge[0][j], Edge[1][j]);
                 Location l2 = new Location(Edge[2][j], Edge[3][j]);
-                float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
-                float xy2[] = Application.session.getMap().getScreenPositionFromLocation(l2);
+                float xy1[] = App.db.getMap().getScreenPositionFromLocation(l1);
+                float xy2[] = App.db.getMap().getScreenPositionFromLocation(l2);
 
-                float value = Application.session.getMatEdge(4, j);
-                float poids = PApplet.map(value, 2, Application.session.getEdgeMax(), 1, 15);
+                float value = App.db.getMatEdge(4, j);
+                float poids = PApplet.map(value, 2, App.db.getEdgeMax(), 1, 15);
                 p.strokeWeight(poids);
-                float a = PApplet.map(value, 0, Application.session.getEdgeMax(), 15, 255);
+                float a = PApplet.map(value, 0, App.db.getEdgeMax(), 15, 255);
                 if (value < 2) {
                     a = 0;
                 }
@@ -128,8 +128,8 @@ public class Redistribution {
 
     public static boolean isBTS(Location l) {
         boolean ret = false;
-        for (int i = 0; i < Application.session.getNBRoamBTSMoy(0).length; i++) {
-            Location l1 = new Location(Application.session.getNBRoamBTSMoy(2, i), Application.session.getNBRoamBTSMoy(1, i));
+        for (int i = 0; i < App.db.getNBRoamBTSMoy(0).length; i++) {
+            Location l1 = new Location(App.db.getNBRoamBTSMoy(2, i), App.db.getNBRoamBTSMoy(1, i));
             if ((l.getLat() <= l1.getLat()) && (l1.getLat() < (l.getLat() + X)) && (l.getLon() <= l1.getLon()) && (l1.getLon() < l.getLon() + Y)) {
                 ret = true;
                 break;
@@ -147,8 +147,8 @@ public class Redistribution {
     }
 
     public static void Agreger() {
-        PApplet p = Application.session.getPApplet();
-        Edge = Application.session.getMatEdge();
+        PApplet p = App.db.getPApplet();
+        Edge = App.db.getMatEdge();
         Node = new float[4][mat.length];
         int cpt = 0;
         for (int i = 0; i < mat.length; i++) {
@@ -195,7 +195,7 @@ public class Redistribution {
     }
 
     public static void writeCSV() {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
 
         // un fichier pour les noeuds
 

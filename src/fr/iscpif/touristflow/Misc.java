@@ -58,40 +58,40 @@ import static java.lang.System.*;
  * 
  * @author Quentin Lobbé
  */
-public class Bibliotheque {
+public class Misc {
 
     static void loadGraph() {
-        String prefix = "/Users/macbook/Documents/these/donnees/roaming/gexf_24plages_fluxpersonnes/roaming_2009_03_31-custom-";
+
         for (int i=0; i < 24; i++) {
-            Application.session.setTableauGephi(i, new Gephi());
-            Application.session.getTableauGephi()[i].loadG(prefix + i+"-"+( (i < 23) ? (i+1) : "00")+".gexf");
+            App.db.setGephiLoader(i, new Gephi());
+            App.db.getTableauGephi()[i].loadG(App.conf.imports.graphDirPath + i+"-"+( (i < 23) ? (i+1) : "00")+".gexf");
         }
-        Application.session.setIndex(0);
+        App.db.setIndex(0);
     
     }
     
 
     static void maxEdgeTot(int i) {
-        if (i > Application.session.getMaxEdgeTotal()) {
-            Application.session.setMaxEdgeTotal(i);
+        if (i > App.db.getMaxEdgeTotal()) {
+            App.db.setMaxEdgeTotal(i);
         }
     }
 
     static void maxNodeTot(int i) {
-        if (i > Application.session.getMaxNodeTotal()) {
-            Application.session.setMaxNodeTotal(i);
+        if (i > App.db.getMaxNodeTotal()) {
+            App.db.setMaxNodeTotal(i);
         }
     }
 
     // calcule la distance entre deux points dont on ne connait que la lat/long
     static float distFrom(float lat1, float lng1, float lat2, float lng2) {
-        float earthRadius = (float) 3958.75;
+      
         float dLat = PApplet.radians(lat2 - lat1);
         float dLng = PApplet.radians(lng2 - lng1);
         float a = PApplet.sin(dLat / 2) * PApplet.sin(dLat / 2)
                 + PApplet.cos(PApplet.radians(lat1)) * PApplet.cos(PApplet.radians(lat2)) * PApplet.sin(dLng / 2) * PApplet.sin(dLng / 2);
         float c = 2 * PApplet.atan2(PApplet.sqrt(a), PApplet.sqrt(1 - a));
-        float dist = earthRadius * c;
+        float dist = App.conf.geo.earthRadius * c;
         int meterConversion = 1609;
         float d = (float) dist * (float) meterConversion;
         return d;
@@ -101,8 +101,8 @@ public class Bibliotheque {
     static float meter2Pixel(float dReel) {
         Location l1 = new Location((float) 48.895, (float) 2.283);
         Location l2 = new Location((float) 48.878, (float) 2.436);
-        float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
-        float xy2[] = Application.session.getMap().getScreenPositionFromLocation(l2);
+        float xy1[] = App.db.getMap().getScreenPositionFromLocation(l1);
+        float xy2[] = App.db.getMap().getScreenPositionFromLocation(l2);
         float distReel = distFrom(l1.getLat(), l1.getLon(), l2.getLat(), l2.getLon());
         float distScreen = PApplet.dist(xy1[0], xy1[1], xy2[0], xy2[1]);
         float dScreen = dReel * distScreen / distReel;
@@ -112,15 +112,15 @@ public class Bibliotheque {
     // détermine l'edge de plus grande et plus courte taille
     static void distMinMax() {
         for (int k = 0; k < Temps.getHourCount(); k++) {
-            for (int i = 0; i < Application.session.getTableauGephi()[k].edgeCount; i++) {
-                Location l1 = new Location(Application.session.getMatEdge(0, i), Application.session.getMatEdge(1, i));
-                Location l2 = new Location(Application.session.getMatEdge(2, i), Application.session.getMatEdge(3, i));
+            for (int i = 0; i < App.db.getTableauGephi()[k].edgeCount; i++) {
+                Location l1 = new Location(App.db.getMatEdge(0, i), App.db.getMatEdge(1, i));
+                Location l2 = new Location(App.db.getMatEdge(2, i), App.db.getMatEdge(3, i));
                 float distance = distFrom(l1.getLat(), l1.getLon(), l2.getLat(), l2.getLon());
-                if (distance > Application.session.getDistMax()) {
-                    Application.session.setDistMax(distance);
+                if (distance > App.db.getDistMax()) {
+                    App.db.setDistMax(distance);
                 }
-                if (distance < Application.session.getDistMin()) {
-                    Application.session.setDistMin(distance);
+                if (distance < App.db.getDistMin()) {
+                    App.db.setDistMin(distance);
                 }
             }
         }
@@ -131,62 +131,62 @@ public class Bibliotheque {
 
         int cpt = 0;
 
-        for (int i = 0; i < Application.session.getNodePoids().length; i++) {
-            Application.session.setNodePoids(i, 0);
+        for (int i = 0; i < App.db.getNodePoids().length; i++) {
+            App.db.setNodePoids(i, 0);
         }
 
-        for (int k = 0; k < Application.session.getEdgePoids().length; k++) {
-            Application.session.setEdgePoids(k, 0);
+        for (int k = 0; k < App.db.getEdgePoids().length; k++) {
+            App.db.setEdgePoids(k, 0);
         }
 
-        for (int i = 0; i < Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount; i++) {
-            Application.session.setMatEdge(0, i, (float) Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][0]);
-            Application.session.setMatEdge(1, i, (float) Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][1]);
-            Application.session.setMatEdge(2, i, (float) Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][2]);
-            Application.session.setMatEdge(3, i, (float) Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][3]);
-            Application.session.setMatEdge(4, i, (float) Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][4]);
+        for (int i = 0; i < App.db.getTableauGephi()[App.db.getIndex()].edgeCount; i++) {
+            App.db.setMatEdge(0, i, (float) App.db.getTableauGephi()[App.db.getIndex()].edge[i][0]);
+            App.db.setMatEdge(1, i, (float) App.db.getTableauGephi()[App.db.getIndex()].edge[i][1]);
+            App.db.setMatEdge(2, i, (float) App.db.getTableauGephi()[App.db.getIndex()].edge[i][2]);
+            App.db.setMatEdge(3, i, (float) App.db.getTableauGephi()[App.db.getIndex()].edge[i][3]);
+            App.db.setMatEdge(4, i, (float) App.db.getTableauGephi()[App.db.getIndex()].edge[i][4]);
             cpt++;
-            Application.session.setEdgePoids(i, (float) Application.session.getTableauGephi()[Application.session.getIndex()].edge[i][4]);
+            App.db.setEdgePoids(i, (float) App.db.getTableauGephi()[App.db.getIndex()].edge[i][4]);
         }
 
 
 
 
 
-        for (int i = 0; i < Application.session.getTableauGephiCount(Application.session.getIndex(), 0); i++) {
-            Application.session.setMatNode(0, i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 1, i));
-            Application.session.setMatNode(1, i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 0, i));
-            Application.session.setMatNode(2, i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 2, i));
-            Application.session.setNodePoids(i, (float) Application.session.getTableauGephiNode(Application.session.getIndex(), 2, i));
+        for (int i = 0; i < App.db.getTableauGephiCount(App.db.getIndex(), 0); i++) {
+            App.db.setMatNode(0, i, (float) App.db.getTableauGephiNode(App.db.getIndex(), 1, i));
+            App.db.setMatNode(1, i, (float) App.db.getTableauGephiNode(App.db.getIndex(), 0, i));
+            App.db.setMatNode(2, i, (float) App.db.getTableauGephiNode(App.db.getIndex(), 2, i));
+            App.db.setNodePoids(i, (float) App.db.getTableauGephiNode(App.db.getIndex(), 2, i));
 
 
         }
 
 
-        Application.session.setNodePoids(PApplet.sort(Application.session.getNodePoids()));
-        Application.session.setEdgePoids(PApplet.sort(Application.session.getEdgePoids()));
+        App.db.setNodePoids(PApplet.sort(App.db.getNodePoids()));
+        App.db.setEdgePoids(PApplet.sort(App.db.getEdgePoids()));
 
-        Application.session.setIndexBis(index);
+        App.db.setIndexBis(index);
 
     }
 
     // efface tous les oursins de la liste courante 
     static void effacerOursins() {
-        while (!Application.session.getOursins().isEmpty()) {
-            Application.session.getOursins().remove(0);
+        while (!App.db.getOursins().isEmpty()) {
+            App.db.getOursins().remove(0);
         }
     }
 
     // créer tous les oursins dans la zone définie par l'écran  
     static void creerOursinsVue() {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         int i = 1;
-        for (int j = 0; j < Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount; j++) {
-            Location l1 = new Location(Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
-            float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
-            if ((xy1[1] > 0) && (xy1[0] > 0) && (xy1[0] < p.width) && (xy1[1] < p.height) && (Application.session.getMatNode(2, j) > 50)) {
+        for (int j = 0; j < App.db.getTableauGephi()[App.db.getIndex()].nodeCount; j++) {
+            Location l1 = new Location(App.db.getMatNode(0, j), App.db.getMatNode(1, j));
+            float xy1[] = App.db.getMap().getScreenPositionFromLocation(l1);
+            if ((xy1[1] > 0) && (xy1[0] > 0) && (xy1[0] < p.width) && (xy1[1] < p.height) && (App.db.getMatNode(2, j) > 50)) {
                 out.println("Création Oursin " + i);
-                Affichage.selectionOursins(xy1[0], xy1[1], Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
+                Affichage.selectionOursins(xy1[0], xy1[1], App.db.getMatNode(0, j), App.db.getMatNode(1, j));
                 i++;
             }
         }
@@ -195,17 +195,17 @@ public class Bibliotheque {
 
     // affiche les oursins 
     static void showOursins() {
-        for (int i = 0; i < Application.session.getOursins().size(); i++) {
-            Oursin oursin = (Oursin) Application.session.Oursins.get(i);
-            oursin.setStatus("normal");
+        for (int i = 0; i < App.db.getOursins().size(); i++) {
+            Urchin oursin = (Urchin) App.db.urchins.get(i);
+            oursin.setStatusUnselected();
         }
     }
 
     // cacher les oursins 
     static void hideOursins() {
-        for (int i = 0; i < Application.session.getOursins().size(); i++) {
-            Oursin oursin = (Oursin) Application.session.Oursins.get(i);
-            oursin.setStatus("selected");
+        for (int i = 0; i < App.db.getOursins().size(); i++) {
+            Urchin oursin = (Urchin) App.db.urchins.get(i);
+            oursin.setStatusSelected();
         }
     }
 
@@ -213,16 +213,16 @@ public class Bibliotheque {
     static void miseAJourOursins() {
         float[][] temp = new float[2][1000];
         int i = 0;
-        while (!Application.session.getOursins().isEmpty()) {
-            Oursin oursin = (Oursin) Application.session.Oursins.get(0);
+        while (!App.db.getOursins().isEmpty()) {
+            Urchin oursin = (Urchin) App.db.urchins.get(0);
             temp[0][i] = oursin.getXN();
             temp[1][i] = oursin.getYN();
-            Application.session.getOursins().remove(0);
+            App.db.getOursins().remove(0);
             i++;
         }
         for (int j = 0; j < i + 1; j++) {
             Location l = new Location(temp[0][j], temp[1][j]);
-            float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
+            float xy[] = App.db.getMap().getScreenPositionFromLocation(l);
 
             Affichage.selectionOursins(xy[0], xy[1], temp[0][j], temp[1][j]);
         }
@@ -231,9 +231,9 @@ public class Bibliotheque {
 
     // matrice regroupant les distances de tous les edges de la plus grande à la plus petite
     static void miseAJourMatriceDistance(int index) {
-        Application.session.setTabEdgeDist(new float[(int) Application.session.getMaxEdgeTotal()]);
-        for (int j = 0; j < Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount; j++) {
-            Application.session.setTabEdgeDist(j, distFrom(Application.session.getMatEdge(0, j), Application.session.getMatEdge(1, j), Application.session.getMatEdge(2, j), Application.session.getMatEdge(3, j)));
+        App.db.setTabEdgeDist(new float[(int) App.db.getMaxEdgeTotal()]);
+        for (int j = 0; j < App.db.getTableauGephi()[App.db.getIndex()].edgeCount; j++) {
+            App.db.setTabEdgeDist(j, distFrom(App.db.getMatEdge(0, j), App.db.getMatEdge(1, j), App.db.getMatEdge(2, j), App.db.getMatEdge(3, j)));
         }
 
         //TriRapide.trirapide2(Application.session.getTabEdgeDist(), (int) Application.session.getTableauGephi()[Application.session.getIndex()].edgeCount);
@@ -241,8 +241,8 @@ public class Bibliotheque {
     }
 
     static void maxNbRepartitionEdge(int comp) {
-        if (comp > Application.session.getCompMaxEdge()) {
-            Application.session.setCompMaxEdge(comp);
+        if (comp > App.db.getCompMaxEdge()) {
+            App.db.setCompMaxEdge(comp);
         }
     }
 
@@ -289,9 +289,9 @@ public class Bibliotheque {
         for (int j = 0; j < cpt; j++) {
 
             if (sens == 1) {
-                angle = Application.session.getEntrant(5, j);
+                angle = App.db.getEntrant(5, j);
             } else if (sens == 0) {
-                angle = Application.session.getSortant(5, j);
+                angle = App.db.getSortant(5, j);
             }
 
             if ((-PConstants.PI / 16 <= angle) && (angle < PConstants.PI / 16)) {
@@ -375,22 +375,22 @@ public class Bibliotheque {
             for (int i = 0; i < pointCardinal.length; i++) {
                 if (pointCardinal[i] > 0) {
                     if (sens == 0) {
-                        sum = sum + Application.session.getSortant(4, pointCardinal[i]);
-                        Location location1 = Application.session.getMap().getLocationFromScreenPosition(Application.session.getSortant(0, pointCardinal[i]), Application.session.getSortant(1, pointCardinal[i]));
-                        Location location2 = Application.session.getMap().getLocationFromScreenPosition(Application.session.getSortant(2, pointCardinal[i]), Application.session.getSortant(3, pointCardinal[i]));
+                        sum = sum + App.db.getSortant(4, pointCardinal[i]);
+                        Location location1 = App.db.getMap().getLocationFromScreenPosition(App.db.getSortant(0, pointCardinal[i]), App.db.getSortant(1, pointCardinal[i]));
+                        Location location2 = App.db.getMap().getLocationFromScreenPosition(App.db.getSortant(2, pointCardinal[i]), App.db.getSortant(3, pointCardinal[i]));
                         moy = moy + distFrom(location1.getLat(), location1.getLon(), location2.getLat(), location2.getLon());
                     } else if (sens == 1) {
-                        sum = sum + Application.session.getSortant(4, pointCardinal[i]);
-                        Location location3 = Application.session.getMap().getLocationFromScreenPosition(Application.session.getEntrant(0, pointCardinal[i]), Application.session.getEntrant(1, pointCardinal[i]));
-                        Location location4 = Application.session.getMap().getLocationFromScreenPosition(Application.session.getEntrant(2, pointCardinal[i]), Application.session.getEntrant(3, pointCardinal[i]));
+                        sum = sum + App.db.getSortant(4, pointCardinal[i]);
+                        Location location3 = App.db.getMap().getLocationFromScreenPosition(App.db.getEntrant(0, pointCardinal[i]), App.db.getEntrant(1, pointCardinal[i]));
+                        Location location4 = App.db.getMap().getLocationFromScreenPosition(App.db.getEntrant(2, pointCardinal[i]), App.db.getEntrant(3, pointCardinal[i]));
                         moy = moy + distFrom(location3.getLat(), location3.getLon(), location4.getLat(), location4.getLon());
                     }
                 }
             }
             // sinon on calcul la moyenne des distances et la somme des poids 
             moy = moy / pointCardinal.length;
-            moy = PApplet.map(CoxBoxLambda(moy, (float) 0.4), 0, CoxBoxLambda(Application.session.getDistMax(), (float) 0.4), 0, 1500);
-            sum = PApplet.map(PApplet.log(sum), 0, PApplet.log(Application.session.getEdgeMax()), (float) 0.5, 15);
+            moy = PApplet.map(CoxBoxLambda(moy, (float) 0.4), 0, CoxBoxLambda(App.db.getDistMax(), (float) 0.4), 0, 1500);
+            sum = PApplet.map(PApplet.log(sum), 0, PApplet.log(App.db.getEdgeMax()), (float) 0.5, 15);
 
         }
         pointsCardinaux[rang] = sum;
@@ -407,66 +407,66 @@ public class Bibliotheque {
         float max = PConstants.MIN_FLOAT;
         if ("node".equals(cas)) {
             for (int k = 0; k < Temps.getHourCount(); k++) {
-                count = count = Application.session.getTableauGephi()[k].nodeCount;
+                count = count = App.db.getTableauGephi()[k].nodeCount;
                 for (int i = 1; i < count; i++) {
-                    Application.session.setNodePoids(i, (float) Application.session.getTableauGephi()[k].btsDegree[i]);
+                    App.db.setNodePoids(i, (float) App.db.getTableauGephi()[k].btsDegree[i]);
                 }
-                Application.session.setNodePoids(PApplet.sort(Application.session.getNodePoids()));
+                App.db.setNodePoids(PApplet.sort(App.db.getNodePoids()));
                 cpt = 0;
                 float temp = 0;
                 for (int i = 1; i < count; i++) {
-                    if (Application.session.getNodePoids(i) > 0) {
+                    if (App.db.getNodePoids(i) > 0) {
                         if (cpt == 0) {
-                            temp = Application.session.getNodePoids(i);
+                            temp = App.db.getNodePoids(i);
                             cpt = 1;
                         } else {
-                            if (Application.session.getNodePoids(i) == temp) {
+                            if (App.db.getNodePoids(i) == temp) {
                                 cpt++;
                             } else {
                                 max = PApplet.max(cpt, max);
                                 cpt = 1;
-                                temp = Application.session.getNodePoids(i);
+                                temp = App.db.getNodePoids(i);
                             }
                         }
                     }
                 }
             }
-            Application.session.setNodeEffMax(max);
+            App.db.setNodeEffMax(max);
         } else if ("edge".equals(cas)) {
             for (int k = 0; k < Temps.getHourCount(); k++) {
 
-                count = Application.session.getTableauGephi()[k].edgeCount;
+                count = App.db.getTableauGephi()[k].edgeCount;
 
                 for (int i = 1; i < count; i++) {
-                    Application.session.setEdgePoids(i, (float) Application.session.getTableauGephi()[k].edge[i][4]);
+                    App.db.setEdgePoids(i, (float) App.db.getTableauGephi()[k].edge[i][4]);
                 }
-                Application.session.setEdgePoids(PApplet.sort(Application.session.getEdgePoids()));
+                App.db.setEdgePoids(PApplet.sort(App.db.getEdgePoids()));
                 cpt = 0;
                 float temp = 0;
                 for (int i = 1; i < count; i++) {
-                    if (Application.session.getEdgePoids(i) > 0) {
+                    if (App.db.getEdgePoids(i) > 0) {
                         if (cpt == 0) {
-                            temp = Application.session.getEdgePoids(i);
+                            temp = App.db.getEdgePoids(i);
                             cpt = 1;
                         } else {
-                            if (Application.session.getEdgePoids(i) == temp) {
+                            if (App.db.getEdgePoids(i) == temp) {
                                 cpt++;
                             } else {
                                 max = PApplet.max(cpt, max);
                                 cpt = 1;
-                                temp = Application.session.getEdgePoids(i);
+                                temp = App.db.getEdgePoids(i);
                             }
                         }
                     }
                 }
             }
-            Application.session.setEdgeEffMax(max);
+            App.db.setEdgeEffMax(max);
         } else if ("lissage".equals(cas)) {
-            count = Application.session.getNBRoamBTSMoy(0).length;
+            count = App.db.getNBRoamBTSMoy(0).length;
             float tab[] = new float[(int) count];
             for (int z = 3; z < 27; z++) {
                 for (int k = 0; k < count; k++) {
-                    tab[k] = Application.session.getNBRoamBTSMoy(z, k);
+                    tab[k] = App.db.getNBRoamBTSMoy(z, k);
                 }
                 tab = PApplet.sort(tab);
                 cpt = 0;
@@ -511,11 +511,11 @@ public class Bibliotheque {
     
     
     public static void creerArrow() {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
 
 
 
-        String[] lines = p.loadStrings(Application.session.getReferencesArrows(Application.session.getIndex()));
+        String[] lines = p.loadStrings(App.db.getReferencesArrows(App.db.getIndex()));
         for (int i = 1; i < lines.length; i++) {
 
             String[] mots = PApplet.split(lines[i], ';');
@@ -524,25 +524,25 @@ public class Bibliotheque {
             out.println("flèche " + i + " créée");
 
             if (Boolean.parseBoolean(mots[8])) {
-                Application.session.arrowsIN.add(a);
+                App.db.arrowsIN.add(a);
             } else {
-                Application.session.arrowsOUT.add(a);
+                App.db.arrowsOUT.add(a);
             }
         }
     }
 
     public static void supprimerArrow() {
-        while (Application.session.arrowsIN.size() > 0) {
-            Application.session.arrowsIN.remove(0);
+        while (App.db.arrowsIN.size() > 0) {
+            App.db.arrowsIN.remove(0);
         }
-        while (Application.session.arrowsOUT.size() > 0) {
-            Application.session.arrowsOUT.remove(0);
+        while (App.db.arrowsOUT.size() > 0) {
+            App.db.arrowsOUT.remove(0);
         }
     }
 
     // extraire les données du csv nb_roam_bts_moy
     public static float[][] readData() {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         String[] lines = p.loadStrings("./ressources/nb_roam_bts_moy.csv");
         int count = lines.length;
         float[][] mat = new float[27][count];
@@ -558,17 +558,17 @@ public class Bibliotheque {
 
     // stocker les données des Arrows dans un csv 
     public static void writeArrowData() {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         String[] lines = {};
         lines = PApplet.append(lines, "xSource ; ySource ; angle ; xTarget ; yTarget ; xi ; yi ; poids ; sens");
-        for (int i = 0; i < Application.session.arrowsIN.size(); i++) {
-            Arrow a = (Arrow) Application.session.arrowsIN.get(i);
+        for (int i = 0; i < App.db.arrowsIN.size(); i++) {
+            Arrow a = (Arrow) App.db.arrowsIN.get(i);
 
             String words = Float.toString(a.getX()) + ';' + Float.toString(a.getY()) + ';' + Float.toString(a.getAngle()) + ';' + Float.toString(a.get_X()) + ';' + Float.toString(a.get_Y()) + ';' + Float.toString(a.getXi()) + ';' + Float.toString(a.getYi()) + ';' + Float.toString(a.getPoids()) + ';' + Boolean.toString(a.getSens());
             lines = PApplet.append(lines, words);
         }
-        for (int i = 0; i < Application.session.arrowsOUT.size(); i++) {
-            Arrow a = (Arrow) Application.session.arrowsOUT.get(i);
+        for (int i = 0; i < App.db.arrowsOUT.size(); i++) {
+            Arrow a = (Arrow) App.db.arrowsOUT.get(i);
 
             String words = Float.toString(a.getX()) + ';' + Float.toString(a.getY()) + ';' + Float.toString(a.getAngle()) + ';' + Float.toString(a.get_X()) + ';' + Float.toString(a.get_Y()) + ';' + Float.toString(a.getXi()) + ';' + Float.toString(a.getYi()) + ';' + Float.toString(a.getPoids()) + ';' + Boolean.toString(a.getSens());
             lines = PApplet.append(lines, words);
@@ -586,11 +586,11 @@ public class Bibliotheque {
      * donc plus on zoom plus la grille est précise en mêtre mais l'éccartement à l'écran reste le même
      */
     public static float[][] getGrille(float n) {
-        PApplet p = Application.session.getPApplet();
-        n = Bibliotheque.meter2Pixel(n);
-        Location l1 = Application.session.getMap().getLocationFromScreenPosition(0, 0);
-        Location l2 = Application.session.getMap().getLocationFromScreenPosition(n, n);
-        Location l3 = Application.session.getMap().getLocationFromScreenPosition(0, n);
+        PApplet p = App.db.getPApplet();
+        n = Misc.meter2Pixel(n);
+        Location l1 = App.db.getMap().getLocationFromScreenPosition(0, 0);
+        Location l2 = App.db.getMap().getLocationFromScreenPosition(n, n);
+        Location l3 = App.db.getMap().getLocationFromScreenPosition(0, n);
         float pas_X = l1.getLat() - l2.getLat();
         float pas_Y = l2.getLon() - l1.getLon();
         out.println(pas_X);
@@ -617,9 +617,9 @@ public class Bibliotheque {
         // T(Y) = ((Y^lambda)-1)/lambda si lambda != 0
         float lambda = 1;
         if (i == 'e') {
-            lambda = Application.session.getLambdaE();
+            lambda = App.db.getLambdaE();
         } else if (i == 'n') {
-            lambda = Application.session.getLambdaN();
+            lambda = App.db.getLambdaN();
         }
         float ret = 0;
         if (lambda == 0) {

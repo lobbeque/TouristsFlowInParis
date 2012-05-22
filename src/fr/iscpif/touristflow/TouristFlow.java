@@ -47,8 +47,11 @@ license and that you accept its terms.
 
 package fr.iscpif.touristflow;
 
+import codeanticode.glgraphics.GLConstants;
+import de.fhpotsdam.unfolding.Map;
 import java.util.Properties;
 import de.fhpotsdam.unfolding.geo.Location;
+import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 import javax.script.ScriptException;
 import org.openide.util.Exceptions;
@@ -75,10 +78,11 @@ public class TouristFlow extends PApplet {
 
     @Override
     public void setup() {
-        Application.session.setPApplet(this);
+        App.db.setPApplet(this);
+        App.conf.fonts.recreateUsing(this);
 
         //size(1200, 979);
-        size(1300, 850);
+        size(1200, 900);
         
         MouseHandlerCustom.setWidth(width);
         MouseHandlerCustom.setHeight(height);
@@ -91,33 +95,36 @@ public class TouristFlow extends PApplet {
 
 
         // info à rentrer pour créer la carte unfloding
-        Application.session.setMap(new de.fhpotsdam.unfolding.Map(this));
-        Application.session.map.zoomAndPanTo(new Location(48.866f, 2.359f), 10);// position de départ de la carte 
-        MapUtilsCustom.createDefaultEventDispatcherCustom(this, Application.session.getMap());
+        Map map = new Map(this, 0, 0, width, height, new MBTilesMapProvider("jdbc:sqlite:./ressources/idf_light.mbtiles"));
+        App.db.setMap(map);
+        map.setZoomRange(9, 14);
+        
+        App.db.map.zoomAndPanTo(new Location(48.866f, 2.359f), 10);// position de départ de la carte 
+        MapUtilsCustom.createDefaultEventDispatcherCustom(this, App.db.getMap());
         
         //Application.session.getMap().
  
         //initialiser la date courante de la carte
         Temps.setupDates();
         //charger les gexf
-        Bibliotheque.loadGraph();
+        Misc.loadGraph();
 
         // les info sur les noeuds et edges sont stockés dans 2 matrices
-        Application.session.setMatEdge(new float[5][(int) Application.session.getMaxEdgeTotal()]);
-        Application.session.setMatNode();
+        App.db.setMatEdge(new float[5][(int) App.db.getMaxEdgeTotal()]);
+        App.db.setMatNode();
         // on réserve de la place pour le mode sélection et oursins
-        Application.session.setSortant(new float[6][(int) Application.session.getMaxEdgeTotal() / 20]);
-        Application.session.setEntrant(new float[6][(int) Application.session.getMaxEdgeTotal() / 20]);
-        Application.session.setEdgePoids(new float[(int) Application.session.getMaxEdgeTotal()]);
-        Application.session.setNodePoids(new float[(int) Application.session.getMaxNodeTotal()]);
+        App.db.setOutputs(new float[6][(int) App.db.getMaxEdgeTotal() / 20]);
+        App.db.setInputs(new float[6][(int) App.db.getMaxEdgeTotal() / 20]);
+        App.db.setEdgePoids(new float[(int) App.db.getMaxEdgeTotal()]);
+        App.db.setNodePoids(new float[(int) App.db.getMaxNodeTotal()]);
         // on initialise les 2 matrices principales sur lesquelles nou sallons maintenant travailler 
-        Bibliotheque.remplirTableauImage(Application.session.getIndex());
+        Misc.remplirTableauImage(App.db.getIndex());
         // on initialise les effectifs pour les graphiques de distributions
-        Bibliotheque.effectif("edge");
-        Bibliotheque.effectif("node");
+        Misc.effectif("edge");
+        Misc.effectif("node");
 
         // chargement du points pour le heatmap
-        Application.session.setMyPoints(loadImage("./ressources/ppp.png"));
+        App.db.setMyPoints(loadImage("./ressources/ppp.png"));
 
         smooth();
 
@@ -127,55 +134,55 @@ public class TouristFlow extends PApplet {
 
         // définition des boutons du menu et des dépendences entre eux 
         String[] arr = new String[]{"Noeud", "Arc", "Lissée"};
-        Application.session.getBoutons().add(new BoutonMenu(50, xMap, yMap, "Carte", true, arr));
+        App.db.getBoutons().add(new BoutonMenu(50, xMap, yMap, "Carte", true, arr));
         String[] arr1 = new String[]{"Box Cox Noeud", "Select", "HeatMap", "Oursins"};
         String[] arr4 = new String[]{"Oursins"};
-        Application.session.getBoutons().add(new BoutonMenu(30, xMap + 70, yMap, "Noeud", arr1));
-        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap - 20, "Box Cox Noeud"));
-        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 165, yMap, "Select", arr4));
-        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap + 20, "HeatMap"));
+        App.db.getBoutons().add(new BoutonMenu(30, xMap + 70, yMap, "Noeud", arr1));
+        App.db.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap - 20, "Box Cox Noeud"));
+        App.db.getBoutons().add(new BoutonMenu(20, xMap + 165, yMap, "Select", arr4));
+        App.db.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap + 20, "HeatMap"));
         String[] arr2 = new String[]{"Exp(1/x)", "Box Cox", "Log"};
-        Application.session.getBoutons().add(new BoutonMenu(30, xMap, yMap + 70, "Arc", arr2));
-        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 50, yMap + 135, "Box Cox"));
-        Application.session.getBoutons().add(new BoutonMenu(20, xMap, yMap + 135, "Exp(1/x)"));
-        Application.session.getBoutons().add(new BoutonMenu(20, xMap - 50, yMap + 135, "Log"));
+        App.db.getBoutons().add(new BoutonMenu(30, xMap, yMap + 70, "Arc", arr2));
+        App.db.getBoutons().add(new BoutonMenu(20, xMap + 50, yMap + 135, "Box Cox"));
+        App.db.getBoutons().add(new BoutonMenu(20, xMap, yMap + 135, "Exp(1/x)"));
+        App.db.getBoutons().add(new BoutonMenu(20, xMap - 50, yMap + 135, "Log"));
         String[] arr3 = new String[]{"Biweight", "Shepard", "Arrow"};
-        Application.session.getBoutons().add(new BoutonMenu(30, xMap + 70, yMap + 70, "Lissée", arr3));
-        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap + 135, "Biweight"));
-        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap + 70, "Shepard"));
-        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 260, yMap, "Oursins"));
-        Application.session.getBoutons().add(new BoutonMenu(20, xMap + 70, yMap + 135, "Arrow"));
+        App.db.getBoutons().add(new BoutonMenu(30, xMap + 70, yMap + 70, "Lissée", arr3));
+        App.db.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap + 135, "Biweight"));
+        App.db.getBoutons().add(new BoutonMenu(20, xMap + 130, yMap + 70, "Shepard"));
+        App.db.getBoutons().add(new BoutonMenu(20, xMap + 260, yMap, "Oursins"));
+        App.db.getBoutons().add(new BoutonMenu(20, xMap + 70, yMap + 135, "Arrow"));
 
-        Bibliotheque.miseAJourMatriceDistance(Application.session.getIndex());
+        Misc.miseAJourMatriceDistance(App.db.getIndex());
 
         // tableau qui contiendra les noeuds pour le lissage
-        Application.session.setNodePourLissage(new float[3][Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount]);
+        App.db.setNodePourLissage(new float[3][App.db.getTableauGephi()[App.db.getIndex()].nodeCount]);
         // initialisation de la constante Dmax, utile au lissage 
-        Application.session.setDmaxOnScreen(Bibliotheque.meter2Pixel(Application.session.getDmax()));
+        App.db.setDmaxOnScreen(Misc.meter2Pixel(App.db.getDmax()));
 
-        Bibliotheque.distMinMax();
+        Misc.distMinMax();
 
-        zoom = Application.session.getMap().getZoom();
+        zoom = App.db.getMap().getZoom();
 
         // création des deux curseurs de sélection pour le lissage
-        Application.session.setCurseur(new Stick(10, (float) (width / 56 + 165), (float) (height - 150 + 53), Application.session.getDmaxSmooth(), (float) (320 - 10 - 165), 0, 1500, (float) 1 / 3));
-        Application.session.setCurseur2(new Stick(10, (float) (width / 56 + 165), (float) (height - 150 + 18), Application.session.getP(), (float) (320 - 10 - 165), 0, (float) 1.2, (float) 1 / 3));
+        App.db.setCurseur(new Stick(10, (float) (width / 56 + 165), (float) (height - 150 + 53), App.db.getDmaxSmooth(), (float) (320 - 10 - 165), 0, 1500, (float) 1 / 3));
+        App.db.setCurseur2(new Stick(10, (float) (width / 56 + 165), (float) (height - 150 + 18), App.db.getP(), (float) (320 - 10 - 165), 0, (float) 1.2, (float) 1 / 3));
         // création des deux curseurs pour le box cox
-        Application.session.setCurseur3(new Stick(10, (float) (width / 56 + 175 + 30), (float) (height - 245), Application.session.getLambdaE(), 115, (float) -1.5, (float) 1.5, (float) 5 / 6));
-        Application.session.setCurseur4(new Stick(10, (float) (width / 56 + 175 + 30), (float) (height - 295), Application.session.getLambdaE(), 115, (float) -1.5, (float) 1.5, (float) 5 / 6));
+        App.db.setCurseur3(new Stick(10, (float) (width / 56 + 175 + 30), (float) (height - 245), App.db.getLambdaE(), 115, (float) -1.5, (float) 1.5, (float) 5 / 6));
+        App.db.setCurseur4(new Stick(10, (float) (width / 56 + 175 + 30), (float) (height - 295), App.db.getLambdaE(), 115, (float) -1.5, (float) 1.5, (float) 5 / 6));
         // création du curseur pour le kmeans
-        Application.session.setCurseur5(new Stick(10, (float) (width - 250 + 10), (float) (height / 18 + 28), KMeans.getN(), 60, (float) 1, (float) 5, (float) 3 / 5));
-        Application.session.setCurseur6(new Stick(10, (float) (width / 70 + 10), (float) (height - 500 + 145), Application.session.getArrowsMax(), 100, (float) 0, (float) 25, (float) 1 / 5));
-        Application.session.setCurseur7(new Stick(10, (float) (width / 70 + 10), (float) (height - 500 + 187), Application.session.getDmax(), 100, (float) 0, (float) 2500, (float) 1 / 5));
+        App.db.setCurseur5(new Stick(10, (float) (width - 250 + 10), (float) (height / 18 + 28), KMeans.getN(), 60, (float) 1, (float) 5, (float) 3 / 5));
+        App.db.setCurseur6(new Stick(10, (float) (width / 70 + 10), (float) (height - 500 + 145), App.db.getArrowsMax(), 100, (float) 0, (float) 25, (float) 1 / 5));
+        App.db.setCurseur7(new Stick(10, (float) (width / 70 + 10), (float) (height - 500 + 187), App.db.getDmax(), 100, (float) 0, (float) 2500, (float) 1 / 5));
 
-        Application.session.setNBRoamBTSMoy(Bibliotheque.readData());
+        App.db.setNBRoamBTSMoy(Misc.readData());
 
         // charger les liens vers les csv contenant les info sur les flêches d'anisotropie
-        Application.session.setReferencesArrows(new String[25]);
+        App.db.setReferencesArrows(new String[25]);
         String prefix = "./ressources/Arrow31 March 2009 ";
         
         for (int i=0;i<24;i++) {
-            Application.session.setReferencesArrows(i, prefix + nf(i, 2)+"h.csv");
+            App.db.setReferencesArrows(i, prefix + nf(i, 2)+"h.csv");
         }
 
         Affichage.setTemp(0);
@@ -186,28 +193,28 @@ public class TouristFlow extends PApplet {
     public void draw() {
 
         background(0);
-        Application.session.getMap().draw();
+        App.db.getMap().draw();
 
         fill(190, 201, 186, 100);
         rect(0, 0, width, height);
         noFill();
 
         // Mises à jour s'il y a changement d'interval
-        if (Application.session.getIndexBis() != Application.session.getIndex()) {
+        if (App.db.getIndexBis() != App.db.getIndex()) {
 
-            Bibliotheque.remplirTableauImage(Application.session.getIndex());
-            Bibliotheque.miseAJourMatriceDistance(Application.session.getIndex());
+            Misc.remplirTableauImage(App.db.getIndex());
+            Misc.miseAJourMatriceDistance(App.db.getIndex());
 
-            Bibliotheque.miseAJourOursins();
-            if (Application.session.isOursin()) {
+            Misc.miseAJourOursins();
+            if (App.db.isUrchin()) {
                 KMeans.KMeansClean();
             }
 
-            if (Application.session.isArrow()) {
-                if ((Application.session.arrowsIN.size() > 0) || (Application.session.arrowsOUT.size() > 0)) {
+            if (App.db.isArrow()) {
+                if ((App.db.arrowsIN.size() > 0) || (App.db.arrowsOUT.size() > 0)) {
 
-                    Bibliotheque.supprimerArrow();
-                    Bibliotheque.creerArrow();
+                    Misc.supprimerArrow();
+                    Misc.creerArrow();
                 }
                 if (Affichage.isDrawArrow()) {
 
@@ -215,16 +222,16 @@ public class TouristFlow extends PApplet {
                 }
             }
 
-            if (Application.session.isHeat()) {
+            if (App.db.isHeat()) {
                 Smooth.initBuff1();
             }
         }
 
         // on surveille le niveau de zoom
-        if (zoom != Application.session.getMap().getZoom()) {
-            zoom = Application.session.getMap().getZoom();
+        if (zoom != App.db.getMap().getZoom()) {
+            zoom = App.db.getMap().getZoom();
             // s'il change on met à jour la carte lissée
-            if (Application.session.isHeat()) {
+            if (App.db.isHeat()) {
                 Smooth.initBuff1();
             }
         }
@@ -232,13 +239,13 @@ public class TouristFlow extends PApplet {
         PFont font1 = createFont("DejaVuSans-ExtraLight-", 12);
         textFont(font1);
 
-        Application.session.setClosestDist(MAX_FLOAT);
+        App.db.setClosestDist(MAX_FLOAT);
 
-        if (Application.session.isEdge()) { // affichage des edges 
+        if (App.db.isEdge()) { // affichage des edges 
             Edge.afficheEdge();
         }
 
-        if ((Application.session.isNode()) || (!Application.session.isHeat())) { // affichage des nodes
+        if ((App.db.isNode()) || (!App.db.isHeat())) { // affichage des nodes
             if (!ok) {
                 Node.afficheNode();
             }
@@ -259,22 +266,22 @@ public class TouristFlow extends PApplet {
         if (showLegend) {
 
         // affiche la légende en mode edge ou node 
-        if ((!Application.session.isHeat()) && (!Application.session.isChaud()) && (!Application.session.isArrow())) {
+        if ((!App.db.isHeat()) && (!App.db.isChaud()) && (!App.db.isArrow())) {
             Affichage.afficheLegendeNodeEdge();
         }
 
         // affiche la légende en mode lissée
-        if ((Application.session.isHeat()) && (!Application.session.isChaud())) {
+        if ((App.db.isHeat()) && (!App.db.isChaud())) {
             Affichage.afficheLegendeLissee();
         }
 
         // affiche la légende en mode heatMap
-        if (Application.session.isChaud()) {
+        if (App.db.isChaud()) {
             Affichage.afficheLegendeHeatMap();
         }
 
         // affiche la légende en mode Cluster
-        if (Application.session.isOursin()) {
+        if (App.db.isUrchin()) {
             Affichage.afficheCluster();
         }
         }
@@ -283,27 +290,27 @@ public class TouristFlow extends PApplet {
 
         if (showLegend) {
         // dessiner les boutons du menu
-        for (int i = 0; i < Application.session.getBoutons().size(); i++) {
-            BoutonMenu boutonMenu = (BoutonMenu) Application.session.getBoutons().get(i);
+        for (int i = 0; i < App.db.getBoutons().size(); i++) {
+            BoutonMenu boutonMenu = (BoutonMenu) App.db.getBoutons().get(i);
             boutonMenu.draw();
         }
         }
 
         // dessiner les oursins crées  
-        if ((!Application.session.isSelect()) && (Application.session.isOursin())) {
+        if ((!App.db.isSelect()) && (App.db.isUrchin())) {
 
-            for (int z = 0; z < Application.session.getOursins().size(); z++) {
-                Oursin oursin = (Oursin) Application.session.getOursins().get(z);
+            for (int z = 0; z < App.db.getOursins().size(); z++) {
+                Urchin oursin = (Urchin) App.db.getOursins().get(z);
                 oursin.draw();
             }
         }
 
         // dessiner les clusters
-        if (Application.session.isKmeansDraw()) {
+        if (App.db.isKmeansDraw()) {
             KMeans.drawCluster();
         }
 
-        if (Application.session.isArrow()) {
+        if (App.db.isArrow()) {
             Affichage.afficheArrow();
         }
 
@@ -325,7 +332,7 @@ public class TouristFlow extends PApplet {
         if (key == 's' || key == 'S') {
             showLegend=false;
             draw();
-            save("captures/touristflows31-March-2009-num_" + compteurImage + ".png");
+            save(App.conf.exports.screenshotsDirPath + compteurImage + ".png");
             showLegend=true;
             compteurImage++;
         }
@@ -333,7 +340,7 @@ public class TouristFlow extends PApplet {
         if (key == '1') {
             //Redistribution.getGrilleAgreger(1000);
             //Redistribution.Agreger();
-            Bibliotheque.writeArrowData();
+            Misc.writeArrowData();
         }
         
         // lancer l'export en shape 
@@ -351,23 +358,23 @@ public class TouristFlow extends PApplet {
     @Override
     public void mousePressed() {
 
-        for (int i = 0; i < Application.session.getBoutons().size(); i++) {
-            BoutonMenu boutonMenu = (BoutonMenu) Application.session.getBoutons().get(i);
+        for (int i = 0; i < App.db.getBoutons().size(); i++) {
+            BoutonMenu boutonMenu = (BoutonMenu) App.db.getBoutons().get(i);
             boutonMenu.pressed(mouseX, mouseY); // appel de la routine pour chaque noeud du menu
         }
 
         // création d'un oursin quand on clique dessus
-        if ((!Application.session.isSelect()) && (Application.session.isOursin())) {
-            for (int j = 0; j < Application.session.getTableauGephi()[Application.session.getIndex()].nodeCount; j++) {
-                Location l1 = new Location(Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
-                float xy1[] = Application.session.getMap().getScreenPositionFromLocation(l1);
+        if ((!App.db.isSelect()) && (App.db.isUrchin())) {
+            for (int j = 0; j < App.db.getTableauGephi()[App.db.getIndex()].nodeCount; j++) {
+                Location l1 = new Location(App.db.getMatNode(0, j), App.db.getMatNode(1, j));
+                float xy1[] = App.db.getMap().getScreenPositionFromLocation(l1);
                 if (dist(mouseX, mouseY, xy1[0], xy1[1]) < (width / 140)) {
-                    Affichage.selectionOursins(xy1[0], xy1[1], Application.session.getMatNode(0, j), Application.session.getMatNode(1, j));
+                    Affichage.selectionOursins(xy1[0], xy1[1], App.db.getMatNode(0, j), App.db.getMatNode(1, j));
                 }
             }
         }
 
-        Application.session.setClicked(true);
+        App.db.setClicked(true);
 
         // Zones de changement d'interval
         float dist1 = dist((float) (width / 2.39), (float) (height / 27.97), mouseX, mouseY);
@@ -384,79 +391,79 @@ public class TouristFlow extends PApplet {
         // Zones d'affichage des distributions ( petits carrés bleus et rouges )
         float dist5 = dist((float) (width / 70 + width / 8 / 2 / 11.6), (float) (height - 320 + width / 8 / 2 / 11.6), mouseX, mouseY);
         float dist6 = dist((float) (width / 70 + width / 8 / 2 / 11.6), (float) (height - 320 - width / 8 / 2 / 11.6), mouseX, mouseY);
-        if (!Application.session.isNodeDistri()) {
+        if (!App.db.isNodeDistri()) {
             if (dist5 < 20) {
-                Application.session.setNodeDistri(true);
+                App.db.setNodeDistri(true);
             }
         } else {
             if ((dist5 < 20) || (dist6 < 20)) {
-                Application.session.setNodeDistri(false);
+                App.db.setNodeDistri(false);
             }
         }
-        if (!Application.session.isEdgeDistri()) {
+        if (!App.db.isEdgeDistri()) {
             if ((width / 70 + 175 - 15 <= mouseX) && (width / 70 + 175 >= mouseX) && (height - 235 <= mouseY) && (height - 220 >= mouseY)) {
-                Application.session.setEdgeDistri(true);
+                App.db.setEdgeDistri(true);
             }
         } else {
             if ((width / 70 + 175 - 15 <= mouseX) && (width / 70 + 175 >= mouseX) && (height - 220 <= mouseY) && (height - 205 >= mouseY)) {
-                Application.session.setEdgeDistri(false);
+                App.db.setEdgeDistri(false);
             }
         }
 
-        if (!Application.session.isEdgeBoxCoxDistri()) {
+        if (!App.db.isEdgeBoxCoxDistri()) {
             if ((width / 70 + 2 * 175 - 15 <= mouseX) && (width / 70 + 2 * 175 >= mouseX) && (height - 235 <= mouseY) && (height - 220 >= mouseY)) {
-                Application.session.setEdgeBoxCoxDistri(true);
+                App.db.setEdgeBoxCoxDistri(true);
             }
         } else {
             if ((width / 70 + 2 * 175 - 15 <= mouseX) && (width / 70 + 2 * 175 >= mouseX) && (height - 220 <= mouseY) && (height - 205 >= mouseY)) {
-                Application.session.setEdgeBoxCoxDistri(false);
+                App.db.setEdgeBoxCoxDistri(false);
             }
         }
 
-        if (!Application.session.isNodeBoxCoxDistri()) {
+        if (!App.db.isNodeBoxCoxDistri()) {
             if ((width / 70 + 2 * 175 - 15 <= mouseX) && (width / 70 + 2 * 175 >= mouseX) && (height - 320 <= mouseY) && (height - 305 >= mouseY)) {
-                Application.session.setNodeBoxCoxDistri(true);
+                App.db.setNodeBoxCoxDistri(true);
             }
         } else {
             if ((width / 70 + 2 * 175 - 15 <= mouseX) && (width / 70 + 2 * 175 >= mouseX) && (height - 335 <= mouseY) && (height - 320 >= mouseY)) {
-                Application.session.setNodeBoxCoxDistri(false);
+                App.db.setNodeBoxCoxDistri(false);
             }
         }
 
-        if (!Application.session.isLissageDistri()) {
+        if (!App.db.isLissageDistri()) {
             if ((width / 56 <= mouseX) && (width / 56 + 15 >= mouseX) && (height - 150 <= mouseY) && (height - 150 + 15 >= mouseY)) {
-                Application.session.setLissageDistri(true);
+                App.db.setLissageDistri(true);
             }
         } else {
             if ((width / 56 <= mouseX) && (width / 56 + 15 >= mouseX) && (height - 150 - 15 <= mouseY) && (height - 150 >= mouseY)) {
-                Application.session.setLissageDistri(false);
+                App.db.setLissageDistri(false);
             }
         }
 
         // zones d'activation des boutons du menu Oursins 
-        if (Application.session.isOursin()) {
+        if (App.db.isUrchin()) {
             if ((width - 250 + 20 <= mouseX) && (width - 250 + 220 / 2 >= mouseX) && (height / 18 - 15 <= mouseY) && (height / 18 >= mouseY)) {
-                Bibliotheque.showOursins();
+                Misc.showOursins();
             } else if ((width - 250 + 220 / 2 <= mouseX) && (width - 250 + 220 - 20 >= mouseX) && (height / 18 - 15 <= mouseY) && (height / 18 >= mouseY)) {
-                Bibliotheque.hideOursins();
+                Misc.hideOursins();
             } else if ((width - 250 + 20 <= mouseX) && (width - 250 + 220 / 2 >= mouseX) && (height / 18 - 30 <= mouseY) && (height / 18 - 15 >= mouseY)) {
-                Bibliotheque.creerOursinsVue();
+                Misc.creerOursinsVue();
             } else if ((width - 250 + 220 / 2 <= mouseX) && (width - 250 + 220 - 20 >= mouseX) && (height / 18 - 30 <= mouseY) && (height / 18 - 15 >= mouseY)) {
-                Bibliotheque.effacerOursins();
+                Misc.effacerOursins();
             }
         }
 
         // pour les Arrows
-        if (Application.session.isArrow()) {
+        if (App.db.isArrow()) {
             if ((width / 70 <= mouseX) && (width / 70 + 120 >= mouseX) && (height - 300 + 100 / 3 + 10 <= mouseY) && (height - 300 + 200 / 3 + 5 >= mouseY)) {
-                Bibliotheque.creerArrow();
+                Misc.creerArrow();
             } else if ((width / 70 <= mouseX) && (width / 70 + 120 >= mouseX) && (height - 300 + 200 / 3 + 5 <= mouseY) && (height - 200 >= mouseY)) {
-                Bibliotheque.supprimerArrow();
+                Misc.supprimerArrow();
             } else if ((width / 70 <= mouseX) && (width / 70 + 120 >= mouseX) && (height - 300 + 10 <= mouseY) && (height - 300 + 100 / 3 + 10 >= mouseY)) {
                 if (Affichage.isDrawArrow()) {
                     Affichage.setDrawArrow(false);
                 } else {
-                    if ((Application.session.getMap().getZoom() <= 8192) && (Application.session.arrowsIN.size() > 0)) {
+                    if ((App.db.getMap().getZoom() <= 8192) && (App.db.arrowsIN.size() > 0)) {
                         Affichage.setDrawArrow(true);
                     } else {
 
@@ -469,23 +476,23 @@ public class TouristFlow extends PApplet {
             float dist7 = dist(width / 70 + 60, height - 500 + 300 / 9 + 300 / 18 - 5, mouseX, mouseY);
             float dist8 = dist(width / 70 + 60, height - 500 + 600 / 9 + 300 / 18 - 5, mouseX, mouseY);
 
-            if (!Application.session.isIN()) {
+            if (!App.db.isIN()) {
                 if (dist8 <= 10) {
-                    Application.session.setIN(true);
+                    App.db.setIN(true);
                 }
             } else {
                 if (dist8 <= 10) {
-                    Application.session.setIN(false);
+                    App.db.setIN(false);
                 }
             }
 
-            if (!Application.session.isOUT()) {
+            if (!App.db.isOUT()) {
                 if (dist7 <= 10) {
-                    Application.session.setOUT(true);
+                    App.db.setOUT(true);
                 }
             } else {
                 if (dist7 <= 10) {
-                    Application.session.setOUT(false);
+                    App.db.setOUT(false);
                 }
             }
 
@@ -496,29 +503,29 @@ public class TouristFlow extends PApplet {
         float dist7 = dist((float) (width - 250 + 107), (float) (height / 18 + 32), mouseX, mouseY);
         float dist8 = dist((float) (width - 250 + 150), (float) (height / 18 + 30), mouseX, mouseY);
         float dist9 = dist((float) (width - 250 + 195), (float) (height / 18 + 30), mouseX, mouseY);
-        if (Application.session.isOursin()) {
+        if (App.db.isUrchin()) {
             if (dist7 < 15) {
-                if (Application.session.getOursins().size() != 0) {
+                if (App.db.getOursins().size() != 0) {
                     KMeans.kMeansInit();
                     out.println("Cluster init ok");
                 }
             } else if (dist8 < 15) {
-                if (Application.session.getOursins().size() != 0) {
-                    if (Application.session.isKmeansDraw()) {
-                        Application.session.setKmeansDraw(false);
+                if (App.db.getOursins().size() != 0) {
+                    if (App.db.isKmeansDraw()) {
+                        App.db.setKmeansDraw(false);
                     } else {
-                        Application.session.setKmeansDraw(true);
+                        App.db.setKmeansDraw(true);
                         out.println("Cluster représentation ok");
                     }
                 }
             } else if (dist9 < 15) {
-                Application.session.setKmeansDraw(false);
+                App.db.setKmeansDraw(false);
                 KMeans.KMeansClean();
                 out.println("Cluster Clean");
             }
         }
 
-        if (Application.session.isNode()) {
+        if (App.db.isNode()) {
             float dist = dist((float) (width / 70 + 35), (float) (height - 320 + 25), mouseX, mouseY);
             if (dist < 15) {
                 if (ok) {
@@ -530,28 +537,28 @@ public class TouristFlow extends PApplet {
         }
 
         // Affichage indépendant des calques des clusters
-        if (Application.session.isKmeansDraw()) {
+        if (App.db.isKmeansDraw()) {
             KMeans.pressed(mouseX, mouseY);
         }
     }
 
     @Override
     public void mouseReleased() {
-        Application.session.setClicked(false);
-        Application.session.setDraged(true);
+        App.db.setClicked(false);
+        App.db.setDragged(true);
     }
 
     @Override
     public void mouseDragged() {
-        Application.session.getCurseur().dragged(mouseX, mouseY);
-        Application.session.getCurseur2().dragged(mouseX, mouseY);
-        Application.session.getCurseur3().dragged(mouseX, mouseY);
-        Application.session.getCurseur4().dragged(mouseX, mouseY);
-        if (!Application.session.isKmeansDraw()) {
-            Application.session.getCurseur5().dragged(mouseX, mouseY);
+        App.db.getCurseur().dragged(mouseX, mouseY);
+        App.db.getCurseur2().dragged(mouseX, mouseY);
+        App.db.getCurseur3().dragged(mouseX, mouseY);
+        App.db.getCurseur4().dragged(mouseX, mouseY);
+        if (!App.db.isKmeansDraw()) {
+            App.db.getCurseur5().dragged(mouseX, mouseY);
         }
-        Application.session.setDraged(false);
-        Application.session.getCurseur6().dragged(mouseX, mouseY);
-        Application.session.getCurseur7().dragged(mouseX, mouseY);
+        App.db.setDragged(false);
+        App.db.getCurseur6().dragged(mouseX, mouseY);
+        App.db.getCurseur7().dragged(mouseX, mouseY);
     }
 }

@@ -67,7 +67,7 @@ public class Temps {
     public static String lastHourStamp = "2009033124";
     public static String nowHour;
 
-    public static final long MILLIS_PER_4HOURS = 1 * 60 * 60 * 1000; // nombre de millisecondes dans un interval de 4 heures
+    public static final long TIMESTEPS = 1 * 60 * 60 * 1000; // nombre de millisecondes dans un interval de 4 heures
 
 
     public static int hourCount; // nb d'intervals en une journée
@@ -92,7 +92,7 @@ public class Temps {
         long lastHourMillis = lastHour.getTime( );
 
         // calcul du nombre d'interval en une journée ( peu se faire à la main, mais bon comme ca c'est fait pour de plus grands jeux )
-        hourCount = (int)((lastHourMillis - firstHourMillis) / MILLIS_PER_4HOURS);
+        hourCount = (int)((lastHourMillis - firstHourMillis) / TIMESTEPS);
         
         // hourCount = 6;
         maxHourIndex = hourCount;
@@ -102,7 +102,7 @@ public class Temps {
         nowHour = PApplet.year() + PApplet.nf(PApplet.month( ), 2) + PApplet.nf(PApplet.day( ), 2) + PApplet.nf(PApplet.hour( ), 2);
 
         for (int i = 0; i < hourCount; i++) {
-          Date date = new Date(firstHourMillis + MILLIS_PER_4HOURS*i);
+          Date date = new Date(firstHourMillis + TIMESTEPS*i);
           hourPretty[i] = prettyFormat.format(date);
           hourStamp[i] = stampFormat.format(date);
         }
@@ -116,7 +116,7 @@ public class Temps {
 
     // affichage de la barre de sélection
     static public void drawDateSelector() {
-      PApplet p = Application.session.getPApplet();
+      PApplet p = App.db.getPApplet();
         
       hourSelectorX = (p.width - hourCount*2) / 2;
       p.strokeWeight(1);
@@ -152,7 +152,7 @@ public class Temps {
       hourIndex = i;
       if ( hourIndex > hourCount - 1 ) hourIndex = 0; 
       if ( hourIndex < 0 ) hourIndex = hourCount - 1;
-      Application.session.setIndex(hourIndex);
+      App.db.setIndex(hourIndex);
     }
 
     public static int getHourIndex() {

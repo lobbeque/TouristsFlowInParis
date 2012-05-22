@@ -4,7 +4,6 @@ Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
 
 Authors : 
 Quentin Lobbé <quentin.lobbe@gmail.com>
-Julie Fen-Chong <julie.fenchong@gmail.com>
 Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
@@ -50,6 +49,7 @@ package fr.iscpif.touristflow;
  *
  * @author Quentin Lobbé
  */
-public class Application {
-    static Session session = new Session();
+public class App {
+    static Db db = new Db();
+    static Configuration conf = new Configuration();
 }

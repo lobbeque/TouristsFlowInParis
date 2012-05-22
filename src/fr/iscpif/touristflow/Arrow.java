@@ -114,8 +114,8 @@ public class Arrow {
     // cette fonction dessine, oriente et grossit la flèche "classique" 
     public void update() {
         Location l = new Location(x, y);
-        float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
-        PApplet p = Application.session.getPApplet();
+        float xy[] = App.db.getMap().getScreenPositionFromLocation(l);
+        PApplet p = App.db.getPApplet();
         p.pushMatrix();
         p.translate(xy[0], xy[1]);
         p.rotate(angle);
@@ -152,13 +152,13 @@ public class Arrow {
     // cette fonction dessine, oriente et grossit la flèche "simple" 
     public void updateLight(){
         Location l = new Location(x, y);
-        float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
-        PApplet p = Application.session.getPApplet();
+        float xy[] = App.db.getMap().getScreenPositionFromLocation(l);
+        PApplet p = App.db.getPApplet();
         p.pushMatrix();
         p.translate(xy[0], xy[1]);  
         p.strokeWeight((float) 0.5);
         p.stroke(0);
-        float t = PApplet.map(taille, 0, 5, 0, Application.session.getArrowsMax());  
+        float t = PApplet.map(taille, 0, 5, 0, App.db.getArrowsMax());  
         p.scale(t);
         if (sens) {
             p.rotate(- angle + PConstants.PI);
@@ -191,7 +191,7 @@ public class Arrow {
     
     // fonction de dessin pour les flèches de la légende
     public void updateLightBis(){
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         p.pushMatrix();
         p.translate(x, y);  
         p.rotate(angle);

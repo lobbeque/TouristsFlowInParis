@@ -56,7 +56,7 @@ import processing.core.*;
  *
  * @author Quentin lobbé
  */
-public class Oursin {
+public class Urchin {
 
     Arrow arrow;
     // les coordonnées du centre de l'oursin dans le plan
@@ -67,9 +67,10 @@ public class Oursin {
     public float yNative;
     public float[] branchesSortantes;
     public float[] branchesEntrantes;
-    private String statusNormal = "normal"; // 2 status possibles pour un oursin
-    private String statusSelected = "selected";
-    public String status = statusNormal;
+    public enum Status {
+    UNSELECTED, SELECTED
+    }
+    public Status status = Status.UNSELECTED;
     public float somEntrant;
     public float somSortant;
     // Vecteur moyen
@@ -99,7 +100,7 @@ public class Oursin {
     nordEstEstPoids, nordEstEstDist = 30, 31
      */
     // constructeur
-    Oursin(float[] pointsCardinauxEntrant, float[] pointsCardinauxSortant, float x, float y, float xN, float yN) {
+    Urchin(float[] pointsCardinauxEntrant, float[] pointsCardinauxSortant, float x, float y, float xN, float yN) {
         branchesSortantes = new float[32];
         branchesEntrantes = new float[32];
         this.nEntrant = 0;
@@ -142,8 +143,8 @@ public class Oursin {
 
         }
 
-        if (Application.session.isArrow()) {
-            this.status = this.statusSelected;
+        if (App.db.isArrow()) {
+            this.status = Status.SELECTED;
         }
     }
 
@@ -152,9 +153,9 @@ public class Oursin {
      * pour créer une flèche/vecteur moyen depuis un oursin il faut décommenter à partir de "if (Application.session.isArrow())"
      */
     public void draw() {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         Location l = new Location(xNative, yNative);
-        float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
+        float xy[] = App.db.getMap().getScreenPositionFromLocation(l);
         xMoyEntrant = 0;
         xMoySortant = 0;
         yMoyEntrant = 0;
@@ -176,16 +177,16 @@ public class Oursin {
         if (PApplet.max(somEntrant, somSortant) == somEntrant) {
             p.fill(16, 91, 136);
             p.stroke(10);
-            if (status.equals(statusNormal)) {
+            //if (status.equals(statusNormal)) {
                 //p.ellipse(xy[0], xy[1], 5, 5);
-            }
+            //}
             p.noStroke();
         } else {
             p.fill(182, 92, 96);
             p.stroke(10);
-            if (status.equals(statusNormal)) {
+            //if (status.equals(statusNormal)) {
                 //p.ellipse(xy[0], xy[1], 5, 5);
-            }
+            //}
             p.noStroke();
         }
         p.ellipseMode(PApplet.CENTER);
@@ -194,7 +195,7 @@ public class Oursin {
         p.strokeWeight(2);
 
         // pour créer des flèches 
-        if (Application.session.isArrow()) {
+        if (App.db.isArrow()) {
             p.stroke(0);
             p.stroke(16, 91, 136);
             drawVectMoy(xy[0], xy[1], xMoyEntrant / nEntrant + xy[0], yMoyEntrant / nEntrant + xy[1], true);
@@ -213,12 +214,12 @@ public class Oursin {
      * c'est depuis ces listes que l'on accèdera alors aux flèches
      */
     public void drawVectMoy(float x1, float y1, float x2, float y2, boolean sens) {
-        PApplet p = Application.session.getPApplet();
-        Location l = Application.session.getMap().getLocationFromScreenPosition(x2, y2);
+        PApplet p = App.db.getPApplet();
+        Location l = App.db.getMap().getLocationFromScreenPosition(x2, y2);
         float a = PApplet.atan2(y2 - y1, x2 - x1);
         
-        float xi = Bibliotheque.distFrom(xNative, yNative, l.getLat(), yNative);
-        float yi = Bibliotheque.distFrom(xNative, yNative, xNative, l.getLon());
+        float xi = Misc.distFrom(xNative, yNative, l.getLat(), yNative);
+        float yi = Misc.distFrom(xNative, yNative, xNative, l.getLon());
         
         a = -a;
         if (a < 0) {
@@ -226,11 +227,11 @@ public class Oursin {
         }
         if (sens) {
             arrow = new Arrow(xNative, yNative, -a, l.getLat(), l.getLon(), xi, yi, somEntrant, sens);
-            Application.session.arrowsIN.add(arrow);
+            App.db.arrowsIN.add(arrow);
 
         } else {
             arrow = new Arrow(xNative, yNative, -a + PConstants.PI, l.getLat(), l.getLon(), xi, yi, somSortant, sens);
-            Application.session.arrowsOUT.add(arrow);
+            App.db.arrowsOUT.add(arrow);
         }
 
         p.stroke(0);
@@ -241,21 +242,21 @@ public class Oursin {
      * au passage on complète les sommes x/yMoyEntrant/Sortant qui serviront à calculer le poids et l'angle moyen de l'oursin en vue de la création des flèches 
      */
     public void drawArc(float angle, float poids, float rayon, boolean sens) {
-        PApplet p = Application.session.getPApplet();
+        PApplet p = App.db.getPApplet();
         Location l = new Location(xNative, yNative);
-        float xy[] = Application.session.getMap().getScreenPositionFromLocation(l);
+        float xy[] = App.db.getMap().getScreenPositionFromLocation(l);
         if ((poids != 0) || (rayon != 0)) {
             p.smooth();
             p.ellipseMode(PApplet.RADIUS);
-            float x1 = (Bibliotheque.meter2Pixel(rayon) - poids) * PApplet.cos(angle) + xy[0];
-            float y1 = (Bibliotheque.meter2Pixel(rayon) - poids) * PApplet.sin(angle) + xy[1];
+            float x1 = (Misc.meter2Pixel(rayon) - poids) * PApplet.cos(angle) + xy[0];
+            float y1 = (Misc.meter2Pixel(rayon) - poids) * PApplet.sin(angle) + xy[1];
 
             if (sens) {
-                xMoyEntrant = xMoyEntrant + Bibliotheque.meter2Pixel(rayon) * PApplet.cos(angle);
-                yMoyEntrant = yMoyEntrant + Bibliotheque.meter2Pixel(rayon) * PApplet.sin(angle);
+                xMoyEntrant = xMoyEntrant + Misc.meter2Pixel(rayon) * PApplet.cos(angle);
+                yMoyEntrant = yMoyEntrant + Misc.meter2Pixel(rayon) * PApplet.sin(angle);
             } else {
-                xMoySortant = xMoySortant + Bibliotheque.meter2Pixel(rayon) * PApplet.cos(angle);
-                yMoySortant = yMoySortant + Bibliotheque.meter2Pixel(rayon) * PApplet.sin(angle);
+                xMoySortant = xMoySortant + Misc.meter2Pixel(rayon) * PApplet.cos(angle);
+                yMoySortant = yMoySortant + Misc.meter2Pixel(rayon) * PApplet.sin(angle);
             }
 
             if (poids <= 0) {
@@ -263,7 +264,7 @@ public class Oursin {
             } else {
                 p.strokeWeight(poids);
             }
-            if (status.equals(statusNormal)) {
+            if (checkStatus(Status.UNSELECTED)) {
                 p.line(xy[0], xy[1], x1, y1);
             }
         }
@@ -301,23 +302,29 @@ public class Oursin {
         return this.branchesSortantes[i];
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
-
-    public void setStatus(String stat) {
+    public boolean checkStatus(Status st) {
+        return status == st;
+    }
+    public void setStatus(Status stat) {
         this.status = stat;
     }
-
-
+    public void setStatusSelected() {
+        setStatus(Status.SELECTED); 
+    }
+    public void setStatusUnselected() {
+        setStatus(Status.UNSELECTED); 
+    }
     /*
      * afficher ou non un oursin
      */
     public void pressed() {
-        if (status.equals(statusNormal)) { // si le status est normal alors celui devient selected
-            status = statusSelected;
-        } else if (status.equals(statusSelected)) { // si le status est selected alors celui ci devient normal 
-            status = statusNormal;
+        if (checkStatus(Status.UNSELECTED)) { // si le status est normal alors celui devient selected
+            setStatusSelected();
+        } else { // si le status est selected alors celui ci devient normal 
+            setStatusUnselected();
         }
     }
 
