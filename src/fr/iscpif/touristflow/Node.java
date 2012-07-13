@@ -4,6 +4,7 @@ Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
 
 Authors : 
 Quentin Lobbé <quentin.lobbe@gmail.com>
+Julie Fen-Chong <julie.fenchong@gmail.com>
 Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
@@ -75,7 +76,7 @@ public class Node {
             if (!App.db.isBoxCoxNode()) {
                 radius = PApplet.map(degree, App.db.getNodeMin(), App.db.getNodeMax(), 1, 10);
             } else {
-                radius = PApplet.map(Misc.CoxBox(degree, 'n'), Misc.CoxBox(App.db.getNodeMin(), 'n'), Misc.CoxBox(App.db.getNodeMax(), 'n'), 1, 10);
+                radius = PApplet.map(Bibliotheque.CoxBox(degree, 'n'), Bibliotheque.CoxBox(App.db.getNodeMin(), 'n'), Bibliotheque.CoxBox(App.db.getNodeMax(), 'n'), 1, 10);
             }
             p.ellipseMode(PConstants.RADIUS);
             float zoom = App.db.getMap().getZoom();
@@ -99,7 +100,7 @@ public class Node {
             float d = PApplet.dist(xy[0], xy[1], p.mouseX, p.mouseY);
 
             //mode sélection
-            if ((d < radius + 2) && App.db.isClicked() && (!App.db.isSelect()) && (!App.db.isUrchin())) {
+            if ((d < radius + 2) && App.db.isClicked() && (!App.db.isSelect()) && (!App.db.isOursin())) {
                 Affichage.selection(xy[0], xy[1], radius, i);
             }
 

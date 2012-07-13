@@ -4,6 +4,7 @@ Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
 
 Authors : 
 Quentin Lobbé <quentin.lobbe@gmail.com>
+Julie Fen-Chong <julie.fenchong@gmail.com>
 Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
@@ -118,7 +119,7 @@ public class KMeans {
         float[] resultat = new float[n];
 
         // placer les oursins dans des classes
-        for (int i = 0; i < App.db.getOursins().size(); i++) {
+        for (int i = 0; i < App.db.getUrchins().size(); i++) {
             Urchin oursin = (Urchin) App.db.urchins.get(i);
 
             for (int j = 0; j < n; j++) {
@@ -171,7 +172,7 @@ public class KMeans {
         // ce tableau va recueillir les résultats des calculs de distance 
         float[] resultat = new float[n];
         // placer les oursins dans des classes
-        for (int i = 0; i < App.db.getOursins().size(); i++) {
+        for (int i = 0; i < App.db.getUrchins().size(); i++) {
             Urchin oursin = (Urchin) App.db.urchins.get(i);
 
             for (int j = 0; j < n; j++) {
@@ -227,7 +228,7 @@ public class KMeans {
             p.ellipse(x + 50, y, 25, 25);
 
             p.fill(0);
-            PFont font1 = p.createFont("DejaVuSans-ExtraLight-", 12);
+            PFont font1 = App.cf.fonts.size_12;
             p.textFont(font1);
             p.textMode(PConstants.CENTER);
             p.text("cluster " + (i + 1), x + 30, y - 35);
@@ -279,7 +280,7 @@ public class KMeans {
         int index = 0;
         out.println(Arrays.toString(oursinsInit));
         do {
-            index = (int) p.random(0, App.db.getOursins().size());
+            index = (int) p.random(0, App.db.getUrchins().size());
             out.println(Arrays.toString(oursinsInit));
             out.println(index);
         } while (member(oursinsInit, index));
@@ -332,7 +333,7 @@ public class KMeans {
                 float x = Float.parseFloat(coordo[0]);
                 float y = Float.parseFloat(coordo[1]);
                 // et chercher l'oursin correspondant 
-                for (int k = 0; k < App.db.getOursins().size(); k++) {
+                for (int k = 0; k < App.db.getUrchins().size(); k++) {
                     Urchin oursin = (Urchin) App.db.urchins.get(k);
                     if ((oursin.getXN() == x) && (oursin.getYN() == y)) {
                         for (int l = 0; l < 32; l++) {

@@ -4,6 +4,7 @@ Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
 
 Authors : 
 Quentin Lobbé <quentin.lobbe@gmail.com>
+Julie Fen-Chong <julie.fenchong@gmail.com>
 Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
@@ -95,7 +96,7 @@ public class Stick {
         // ligne horizontale de base
         p.line(labelCourant, y + 5, labelCourant + longueur, y + 5);
         
-        PFont font1 = p.createFont("DejaVuSans-ExtraLight-", 10);
+        PFont font1 = App.cf.fonts.size_10;
         p.textFont(font1); 
         p.stroke(10);
         p.textAlign(PConstants.CENTER);
@@ -121,7 +122,7 @@ public class Stick {
         // ligne horizontale de base
         p.line(labelCourant, y + 5, labelCourant + longueur, y + 5);
         
-        PFont font1 = p.createFont("DejaVuSans-ExtraLight-", 10);
+        PFont font1 = App.cf.fonts.size_10;
         p.textFont(font1); 
         p.stroke(10);
         p.textAlign(PConstants.CENTER);

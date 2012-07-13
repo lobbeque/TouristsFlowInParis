@@ -4,6 +4,7 @@ Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
 
 Authors : 
 Quentin Lobbé <quentin.lobbe@gmail.com>
+Julie Fen-Chong <julie.fenchong@gmail.com>
 Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
@@ -65,7 +66,7 @@ public class Edge {
             float xy1[] = App.db.getMap().getScreenPositionFromLocation(l1);
             float xy2[] = App.db.getMap().getScreenPositionFromLocation(l2);
 
-            float distance = Misc.distFrom(l1.getLat(), l1.getLon(), l2.getLat(), l2.getLon());
+            float distance = Bibliotheque.distFrom(l1.getLat(), l1.getLon(), l2.getLat(), l2.getLon());
 
 
             // Valuation de la transparence des edges en fonction de leur poids
@@ -77,7 +78,7 @@ public class Edge {
                     epaisseur = PApplet.map(PApplet.log(value), PApplet.log(2), PApplet.log(App.db.getEdgeMax()), 1, 10);
                 }
             } else if (App.db.isBoxCox()) {
-                epaisseur = PApplet.map(Misc.CoxBox(value,'e'), 0, Misc.CoxBox(App.db.getEdgeMax(),'e'), 1, 10);        
+                epaisseur = PApplet.map(Bibliotheque.CoxBox(value,'e'), 0, Bibliotheque.CoxBox(App.db.getEdgeMax(),'e'), 1, 10);        
             } else {
                 epaisseur = PApplet.map(value, 2, App.db.getEdgeMax(), 1, 15);
             }

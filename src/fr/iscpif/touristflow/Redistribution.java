@@ -4,6 +4,7 @@ Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
 
 Authors : 
 Quentin Lobbé <quentin.lobbe@gmail.com>
+Julie Fen-Chong <julie.fenchong@gmail.com>
 Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
@@ -72,7 +73,7 @@ public class Redistribution {
     public static void getGrilleAgreger(float n) {
         PApplet p = App.db.getPApplet();
         cellule = n;
-        float d = Misc.meter2Pixel(n);
+        float d = Bibliotheque.meter2Pixel(n);
         Location l1 = App.db.getMap().getLocationFromScreenPosition(0, 0);
         Location l2 = App.db.getMap().getLocationFromScreenPosition(d, d);
         X = l1.getLat() - l2.getLat();

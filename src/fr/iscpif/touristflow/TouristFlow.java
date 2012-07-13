@@ -4,6 +4,7 @@ Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
 
 Authors : 
 Quentin Lobbé <quentin.lobbe@gmail.com>
+Julie Fen-Chong <julie.fenchong@gmail.com>
 Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
@@ -46,11 +47,8 @@ license and that you accept its terms.
 
 package fr.iscpif.touristflow;
 
-import codeanticode.glgraphics.GLConstants;
-import de.fhpotsdam.unfolding.Map;
 import java.util.Properties;
 import de.fhpotsdam.unfolding.geo.Location;
-import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 import javax.script.ScriptException;
 import org.openide.util.Exceptions;
@@ -78,27 +76,24 @@ public class TouristFlow extends PApplet {
     @Override
     public void setup() {
         App.db.setPApplet(this);
-        App.conf.fonts.recreateUsing(this);
-
+        App.cf.fonts.recreateUsing(this);
+        
         //size(1200, 979);
-        size(1200, 900);
+        size(App.cf.screenWidth, App.cf.screenHeight);
         
         MouseHandlerCustom.setWidth(width);
         MouseHandlerCustom.setHeight(height);
 
         //Si l'on se sert d'un proxy, décommenter et ajouter le nom du proxy  
-        /*Properties props = System.getProperties();
-        props.put("http.proxyHost", "proxyhostname");
-        props.put("http.proxyPort", "proxyhostport");*/
-
-
+        Properties props = System.getProperties();
+        if (App.cf.useProxy) {       
+          props.put("http.proxyHost", App.cf.proxyHost);
+          props.put("http.proxyPort", App.cf.proxyPort);
+        }
 
         // info à rentrer pour créer la carte unfloding
-        Map map = new Map(this, 0, 0, width, height, new MBTilesMapProvider("jdbc:sqlite:./ressources/idf_light.mbtiles"));
-        App.db.setMap(map);
-        map.setZoomRange(9, 14);
-        
-        App.db.map.zoomAndPanTo(new Location(48.866f, 2.359f), 10);// position de départ de la carte 
+        App.db.setMap(new de.fhpotsdam.unfolding.Map(this));
+        App.db.map.zoomAndPanTo(new Location(App.cf.initialLat, App.cf.initialLon), App.cf.initialZoom);// position de départ de la carte 
         MapUtilsCustom.createDefaultEventDispatcherCustom(this, App.db.getMap());
         
         //Application.session.getMap().
@@ -106,24 +101,26 @@ public class TouristFlow extends PApplet {
         //initialiser la date courante de la carte
         Temps.setupDates();
         //charger les gexf
-        Misc.loadGraph();
+        Bibliotheque.loadGraph();
 
         // les info sur les noeuds et edges sont stockés dans 2 matrices
+        System.out.println("maxEdge: "+App.db.getMaxEdgeTotal());
         App.db.setMatEdge(new float[5][(int) App.db.getMaxEdgeTotal()]);
         App.db.setMatNode();
         // on réserve de la place pour le mode sélection et oursins
-        App.db.setOutputs(new float[6][(int) App.db.getMaxEdgeTotal() / 20]);
-        App.db.setInputs(new float[6][(int) App.db.getMaxEdgeTotal() / 20]);
+        App.db.setSortant(new float[6][(int) App.db.getMaxEdgeTotal() / 20]);
+        App.db.setEntrant(new float[6][(int) App.db.getMaxEdgeTotal() / 20]);
         App.db.setEdgePoids(new float[(int) App.db.getMaxEdgeTotal()]);
         App.db.setNodePoids(new float[(int) App.db.getMaxNodeTotal()]);
         // on initialise les 2 matrices principales sur lesquelles nou sallons maintenant travailler 
-        Misc.remplirTableauImage(App.db.getIndex());
+        Bibliotheque.remplirTableauImage(App.db.getIndex());
         // on initialise les effectifs pour les graphiques de distributions
-        Misc.effectif("edge");
-        Misc.effectif("node");
+        Bibliotheque.effectif("edge");
+        Bibliotheque.effectif("node");
 
         // chargement du points pour le heatmap
-        App.db.setMyPoints(loadImage("./ressources/ppp.png"));
+        
+        App.db.setMyPoints(loadImage(App.cf.heatMapSprite));
 
         smooth();
 
@@ -152,14 +149,14 @@ public class TouristFlow extends PApplet {
         App.db.getBoutons().add(new BoutonMenu(20, xMap + 260, yMap, "Oursins"));
         App.db.getBoutons().add(new BoutonMenu(20, xMap + 70, yMap + 135, "Arrow"));
 
-        Misc.miseAJourMatriceDistance(App.db.getIndex());
+        Bibliotheque.miseAJourMatriceDistance(App.db.getIndex());
 
         // tableau qui contiendra les noeuds pour le lissage
         App.db.setNodePourLissage(new float[3][App.db.getTableauGephi()[App.db.getIndex()].nodeCount]);
         // initialisation de la constante Dmax, utile au lissage 
-        App.db.setDmaxOnScreen(Misc.meter2Pixel(App.db.getDmax()));
+        App.db.setDmaxOnScreen(Bibliotheque.meter2Pixel(App.db.getDmax()));
 
-        Misc.distMinMax();
+        Bibliotheque.distMinMax();
 
         zoom = App.db.getMap().getZoom();
 
@@ -174,14 +171,13 @@ public class TouristFlow extends PApplet {
         App.db.setCurseur6(new Stick(10, (float) (width / 70 + 10), (float) (height - 500 + 145), App.db.getArrowsMax(), 100, (float) 0, (float) 25, (float) 1 / 5));
         App.db.setCurseur7(new Stick(10, (float) (width / 70 + 10), (float) (height - 500 + 187), App.db.getDmax(), 100, (float) 0, (float) 2500, (float) 1 / 5));
 
-        App.db.setNBRoamBTSMoy(Misc.readData());
+        App.db.setNBRoamBTSMoy(Bibliotheque.readData());
 
         // charger les liens vers les csv contenant les info sur les flêches d'anisotropie
         App.db.setReferencesArrows(new String[25]);
-        String prefix = "./ressources/Arrow31 March 2009 ";
         
         for (int i=0;i<24;i++) {
-            App.db.setReferencesArrows(i, prefix + nf(i, 2)+"h.csv");
+            App.db.setReferencesArrows(i, App.cf.arrowsPrefix + nf(i, 2)+"h.csv");
         }
 
         Affichage.setTemp(0);
@@ -201,19 +197,19 @@ public class TouristFlow extends PApplet {
         // Mises à jour s'il y a changement d'interval
         if (App.db.getIndexBis() != App.db.getIndex()) {
 
-            Misc.remplirTableauImage(App.db.getIndex());
-            Misc.miseAJourMatriceDistance(App.db.getIndex());
+            Bibliotheque.remplirTableauImage(App.db.getIndex());
+            Bibliotheque.miseAJourMatriceDistance(App.db.getIndex());
 
-            Misc.miseAJourOursins();
-            if (App.db.isUrchin()) {
+            Bibliotheque.miseAJourOursins();
+            if (App.db.isOursin()) {
                 KMeans.KMeansClean();
             }
 
             if (App.db.isArrow()) {
                 if ((App.db.arrowsIN.size() > 0) || (App.db.arrowsOUT.size() > 0)) {
 
-                    Misc.supprimerArrow();
-                    Misc.creerArrow();
+                    Bibliotheque.supprimerArrow();
+                    Bibliotheque.creerArrow();
                 }
                 if (Affichage.isDrawArrow()) {
 
@@ -235,8 +231,7 @@ public class TouristFlow extends PApplet {
             }
         }
 
-        PFont font1 = createFont("DejaVuSans-ExtraLight-", 12);
-        textFont(font1);
+        textFont(App.cf.fonts.size_12);
 
         App.db.setClosestDist(MAX_FLOAT);
 
@@ -280,7 +275,7 @@ public class TouristFlow extends PApplet {
         }
 
         // affiche la légende en mode Cluster
-        if (App.db.isUrchin()) {
+        if (App.db.isOursin()) {
             Affichage.afficheCluster();
         }
         }
@@ -296,10 +291,10 @@ public class TouristFlow extends PApplet {
         }
 
         // dessiner les oursins crées  
-        if ((!App.db.isSelect()) && (App.db.isUrchin())) {
+        if ((!App.db.isSelect()) && (App.db.isOursin())) {
 
-            for (int z = 0; z < App.db.getOursins().size(); z++) {
-                Urchin oursin = (Urchin) App.db.getOursins().get(z);
+            for (int z = 0; z < App.db.getUrchins().size(); z++) {
+                Urchin oursin = (Urchin) App.db.getUrchins().get(z);
                 oursin.draw();
             }
         }
@@ -331,7 +326,7 @@ public class TouristFlow extends PApplet {
         if (key == 's' || key == 'S') {
             showLegend=false;
             draw();
-            save(App.conf.exports.screenshotsDirPath + compteurImage + ".png");
+            save(App.cf.capturesPrefix + compteurImage + ".png");
             showLegend=true;
             compteurImage++;
         }
@@ -339,7 +334,7 @@ public class TouristFlow extends PApplet {
         if (key == '1') {
             //Redistribution.getGrilleAgreger(1000);
             //Redistribution.Agreger();
-            Misc.writeArrowData();
+            Bibliotheque.writeArrowData();
         }
         
         // lancer l'export en shape 
@@ -363,7 +358,7 @@ public class TouristFlow extends PApplet {
         }
 
         // création d'un oursin quand on clique dessus
-        if ((!App.db.isSelect()) && (App.db.isUrchin())) {
+        if ((!App.db.isSelect()) && (App.db.isOursin())) {
             for (int j = 0; j < App.db.getTableauGephi()[App.db.getIndex()].nodeCount; j++) {
                 Location l1 = new Location(App.db.getMatNode(0, j), App.db.getMatNode(1, j));
                 float xy1[] = App.db.getMap().getScreenPositionFromLocation(l1);
@@ -440,24 +435,24 @@ public class TouristFlow extends PApplet {
         }
 
         // zones d'activation des boutons du menu Oursins 
-        if (App.db.isUrchin()) {
+        if (App.db.isOursin()) {
             if ((width - 250 + 20 <= mouseX) && (width - 250 + 220 / 2 >= mouseX) && (height / 18 - 15 <= mouseY) && (height / 18 >= mouseY)) {
-                Misc.showOursins();
+                Bibliotheque.showOursins();
             } else if ((width - 250 + 220 / 2 <= mouseX) && (width - 250 + 220 - 20 >= mouseX) && (height / 18 - 15 <= mouseY) && (height / 18 >= mouseY)) {
-                Misc.hideOursins();
+                Bibliotheque.hideOursins();
             } else if ((width - 250 + 20 <= mouseX) && (width - 250 + 220 / 2 >= mouseX) && (height / 18 - 30 <= mouseY) && (height / 18 - 15 >= mouseY)) {
-                Misc.creerOursinsVue();
+                Bibliotheque.creerOursinsVue();
             } else if ((width - 250 + 220 / 2 <= mouseX) && (width - 250 + 220 - 20 >= mouseX) && (height / 18 - 30 <= mouseY) && (height / 18 - 15 >= mouseY)) {
-                Misc.effacerOursins();
+                Bibliotheque.effacerOursins();
             }
         }
 
         // pour les Arrows
         if (App.db.isArrow()) {
             if ((width / 70 <= mouseX) && (width / 70 + 120 >= mouseX) && (height - 300 + 100 / 3 + 10 <= mouseY) && (height - 300 + 200 / 3 + 5 >= mouseY)) {
-                Misc.creerArrow();
+                Bibliotheque.creerArrow();
             } else if ((width / 70 <= mouseX) && (width / 70 + 120 >= mouseX) && (height - 300 + 200 / 3 + 5 <= mouseY) && (height - 200 >= mouseY)) {
-                Misc.supprimerArrow();
+                Bibliotheque.supprimerArrow();
             } else if ((width / 70 <= mouseX) && (width / 70 + 120 >= mouseX) && (height - 300 + 10 <= mouseY) && (height - 300 + 100 / 3 + 10 >= mouseY)) {
                 if (Affichage.isDrawArrow()) {
                     Affichage.setDrawArrow(false);
@@ -502,14 +497,14 @@ public class TouristFlow extends PApplet {
         float dist7 = dist((float) (width - 250 + 107), (float) (height / 18 + 32), mouseX, mouseY);
         float dist8 = dist((float) (width - 250 + 150), (float) (height / 18 + 30), mouseX, mouseY);
         float dist9 = dist((float) (width - 250 + 195), (float) (height / 18 + 30), mouseX, mouseY);
-        if (App.db.isUrchin()) {
+        if (App.db.isOursin()) {
             if (dist7 < 15) {
-                if (App.db.getOursins().size() != 0) {
+                if (!App.db.getUrchins().isEmpty()) {
                     KMeans.kMeansInit();
                     out.println("Cluster init ok");
                 }
             } else if (dist8 < 15) {
-                if (App.db.getOursins().size() != 0) {
+                if (!App.db.getUrchins().isEmpty()) {
                     if (App.db.isKmeansDraw()) {
                         App.db.setKmeansDraw(false);
                     } else {
@@ -544,7 +539,7 @@ public class TouristFlow extends PApplet {
     @Override
     public void mouseReleased() {
         App.db.setClicked(false);
-        App.db.setDragged(true);
+        App.db.setDraged(true);
     }
 
     @Override
@@ -556,7 +551,7 @@ public class TouristFlow extends PApplet {
         if (!App.db.isKmeansDraw()) {
             App.db.getCurseur5().dragged(mouseX, mouseY);
         }
-        App.db.setDragged(false);
+        App.db.setDraged(false);
         App.db.getCurseur6().dragged(mouseX, mouseY);
         App.db.getCurseur7().dragged(mouseX, mouseY);
     }

@@ -4,6 +4,7 @@ Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
 
 Authors : 
 Quentin Lobbé <quentin.lobbe@gmail.com>
+Julie Fen-Chong <julie.fenchong@gmail.com>
 Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
@@ -93,6 +94,8 @@ public class Gephi {
             container = (Container) importController.importFile(file);
             container.getLoader().setEdgeDefault(EdgeDefault.DIRECTED);	//Force DIRECTED container.setAllowAutoNode(false); //Don’t create missing nodes
         } catch (Exception ex) {
+            System.out.println("Error: "+ex);
+            System.exit(-1);
             return;
         }
 
@@ -152,7 +155,7 @@ public class Gephi {
 
             i++;
         }
-        Misc.maxNodeTot(nodeCount);
+        Bibliotheque.maxNodeTot(nodeCount);
 
         i = 0;
         for (org.gephi.graph.api.Edge e : directedGraph.getEdges()) {
@@ -175,7 +178,7 @@ public class Gephi {
 
             i++;
         }
-        Misc.maxEdgeTot(edgeCount);
+        Bibliotheque.maxEdgeTot(edgeCount);
         out.println(btsLon[1] + " " + btsLat[1]);
 
     }

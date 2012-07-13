@@ -4,6 +4,7 @@ Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
 
 Authors : 
 Quentin Lobbé <quentin.lobbe@gmail.com>
+Julie Fen-Chong <julie.fenchong@gmail.com>
 Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
@@ -104,7 +105,7 @@ public class Smooth {
     public static void lissage() {
         PApplet p = App.db.getPApplet();
         int cpt = 0;
-        if (App.db.isDragged()) {
+        if (App.db.isDraged()) {
             init = false;
         }
 
@@ -158,7 +159,7 @@ public class Smooth {
         int height = p.height;
         int count = App.db.getNodePourLissageCount() - 1;
         int zoom = (int) App.db.getMap().getZoom();
-        float DmaxOnScreen = Misc.meter2Pixel(App.db.getDmaxSmooth());
+        float DmaxOnScreen = Bibliotheque.meter2Pixel(App.db.getDmaxSmooth());
         int cpt = 0;
         for (float i = 0; i < width; i = i + 3) {//l'écran est découpé en petits carrés
             for (float j = 0; j < height; j = j + 3) {
@@ -180,7 +181,7 @@ public class Smooth {
      */
     public static void miseAJourCarteLissee() {
         PApplet p = App.db.getPApplet();
-        App.db.setNodeforSmoothingCount(0);
+        App.db.setNodePourLissageCount(0);
         App.db.setNodePourLissageHold(App.db.getNodePourLissage());
         App.db.setNodePourLissage(new float[3][App.db.getNBRoamBTSMoy(0).length]);
 
@@ -198,7 +199,7 @@ public class Smooth {
                     // commenter l'instruction ci dessous et décommenter la suivante pour revenir à la carte lissée depuis le graphe et non les csv
                     App.db.setNodePourLissage(2, App.db.getNodePourLissageCount(), App.db.getNBRoamBTSMoy(App.db.getIndex() * nbInterval + 3, i));
                     //Application.session.setNodePourLissage(2, Application.session.getNodePourLissageCount(), Application.session.getMatNode(2, i));
-                    App.db.setNodeforSmoothingCount(App.db.getNodePourLissageCount() + 1);
+                    App.db.setNodePourLissageCount(App.db.getNodePourLissageCount() + 1);
                 }
             }
         }
@@ -269,7 +270,7 @@ public class Smooth {
         PApplet p = App.db.getPApplet();
 
 
-        if (App.db.isDragged()) {
+        if (App.db.isDraged()) {
             init = false;
         }
 
@@ -301,7 +302,7 @@ public class Smooth {
     public static void calculScore2() {
 
         PApplet p = App.db.getPApplet();
-        float DmaxOnScreen = Misc.meter2Pixel(App.db.getDmax());
+        float DmaxOnScreen = Bibliotheque.meter2Pixel(App.db.getDmax());
         float angle = 0;
         for (int i = 0; i < Grille[0].length; i++) {
             if (Grille[0][i] > 0) {

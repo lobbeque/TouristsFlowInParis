@@ -4,6 +4,7 @@ Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
 
 Authors : 
 Quentin Lobbé <quentin.lobbe@gmail.com>
+Julie Fen-Chong <julie.fenchong@gmail.com>
 Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
@@ -242,12 +243,12 @@ public class BoutonMenu {
         }
         if (this.nom.equals("Lissée")) {
             App.db.setHeat(true);
-            App.db.setFirstSmoothing(true);
+            App.db.setPremierLissage(true);
             App.db.setBoxCox(false);
         }
         if (this.nom.equals("Box Cox")) {
             App.db.setBoxCox(true);
-            App.db.setLogTransform(false);
+            App.db.setLog(false);
         }
         if (this.nom.equals("Exp(1/x)")) {
             App.db.setGros(false);
@@ -279,10 +280,10 @@ public class BoutonMenu {
             App.db.setChaud(true);
         }
         if (this.nom.equals("Log")) {
-            App.db.setLogTransform(true);
+            App.db.setLog(true);
         }
         if (this.nom.equals("Oursins")) {
-            App.db.isUrchin(true);
+            App.db.setOursin(true);
         }
         if (this.nom.equals("Arrow")) {
             App.db.setArrow(true);
@@ -302,7 +303,7 @@ public class BoutonMenu {
         }
         if (this.nom.equals("Lissée")) {
             App.db.setHeat(false);
-            App.db.setFirstSmoothing(false);
+            App.db.setPremierLissage(false);
         }
         if (this.nom.equals("Box Cox")) {
             App.db.setBoxCox(false);
@@ -331,12 +332,12 @@ public class BoutonMenu {
             App.db.setChaud(false);
         }
         if (this.nom.equals("Log")) {
-            App.db.setLogTransform(false);
+            App.db.setLog(false);
         }
         if (this.nom.equals("Oursins")) {
-            App.db.isUrchin(false);
+            App.db.setOursin(false);
             KMeans.KMeansClean();
-            Misc.effacerOursins();
+            Bibliotheque.effacerOursins();
         }
         if (this.nom.equals("Arrow")) {
             App.db.setArrow(false);

@@ -4,6 +4,7 @@ Copyright Quentin Lobbé (2012)
 
 Authors : 
 Quentin Lobbé <quentin.lobbe@gmail.com>
+Julie Fen-Chong <julie.fenchong@gmail.com>
 Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
@@ -148,7 +149,7 @@ public class MouseHandlerCustom extends MouseHandler {
                 return;
             } 
             
-            if ( App.db.isUrchin() && mouseX > width - 250 && mouseX < width - 250 + 220 && mouseY > height/18 && mouseY < height/18 + 50 ) {
+            if ( App.db.isOursin() && mouseX > width - 250 && mouseX < width - 250 + 220 && mouseY > height/18 && mouseY < height/18 + 50 ) {
                 return;
             }
             

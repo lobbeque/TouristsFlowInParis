@@ -4,6 +4,7 @@ Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
 
 Authors : 
 Quentin Lobbé <quentin.lobbe@gmail.com>
+Julie Fen-Chong <julie.fenchong@gmail.com>
 Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
@@ -66,10 +67,9 @@ public class Urchin {
     public float yNative;
     public float[] branchesSortantes;
     public float[] branchesEntrantes;
-    public enum Status {
-    UNSELECTED, SELECTED
-    }
-    public Status status = Status.UNSELECTED;
+    private String statusNormal = "normal"; // 2 status possibles pour un oursin
+    private String statusSelected = "selected";
+    public String status = statusNormal;
     public float somEntrant;
     public float somSortant;
     // Vecteur moyen
@@ -143,7 +143,7 @@ public class Urchin {
         }
 
         if (App.db.isArrow()) {
-            this.status = Status.SELECTED;
+            this.status = this.statusSelected;
         }
     }
 
@@ -176,16 +176,16 @@ public class Urchin {
         if (PApplet.max(somEntrant, somSortant) == somEntrant) {
             p.fill(16, 91, 136);
             p.stroke(10);
-            //if (status.equals(statusNormal)) {
+            if (status.equals(statusNormal)) {
                 //p.ellipse(xy[0], xy[1], 5, 5);
-            //}
+            }
             p.noStroke();
         } else {
             p.fill(182, 92, 96);
             p.stroke(10);
-            //if (status.equals(statusNormal)) {
+            if (status.equals(statusNormal)) {
                 //p.ellipse(xy[0], xy[1], 5, 5);
-            //}
+            }
             p.noStroke();
         }
         p.ellipseMode(PApplet.CENTER);
@@ -217,8 +217,8 @@ public class Urchin {
         Location l = App.db.getMap().getLocationFromScreenPosition(x2, y2);
         float a = PApplet.atan2(y2 - y1, x2 - x1);
         
-        float xi = Misc.distFrom(xNative, yNative, l.getLat(), yNative);
-        float yi = Misc.distFrom(xNative, yNative, xNative, l.getLon());
+        float xi = Bibliotheque.distFrom(xNative, yNative, l.getLat(), yNative);
+        float yi = Bibliotheque.distFrom(xNative, yNative, xNative, l.getLon());
         
         a = -a;
         if (a < 0) {
@@ -238,7 +238,8 @@ public class Urchin {
 
     /*
      * cette fonction dessine la branche de l'oursin voulue
-     * au passage on complète les sommes x/yMoyEntrant/Sortant qui serviront à calculer le poids et l'angle moyen de l'oursin en vue de la création des flèches 
+     * au passage on complète les sommes x/yMoyEntrant/Sortant qui serviront 
+     * à calculer le poids et l'angle moyen de l'oursin en vue de la création des flèches 
      */
     public void drawArc(float angle, float poids, float rayon, boolean sens) {
         PApplet p = App.db.getPApplet();
@@ -247,15 +248,15 @@ public class Urchin {
         if ((poids != 0) || (rayon != 0)) {
             p.smooth();
             p.ellipseMode(PApplet.RADIUS);
-            float x1 = (Misc.meter2Pixel(rayon) - poids) * PApplet.cos(angle) + xy[0];
-            float y1 = (Misc.meter2Pixel(rayon) - poids) * PApplet.sin(angle) + xy[1];
+            float x1 = (Bibliotheque.meter2Pixel(rayon) - poids) * PApplet.cos(angle) + xy[0];
+            float y1 = (Bibliotheque.meter2Pixel(rayon) - poids) * PApplet.sin(angle) + xy[1];
 
             if (sens) {
-                xMoyEntrant = xMoyEntrant + Misc.meter2Pixel(rayon) * PApplet.cos(angle);
-                yMoyEntrant = yMoyEntrant + Misc.meter2Pixel(rayon) * PApplet.sin(angle);
+                xMoyEntrant = xMoyEntrant + Bibliotheque.meter2Pixel(rayon) * PApplet.cos(angle);
+                yMoyEntrant = yMoyEntrant + Bibliotheque.meter2Pixel(rayon) * PApplet.sin(angle);
             } else {
-                xMoySortant = xMoySortant + Misc.meter2Pixel(rayon) * PApplet.cos(angle);
-                yMoySortant = yMoySortant + Misc.meter2Pixel(rayon) * PApplet.sin(angle);
+                xMoySortant = xMoySortant + Bibliotheque.meter2Pixel(rayon) * PApplet.cos(angle);
+                yMoySortant = yMoySortant + Bibliotheque.meter2Pixel(rayon) * PApplet.sin(angle);
             }
 
             if (poids <= 0) {
@@ -263,7 +264,7 @@ public class Urchin {
             } else {
                 p.strokeWeight(poids);
             }
-            if (checkStatus(Status.UNSELECTED)) {
+            if (status.equals(statusNormal)) {
                 p.line(xy[0], xy[1], x1, y1);
             }
         }
@@ -301,29 +302,23 @@ public class Urchin {
         return this.branchesSortantes[i];
     }
 
-    public Status getStatus() {
+    public String getStatus() {
         return status;
     }
-    public boolean checkStatus(Status st) {
-        return status == st;
-    }
-    public void setStatus(Status stat) {
+
+    public void setStatus(String stat) {
         this.status = stat;
     }
-    public void setStatusSelected() {
-        setStatus(Status.SELECTED); 
-    }
-    public void setStatusUnselected() {
-        setStatus(Status.UNSELECTED); 
-    }
+
+
     /*
      * afficher ou non un oursin
      */
     public void pressed() {
-        if (checkStatus(Status.UNSELECTED)) { // si le status est normal alors celui devient selected
-            setStatusSelected();
-        } else { // si le status est selected alors celui ci devient normal 
-            setStatusUnselected();
+        if (status.equals(statusNormal)) { // si le status est normal alors celui devient selected
+            status = statusSelected;
+        } else if (status.equals(statusSelected)) { // si le status est selected alors celui ci devient normal 
+            status = statusNormal;
         }
     }
 

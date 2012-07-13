@@ -1,0 +1,33 @@
+# chaine prefixe du chemin vers les graphes
+inputGraphPrefix: "/Users/jbilcke/Sites/TouristsFlowInParis/gexf-24h/fran_sans4080_03_31_"
+
+# ?
+nbRoamingBTSmoy: "./ressources/nb_roam_bts_moy.csv"
+
+# chemin de sortie des captures (préfixe)
+capturesPrefix: "./captures/touristflows31-March-2009-num_"
+
+
+# icone utilise pour la heatmap
+heatMapSprite: "./ressources/ppp.png"
+
+# ATTENTION aux espaces !
+arrowsPrefix: "./ressources/Arrow31 March 2009 "
+
+# attention.. aux.. espaces..
+writeArrowsPrefix: "./Arrow roaming "
+
+# set to true to enable proxy
+useProxy: false
+proxyHost: "p-goodway.rd.francetelecom.fr"
+proxyPort: "3128"
+
+
+# initial camera position
+initialLat: 48.866
+initialLon: 2.359
+initialZoom: 10
+
+# screen resolution
+screenWidth: 1200
+screenHeight: 900

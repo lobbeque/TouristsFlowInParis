@@ -4,6 +4,7 @@ Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
 
 Authors : 
 Quentin Lobbé <quentin.lobbe@gmail.com>
+Julie Fen-Chong <julie.fenchong@gmail.com>
 Julian Bilcke <julian.bilcke@iscpif.fr>
 
 This file is a part of TouristsFlowInParis Project
@@ -66,7 +67,7 @@ public class Temps {
     public static String lastHourStamp = "2009033124";
     public static String nowHour;
 
-    public static final long TIMESTEPS = 1 * 60 * 60 * 1000; // nombre de millisecondes dans un interval de 4 heures
+    public static final long MILLIS_PER_4HOURS = 1 * 60 * 60 * 1000; // nombre de millisecondes dans un interval de 4 heures
 
 
     public static int hourCount; // nb d'intervals en une journée
@@ -91,7 +92,7 @@ public class Temps {
         long lastHourMillis = lastHour.getTime( );
 
         // calcul du nombre d'interval en une journée ( peu se faire à la main, mais bon comme ca c'est fait pour de plus grands jeux )
-        hourCount = (int)((lastHourMillis - firstHourMillis) / TIMESTEPS);
+        hourCount = (int)((lastHourMillis - firstHourMillis) / MILLIS_PER_4HOURS);
         
         // hourCount = 6;
         maxHourIndex = hourCount;
@@ -101,7 +102,7 @@ public class Temps {
         nowHour = PApplet.year() + PApplet.nf(PApplet.month( ), 2) + PApplet.nf(PApplet.day( ), 2) + PApplet.nf(PApplet.hour( ), 2);
 
         for (int i = 0; i < hourCount; i++) {
-          Date date = new Date(firstHourMillis + TIMESTEPS*i);
+          Date date = new Date(firstHourMillis + MILLIS_PER_4HOURS*i);
           hourPretty[i] = prettyFormat.format(date);
           hourStamp[i] = stampFormat.format(date);
         }
