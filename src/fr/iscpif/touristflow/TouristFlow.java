@@ -48,7 +48,9 @@ license and that you accept its terms.
 package fr.iscpif.touristflow;
 
 import java.util.Properties;
+import de.fhpotsdam.unfolding.Map;
 import de.fhpotsdam.unfolding.geo.Location;
+import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 import javax.script.ScriptException;
 import org.openide.util.Exceptions;
@@ -90,12 +92,22 @@ public class TouristFlow extends PApplet {
           props.put("http.proxyHost", App.cf.proxyHost);
           props.put("http.proxyPort", App.cf.proxyPort);
         }
-
+        // info à rentrer pour créer la carte unfolding
+        if (App.cf.useTiles) {
         // info à rentrer pour créer la carte unfloding
+        Map map = new Map(this, 0, 0, width, height, new MBTilesMapProvider("jdbc:sqlite:./ressources/idf_light.mbtiles"));
+        App.db.setMap(map);
+        map.setZoomRange(9, 14);
+        
+        App.db.map.zoomAndPanTo(new Location(48.866f, 2.359f), 10);// position de départ de la carte 
+        MapUtilsCustom.createDefaultEventDispatcherCustom(this, App.db.getMap());
+        
+        }
+        } else {
         App.db.setMap(new de.fhpotsdam.unfolding.Map(this));
         App.db.map.zoomAndPanTo(new Location(App.cf.initialLat, App.cf.initialLon), App.cf.initialZoom);// position de départ de la carte 
         MapUtilsCustom.createDefaultEventDispatcherCustom(this, App.db.getMap());
-        
+
         //Application.session.getMap().
  
         //initialiser la date courante de la carte

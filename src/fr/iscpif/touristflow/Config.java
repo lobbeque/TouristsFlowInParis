@@ -59,6 +59,11 @@ public final class Config {
     
     public final Integer screenHeight;
     
+    public final Boolean useTiles;
+    
+    public final String pathToTiles;
+    
+    
     public Config(String path) {
         Map map = new HashMap();
         try {
@@ -162,6 +167,18 @@ public final class Config {
             screenHeight = (Integer) map.get("screenHeight");
         } else {
             screenHeight = 600;
+        }
+        
+        if (map.containsKey("useTiles")) {
+            useTiles = (Boolean) map.get("useTiles");
+        } else {
+            useTiles = false;
+        }
+        
+        if (map.containsKey("pathToTiles")) {
+            pathToTiles = (String) map.get("pathToTiles");
+        } else {
+            pathToTiles = "jdbc:sqlite:./ressources/idf_light.mbtiles";
         }
         
         
