@@ -18,15 +18,19 @@ arrowsPrefix: "./ressources/Arrow31 March 2009 "
 writeArrowsPrefix: "./Arrow roaming "
 
 # set to true to enable proxy
-# useProxy: false
-# proxyHost: "p-goodway.rd.francetelecom.fr"
-# proxyPort: "3128"
+useProxy: false
+proxyHost: p-goodway.rd.francetelecom.fr
+proxyPort: 3128
 
 
 # initial camera position
 initialLat: 48.866
 initialLon: 2.359
+
+# camera zoom settings
 initialZoom: 10
+minZoom: 9
+maxZoom: 14
 
 # screen resolution
 screenWidth: 1200

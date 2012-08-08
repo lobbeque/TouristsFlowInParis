@@ -50,7 +50,7 @@ public final class Config {
     public final String writeArrowsPrefix;
     public final Boolean useProxy;
     public final String proxyHost;
-    public final String proxyPort;
+    public final Integer proxyPort;
     public final Float initialLat;
     public final Float initialLon;
     public final Integer initialZoom;
@@ -62,6 +62,9 @@ public final class Config {
     public final Boolean useTiles;
     
     public final String pathToTiles;
+    
+    public final Integer maxZoom;
+    public final Integer minZoom;
     
     
     public Config(String path) {
@@ -126,9 +129,9 @@ public final class Config {
         
               
         if (map.containsKey("proxyPort")) {
-            proxyPort = (String) map.get("proxyPort");
+            proxyPort = (Integer) map.get("proxyPort");
         } else {
-            proxyPort = "";
+            proxyPort = 8080;
         }
         
         
@@ -181,7 +184,17 @@ public final class Config {
             pathToTiles = "jdbc:sqlite:./ressources/idf_light.mbtiles";
         }
         
+        if (map.containsKey("minZoom")) {
+            minZoom = (Integer) map.get("minZoom");
+        } else {
+            minZoom = 9;
+        }
         
+        if (map.containsKey("maxZoom")) {
+            maxZoom = (Integer) map.get("maxZoom");
+        } else {
+            maxZoom = 14;
+        }
         
     }
 
