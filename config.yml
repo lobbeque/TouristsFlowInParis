@@ -1,8 +1,8 @@
 # chaine prefixe du chemin vers les graphes
-inputGraphPrefix: "/Volumes/LILI/donnees/francais/2012_nofilter/gexf-24h/gexf-24h/fran_sans4080_03_31_"
+inputGraphPrefix: "/Users/jfenchong/Documents/these/données/francais/gexf/fr_03_31_"
 
 # ?
-nbRoamingBTSmoy: "./ressources/nb_roam_bts_moy.csv"
+nbRoamingBTSmoy: "/Volumes/LILI/donnees/francais/nd_fr_bts/nb_fr_bts_03_31.csv"
 
 # chemin de sortie des captures (préfixe)
 capturesPrefix: "./captures/touristflows31-March-2009-num_"
@@ -38,4 +38,4 @@ screenHeight: 900
 
 # fond de carte: si useMBTiles est vrai, alors cela utilise le fichier de fond de cartes
 useTiles: true
-pathToTiles: "jdbc:sqlite:./ressources/idf_light.mbtiles"
+pathToTiles: "jdbc:sqlite:/Users/jfenchong/Documents/MapBox/export/Idf2.mbtiles"

@@ -1,50 +1,47 @@
 /*
 
-Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
+ Copyright : UMR Géographie Cités - Quentin Lobbé (2012)
 
-Authors : 
-Quentin Lobbé <quentin.lobbe@gmail.com>
-Julie Fen-Chong <julie.fenchong@gmail.com>
-Julian Bilcke <julian.bilcke@iscpif.fr>
+ Authors : 
+ Quentin Lobbé <quentin.lobbe@gmail.com>
+ Julie Fen-Chong <julie.fenchong@gmail.com>
+ Julian Bilcke <julian.bilcke@iscpif.fr>
 
-This file is a part of TouristsFlowInParis Project
+ This file is a part of TouristsFlowInParis Project
 
-Build with Processing ( Ben Fry, Casey Reas ) ( GNU GPL )
-Build with Unfolding ( Till Nagel, Felix Lange ) ( BSD )
-
-
-This software is a computer program whose purpose is to manipulate, 
-explore and visualize large graphs of flow through time and space .
-This software is governed by the CeCILL license under French law and 
-abiding by the rules of distribution of free software. You can use, 
-modify and/ or redistribute the software under the terms of the CeCILL 
-license as circulated by CEA, CNRS and INRIA at the following URL 
-"http://www.cecill.info".
+ Build with Processing ( Ben Fry, Casey Reas ) ( GNU GPL )
+ Build with Unfolding ( Till Nagel, Felix Lange ) ( BSD )
 
 
-As a counterpart to the access to the source code and rights to copy, 
-modify and redistribute granted by the license, users are provided only with a 
-limited warranty and the software's author, the holder of the economic rights, 
-and the successive licensors have only limited liability.
+ This software is a computer program whose purpose is to manipulate, 
+ explore and visualize large graphs of flow through time and space .
+ This software is governed by the CeCILL license under French law and 
+ abiding by the rules of distribution of free software. You can use, 
+ modify and/ or redistribute the software under the terms of the CeCILL 
+ license as circulated by CEA, CNRS and INRIA at the following URL 
+ "http://www.cecill.info".
 
 
-In this respect, the user's attention is drawn to the risks associated with loading, 
-using, modifying and/or developing or reproducing the software by the user in light 
-of its specific status of free software, that may mean that it is complicated to manipulate, 
-and that also therefore means that it is reserved for developers and experienced professionals 
-having in-depth computer knowledge. Users are therefore encouraged to load and test 
-the software's suitability as regards their requirements in conditions enabling the security 
-of their systems and/or data to be ensured and, more generally, to use and operate it in 
-the same conditions as regards security.
+ As a counterpart to the access to the source code and rights to copy, 
+ modify and redistribute granted by the license, users are provided only with a 
+ limited warranty and the software's author, the holder of the economic rights, 
+ and the successive licensors have only limited liability.
 
 
-The fact that you are presently reading this means that you have had knowledge of the CeCILL 
-license and that you accept its terms.
+ In this respect, the user's attention is drawn to the risks associated with loading, 
+ using, modifying and/or developing or reproducing the software by the user in light 
+ of its specific status of free software, that may mean that it is complicated to manipulate, 
+ and that also therefore means that it is reserved for developers and experienced professionals 
+ having in-depth computer knowledge. Users are therefore encouraged to load and test 
+ the software's suitability as regards their requirements in conditions enabling the security 
+ of their systems and/or data to be ensured and, more generally, to use and operate it in 
+ the same conditions as regards security.
+
+
+ The fact that you are presently reading this means that you have had knowledge of the CeCILL 
+ license and that you accept its terms.
  
  */
-
-
-
 package fr.iscpif.touristflow;
 
 import de.fhpotsdam.unfolding.geo.Location;
@@ -54,29 +51,28 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 /**
-
- * 
- * 
- * 
+ *
+ *
+ *
+ *
  * @author Quentin Lobbé
  */
 public class Bibliotheque {
 
     static void loadGraph() {
         String prefix = App.cf.inputGraphPrefix;
-        for (int i=0; i < 24; i++) {
+        for (int i = 0; i < 24; i++) {
             App.db.setTableauGephi(i, new Gephi());
             String from = String.format("%02d", (i < 24) ? i : 0);
-            String to = String.format("%02d", (i < 23) ? (i+1) : 0);
-           
-            String filePath = prefix + from + "-"+to+".gexf";
-            System.out.println("filePath: "+filePath);
+            String to = String.format("%02d", (i < 23) ? (i + 1) : 0);
+
+            String filePath = prefix + from + "-" + to + ".gexf";
+            System.out.println("filePath: " + filePath);
             App.db.getTableauGephi()[i].loadG(filePath);
         }
         App.db.setIndex(0);
-    
+
     }
-    
 
     static void maxEdgeTot(int i) {
         if (i > App.db.getMaxEdgeTotal()) {
@@ -504,19 +500,16 @@ public class Bibliotheque {
      * décommenter cette version de creerArrow et commmenter la suivante s'il on veut créer les flèches depuis les oursins
      * sinon on travail sur des fichiers csv préparés
      */
-    
     /*public static void creerArrow() {
     
-    creerOursinsVue();
-    for (int z = 0; z < Application.session.getOursins().size(); z++) {
-    Oursin oursin = (Oursin) Application.session.getOursins().get(z);
-    oursin.draw();
-    }
-    effacerOursins();
+     creerOursinsVue();
+     for (int z = 0; z < Application.session.getOursins().size(); z++) {
+     Oursin oursin = (Oursin) Application.session.getOursins().get(z);
+     oursin.draw();
+     }
+     effacerOursins();
     
-    }*/
-    
-    
+     }*/
     public static void creerArrow() {
         PApplet p = App.db.getPApplet();
 
@@ -550,16 +543,21 @@ public class Bibliotheque {
     // extraire les données du csv nb_roam_bts_moy
     public static float[][] readData() {
         PApplet p = App.db.getPApplet();
-        String[] lines = p.loadStrings(App.cf.nbRoamingBTSmoy);
-        int count = lines.length;
-        float[][] mat = new float[27][count];
-        for (int i = 1; i < lines.length; i++) {
-            String[] mots = PApplet.split(lines[i], ';');
-            for (int j = 0; j < mots.length; j++) {
-                mat[j][i - 1] = Float.parseFloat(mots[j]);
+        float[][] mat;
+        try {
+            String[] lines = p.loadStrings(App.cf.nbRoamingBTSmoy);
+            int count = lines.length;
+            mat = new float[27][count];
+            for (int i = 1; i < lines.length; i++) {
+                String[] mots = PApplet.split(lines[i], ';');
+                for (int j = 0; j < mots.length; j++) {
+                    mat[j][i - 1] = Float.parseFloat(mots[j]);
+                }
             }
+        } catch (Exception erreur1) {
+            System.err.append("erreur lors du chargement du csv de roaming bts moy: "+erreur1);
+            mat = new float[27][0];
         }
-
         return mat;
     }
 
